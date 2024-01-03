@@ -31,4 +31,4 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
     def __str__(self):
-        return self.mobile_no
+        return f"{self.id}-{self.first_name} {self.last_name}-{self.mobile_no}"
