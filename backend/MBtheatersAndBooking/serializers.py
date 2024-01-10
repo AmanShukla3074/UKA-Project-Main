@@ -43,6 +43,7 @@ class Screen2Serializer(serializers.ModelSerializer):
         fields = ['Screen_ID','Screen_Name','T_ID']
 
 
+
 class ShowtimeSerializer(serializers.ModelSerializer):
     Screen_M = Screen2Serializer()
     M_ID = MovieSerializer()
@@ -50,6 +51,21 @@ class ShowtimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShowTime_M
         fields = ['ShowTime_ID','M_ID','Screen_M','StartTime','Date']
+
+
+
+class SeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seat_M
+        fields = '__all__'
+
+class SeatInShowtimeSerializer(serializers.ModelSerializer):
+    seat = SeatSerializer()
+
+    class Meta:
+        model = SeatInShowtime
+        fields = '__all__'
+
 
 # class TheaterDetailSerializer(serializers.ModelSerializer):
 class TheaterSerializer(serializers.ModelSerializer):

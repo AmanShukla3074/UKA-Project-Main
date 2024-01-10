@@ -26,6 +26,16 @@ class ShowtimeList(APIView):
         return Response(serializer.data)
        
 
+class SeatList(generics.ListCreateAPIView):
+    queryset = Seat_M.objects.all()
+    serializer_class = SeatSerializer
+
+class SeatInShowtimeList(generics.ListAPIView):
+    serializer_class = SeatInShowtimeSerializer
+
+    def get_queryset(self):
+        showtime_id = self.kwargs['showtime_id']
+        return SeatInShowtime.objects.filter(showtime_id=showtime_id)
     
 # class TheaterMovieList(APIView):
 #     def get(self, request, *args, **kwargs):

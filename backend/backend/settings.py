@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'account',    
     'Ecom',
     'MBmovies',
-    'MBtheatersAndBooking',
+    # 'MBtheatersAndBooking',
 
     'rest_framework',
     'rest_framework_simplejwt',
+
+    'MBtheatersAndBooking.apps.YourAppConfig',
 ]
 
 MIDDLEWARE = [

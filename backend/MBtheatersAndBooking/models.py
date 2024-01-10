@@ -49,7 +49,6 @@ class Seat_M(models.Model): #add showtime id to fatch
     Seat_Col_Num =models.IntegerField(null=False,blank=False,default=0) # To acces Column Numner e.g. 1,2,3,4
     Seat_Row_AlphaBet = models.CharField(max_length=5,null=False,blank=False)  # To acces Row in Alphabet e.g. A,B,C,D 
     Screen_ID= models.ForeignKey(Screen_M, on_delete=models.CASCADE,null=False,blank=False)
-    Seat_Status = models.BooleanField(default=False)
     Seat_Type= models.ForeignKey(SeatType, on_delete=models.CASCADE,null=False,blank=False)
 
     def __str__(self):
@@ -80,6 +79,15 @@ class ShowTime_M(models.Model):
     def __str__(self):
         return f"Showtime id = {self.ShowTime_ID} - Movie = {self.M_ID} - Screen = {self.Screen_M} - Starttime = {self.StartTime} - Date = {self.Date}"
 
+
+class SeatInShowtime(models.Model):
+    seat = models.ForeignKey(Seat_M, on_delete=models.CASCADE)
+    showtime = models.ForeignKey(ShowTime_M, on_delete=models.CASCADE)
+    is_booked = models.BooleanField(default=False)
+
+    def __str__(self):
+            return f"showtime = {self.showtime} - seat = {self.seat}"
+
 class SeatPrice(models.Model):
     SeatPrice_ID  = models.AutoField(primary_key=True)
     Seat_type_id= models.ForeignKey(SeatType, on_delete=models.CASCADE,null=False,blank=False)
@@ -107,6 +115,7 @@ class Booking_M(models.Model):
     # gst_rate = models.DecimalField(max_digits=5, decimal_places=2)
     gst_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     TotalAmt = models.DecimalField(max_digits=10,decimal_places=2,blank=True, null=True)
+    # Rate_Movie = models.CharField(max_length=5,null=True,blank=True)
 
     def calculate_gst(self):
         gst_rate = 10
