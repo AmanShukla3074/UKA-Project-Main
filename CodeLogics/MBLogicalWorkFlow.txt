@@ -1,0 +1,138 @@
+1. Movies
+    1. for listing movies in home page
+    2. for a perticular movie showing thaters and it's availble shows
+    3. Custom search button to search thaters according to movies**
+
+2. Theaters
+    1. for listing thaters in home page
+    2. for a perticular thaters showing movies and it's availble shows
+    3. Custom search button to search movies according to thaters**
+
+3. Showtimes
+    1. showing availble showtime and its seats
+    2. Give Access To selecting seats
+
+4. Booking
+    1. Get Showtime ,seats info and fetch and calulate amounts
+    2. Giving Payment Portale for pay the amount and give Eticket/QRcode and invoice to user
+   
+    
+5. Theater Manager Panel
+    1. Manage thater profile
+    2. Manage Screens Seats etc
+
+
+complete work fow with API
+
+1. Home Page -> Img sliders , Movie And Theater API -> api/movies/ - api/thaters/ - api/sliderMB/
+
+2. if user select movie -> api/movies/<int:pk>
+        give availble show according to thaters -> /api/showtimes/?movie=<int:pk>
+            showing seats availble in showtime -> /api/seats/?showtime=<int:showtime_id>/ **issue**
+   if user select theater -> api/thater/<int:pk>
+        give availble show according to movies -> /api/showtimes/?thater=<int:pk>
+            showing seats availble in showtime -> /api/seats/?showtime=<int:showtime_id>/ 
+
+3. after selecting seats in seat api
+        data will post too Booking_M and Booking_Seat_M -> /api/bookings/ 
+        *Payment Etc no knowledge*
+ 
+            
+APIs I have to make:
+    1.api/sliderMB/
+    2.api/movies/
+    3.api/movies/<int:pk>
+    4.api/thaters/
+    5.api/thater/<int:pk>
+    6./api/showtimes/
+    7./api/seats/
+    8./api/bookings/ 
+
+
+
+
+
+// Filter Movies according to movie id
+Certainly! If you opt for a flat API structure, where you have separate endpoints for movies and showtimes, you would typically filter the showtimes based on the movie's primary key. Below is an example implementation with models, serializers, views, and URLs:
+
+### Models:
+
+Assuming you have two models, one for movies and one for showtimes:
+
+```python
+# models.py
+from django.db import models
+
+class Movie(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+
+class Showtime(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    datetime = models.DateTimeField()
+    theater = models.CharField(max_length=100)
+```
+
+### Serializers:
+
+Create serializers for both models:
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import Movie, Showtime
+
+class MovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['id', 'title', 'description']
+
+class ShowtimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Showtime
+        fields = ['id', 'datetime', 'theater']
+```
+
+### Views:
+
+Create views to handle the API requests:
+
+```python
+# views.py
+from rest_framework import generics
+from .models import Movie, Showtime
+from .serializers import MovieSerializer, ShowtimeSerializer
+
+class MovieDetailAPIView(generics.RetrieveAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+
+class ShowtimesListAPIView(generics.ListAPIView):
+    serializer_class = ShowtimeSerializer
+
+    def get_queryset(self):
+        movie_id = self.kwargs['pk']
+        return Showtime.objects.filter(movie_id=movie_id)
+```
+
+### URLs:
+
+Configure the URL patterns:
+
+```python
+# urls.py
+from django.urls import path
+from .views import MovieDetailAPIView, ShowtimesListAPIView
+
+urlpatterns = [
+    path('movies/<int:pk>/', MovieDetailAPIView.as_view(), name='movie-detail'),
+    path('showtimes/<int:pk>/', ShowtimesListAPIView.as_view(), name='showtimes-list'),
+]
+```
+
+In this setup:
+
+- The `MovieDetailAPIView` handles requests for movie details.
+- The `ShowtimesListAPIView` handles requests for showtimes based on a movie's primary key (`<int:pk>`).
+
+With these configurations, you can make requests to `/api/movies/<int:pk>/` to get movie details and `/api/showtimes/<int:pk>/` to get showtimes for a specific movie. The `ShowtimesListAPIView` uses the `get_queryset` method to filter showtimes based on the provided movie primary key.

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     'account',    
     'Ecom',
+    'MBmovies',
+    'MBtheatersAndBooking',
 
     'rest_framework',
     'rest_framework_simplejwt',
@@ -142,3 +144,27 @@ PRODUCT_MEDIA_ROOT = BASE_DIR / "media/product"
 # Profile Images
 PROFILE_MEDIA_URL = '/media/profile/'
 PROFILE_MEDIA_ROOT = BASE_DIR / "media/profile"
+
+# Movie Images
+MOVIESIMGS_MEDIA_URL = '/media/movieIMGs/'
+MOVIESIMGS_MEDIA_ROOT = BASE_DIR / "media/movieIMGs"
+
+# Movie Director Images
+MOVIESDIRECTORSIMGS_MEDIA_URL = '/media/DirectorIMGs/'
+MOVIESDIRECTORSIMGS_MEDIA_ROOT = BASE_DIR / "media/DirectorIMGs"
+
+# Movie Producer Images
+MOVIESPRODUCERIMGS_MEDIA_URL = '/media/ProducerIMGs/'
+MOVIESPRODUCERIMGS_MEDIA_ROOT = BASE_DIR / "media/ProducerIMGs"
+
+# Movie Cast Images
+MOVIESCASTIMGS_MEDIA_URL = '/media/CastIMGs/'
+MOVIESCASTIMGS_MEDIA_ROOT = BASE_DIR / "media/CastIMGs"
+
+# Movie Genre Images
+MOVIESGENREIMGS_MEDIA_URL = '/media/GenreIMGs/'
+MOVIESGENREIMGS_MEDIA_ROOT = BASE_DIR / "media/GenreIMGs"
+
+# Movie Language Images
+MOVIESLANGUAGEIMGS_MEDIA_URL = '/media/LanguageIMGs/'
+MOVIESLANGUAGEIMGS_MEDIA_ROOT = BASE_DIR / "media/LanguageIMGs"
