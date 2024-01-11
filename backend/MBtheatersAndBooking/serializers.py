@@ -54,17 +54,51 @@ class ShowtimeSerializer(serializers.ModelSerializer):
 
 
 
+class SeatTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SeatType
+        fields = '__all__'
+
+
+class SeatPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SeatPrice
+        fields = '__all__'
+
+
 class SeatSerializer(serializers.ModelSerializer):
+    Seat_Type = SeatTypeSerializer()
+    # Price = serializers.SerializerMethodField()
+
+    # def get_Price(self,obj):
+    #     price = SeatPrice.objects.filter(ShowTime_ID=obj)
+    #     serializer = SeatPriceSerializer(price, many=True)
+    #     return serializer.data 
+    
     class Meta:
         model = Seat_M
         fields = '__all__'
 
 class SeatInShowtimeSerializer(serializers.ModelSerializer):
     seat = SeatSerializer()
+    Price = serializers.SerializerMethodField()
+
+    def get_Price(self,obj):
+        # price = SeatPrice.objects.filter(ShowTime_ID=obj,Seat_type_id=obj)
+        # serializer = SeatPriceSerializer(price, many=True)
+        # return serializer.data 
+        seat_type = obj.seat.Seat_Type
+        showtime_id = obj.showtime.ShowTime_ID
+
+        # Retrieve the corresponding SeatPrice entry
+        seat_price = SeatPrice.objects.filter(Seat_type_id=seat_type, ShowTime_ID=showtime_id).first()
+
+        # Return the price if available, or None if not found
+        return seat_price.Price if seat_price else None
 
     class Meta:
         model = SeatInShowtime
-        fields = '__all__'
+        fields = ['id','seat','Price','is_booked','showtime']
 
 # class TheaterDetailSerializer(serializers.ModelSerializer):
 class TheaterSerializer(serializers.ModelSerializer):
