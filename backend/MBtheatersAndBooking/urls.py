@@ -12,4 +12,6 @@ urlpatterns = [
    path('seats/', SeatList.as_view(), name='seat-list'),
    path('showtimes/', ShowtimeList.as_view(), name='showtime-list'),
    path('showtimes/<int:showtime_id>/seats/', SeatInShowtimeList.as_view(), name='seats-in-showtime-list'),
+   path('complaint/', ComplaintView.as_view(), name='complaint-list'),
+   path('complaint/<int:pk>/', ComplaintView.as_view(), name='complaint-list'),
 ]

@@ -66,7 +66,6 @@ class SeatInShowtimeSerializer(serializers.ModelSerializer):
         model = SeatInShowtime
         fields = '__all__'
 
-
 # class TheaterDetailSerializer(serializers.ModelSerializer):
 class TheaterSerializer(serializers.ModelSerializer):
     Screen = serializers.SerializerMethodField()
@@ -88,8 +87,34 @@ class TheaterSerializer(serializers.ModelSerializer):
 
 
 
-# class TheaterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Theater_M
-#         fields = ['T_ID','T_Name','T_Flat_Add','T_Street_Add','T_Pin']
+class TheaterMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Theater_M
+        fields = ['T_ID','T_Name','T_Flat_Add','T_Street_Add','T_Pin']
+
+
+class ComplaintPostSerializer(serializers.ModelSerializer):
+
+    # M_ID = MovieSerializer()
+    # T_ID = TheaterMiniSerializer()
+
+    class Meta:
+        model = Complaint_MB
+        fields = '__all__'
+
+class ComplaintGetSerializer(serializers.ModelSerializer):
+
+    # M_ID = MovieSerializer()
+    # T_ID = TheaterMiniSerializer()
+
+    M_ID = serializers.PrimaryKeyRelatedField(source='M_ID.M_ID', read_only=True)
+    M_Name = serializers.CharField(source='M_ID.M_Name', read_only=True)
+    T_ID = serializers.PrimaryKeyRelatedField(source='T_ID.T_ID', read_only=True)
+    T_Name = serializers.CharField(source='T_ID.T_Name', read_only=True)
+    U_FName = serializers.CharField(source='User_ID.first_name', read_only=True)
+    U_LName = serializers.CharField(source='User_ID.last_name', read_only=True)
+
+    class Meta:
+        model = Complaint_MB
+        fields = ['Complaint_ID','User_ID','M_ID','M_Name','T_ID','T_Name','U_FName','U_LName','Complaint_Desc','Complaint_Date']
 

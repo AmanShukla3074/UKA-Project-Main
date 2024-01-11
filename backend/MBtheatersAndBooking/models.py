@@ -145,6 +145,7 @@ class  Complaint_MB(models.Model):
     Complaint_ID  = models.AutoField(primary_key=True)
     User_ID  = models.ForeignKey(User, on_delete=models.CASCADE,null=False,blank=False)
     M_ID  = models.ForeignKey(Movie_M, on_delete=models.CASCADE,null=True,blank=True)
+    T_ID  = models.ForeignKey(Theater_M, on_delete=models.CASCADE,null=True,blank=True)
     Complaint_Desc = models.TextField(null=False,blank=False)
     Complaint_Date = models.DateTimeField(auto_now_add=True)
     def __str__(self):
