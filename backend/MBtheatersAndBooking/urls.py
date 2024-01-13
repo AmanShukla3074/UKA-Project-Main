@@ -14,4 +14,11 @@ urlpatterns = [
    path('showtimes/<int:showtime_id>/seats/', SeatInShowtimeList.as_view(), name='seats-in-showtime-list'),
    path('complaint/', ComplaintView.as_view(), name='complaint-list'),
    path('complaint/<int:pk>/', ComplaintView.as_view(), name='complaint-list'),
+
+   path('bookings/', BookingView.as_view(), name='booking-list-create'),
+   path('bookings/<int:pk>/', BookingView.as_view(), name='booking-retrieve-update-destroy'),
+   path('booking-seats/', BookingSeatView.as_view(), name='booking-seat-list-create'),
+   path('booking-seats/<int:pk>/', BookingSeatView.as_view(), name='booking-seat-retrieve-update-destroy'),
+
+
 ]

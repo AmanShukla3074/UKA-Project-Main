@@ -68,13 +68,7 @@ class SeatPriceSerializer(serializers.ModelSerializer):
 
 class SeatSerializer(serializers.ModelSerializer):
     Seat_Type = SeatTypeSerializer()
-    # Price = serializers.SerializerMethodField()
 
-    # def get_Price(self,obj):
-    #     price = SeatPrice.objects.filter(ShowTime_ID=obj)
-    #     serializer = SeatPriceSerializer(price, many=True)
-    #     return serializer.data 
-    
     class Meta:
         model = Seat_M
         fields = '__all__'
@@ -84,9 +78,6 @@ class SeatInShowtimeSerializer(serializers.ModelSerializer):
     Price = serializers.SerializerMethodField()
 
     def get_Price(self,obj):
-        # price = SeatPrice.objects.filter(ShowTime_ID=obj,Seat_type_id=obj)
-        # serializer = SeatPriceSerializer(price, many=True)
-        # return serializer.data 
         seat_type = obj.seat.Seat_Type
         showtime_id = obj.showtime.ShowTime_ID
 
@@ -99,6 +90,65 @@ class SeatInShowtimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeatInShowtime
         fields = ['id','seat','Price','is_booked','showtime']
+
+# class BookingSeatMSerializer(serializers.ModelSerializer):
+#     Seat_ID = SeatInShowtimeSerializer()
+    
+#     class Meta:
+#         model = Booking_Seat_M
+#         fields = ['Booking_Seat_ID', 'B_ID', 'Seat_ID', 'Price']
+
+
+class BookingPostSerializer(serializers.ModelSerializer):
+    # ShowTime_ID=ShowtimeSerializer()
+    class Meta:
+        model = Booking_M
+        fields = '__all__'
+
+
+class BookingSeatPostSerializer(serializers.ModelSerializer):
+    # Seat_ID=SeatInShowtimeSerializer()
+    class Meta:
+        model = Booking_Seat_M
+        fields = '__all__'
+
+
+class BookingSeatGetSerializer(serializers.ModelSerializer):
+    Seat_ID=SeatInShowtimeSerializer()
+    class Meta:
+        model = Booking_Seat_M
+        fields = '__all__'
+
+class BookingGetSerializer(serializers.ModelSerializer):
+    # ShowTime_ID=ShowtimeSerializer()
+    Seats = serializers.SerializerMethodField()
+
+    def get_Seats(self,obj):
+        seats = Booking_Seat_M.objects.filter(B_ID=obj)
+        serializer = BookingSeatGetSerializer(seats, many=True)
+        return serializer.data 
+
+    M_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.M_ID.M_ID', read_only=True)
+    M_Name = serializers.CharField(source='ShowTime_ID.M_ID.M_Name', read_only=True)
+    T_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.Screen_M.T_ID.T_ID', read_only=True)
+    T_Name = serializers.CharField(source='ShowTime_ID.Screen_M.T_ID.T_Name', read_only=True)
+    Screen = serializers.CharField(source='ShowTime_ID.Screen_M.Screen_Name', read_only=True)
+    U_FName = serializers.CharField(source='User_ID.first_name', read_only=True)
+    U_LName = serializers.CharField(source='User_ID.last_name', read_only=True)
+
+
+    class Meta:
+        model = Booking_M
+        fields = ["B_ID","M_ID","M_Name","T_ID","T_Name","Screen","U_FName","U_LName","B_Time","B_Date","SubTotal","gst_amount","TotalAmt","User_ID","ShowTime_ID","Payment_Mode_ID","Seats"]
+
+
+
+
+
+
+
+
+
 
 # class TheaterDetailSerializer(serializers.ModelSerializer):
 class TheaterSerializer(serializers.ModelSerializer):
