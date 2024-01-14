@@ -13,20 +13,39 @@ class ShowtimeList(APIView):
     def get(self, request, *args, **kwargs):
         movie = self.request.query_params.get('movie')
         theater = self.request.query_params.get('theater')
+        movie_type = self.request.query_params.get('movie_type')
+        language = self.request.query_params.get('language')
 
-        if movie is not None:
-            movies = ShowTime_M.objects.filter(M_ID=movie)
-            serializer = ShowtimeSerializer(movies,many=True)
-            return Response(serializer.data)
+        queryset = ShowTime_M.objects.all()
 
-        if theater is not None:
-            theaters = ShowTime_M.objects.filter(Screen_M__T_ID=theater)
-            serializer = ShowtimeSerializer(theaters,many=True)
-            return Response(serializer.data)
-        
-        movies = ShowTime_M.objects.all()
-        serializer = ShowtimeSerializer(movies, many=True)
+        if movie:
+            queryset = queryset.filter(M_ID=movie)
+
+        if theater:
+            queryset = queryset.filter(Screen_M__T_ID=theater)
+
+        if movie_type:
+            queryset = queryset.filter(M_Type=movie_type)
+
+        if language:
+            queryset = queryset.filter(M_Language=language)
+
+        serializer = ShowtimeSerializer(queryset, many=True)
         return Response(serializer.data)
+    
+        # if movie is not None:
+        #     movies = ShowTime_M.objects.filter(M_ID=movie)
+        #     serializer = ShowtimeSerializer(movies,many=True)
+        #     return Response(serializer.data)
+
+        # if theater is not None:
+        #     theaters = ShowTime_M.objects.filter(Screen_M__T_ID=theater)
+        #     serializer = ShowtimeSerializer(theaters,many=True)
+        #     return Response(serializer.data)
+        
+        # movies = ShowTime_M.objects.all()
+        # serializer = ShowtimeSerializer(movies, many=True)
+        # return Response(serializer.data)
        
 
 class SeatList(generics.ListCreateAPIView):

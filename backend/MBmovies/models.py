@@ -113,3 +113,18 @@ class Movie_Language(models.Model):
 
     def __str__(self):
         return f'{self.M_ID.M_Name} - {self.Language_ID.Language_Name}'
+
+class Movie_Type_M(models.Model):
+    Type_ID = models.AutoField(primary_key=True)
+    Type_Name = models.CharField(max_length=50,null=False,blank=False)
+    
+    def __str__(self):
+        return f'{self.Type_Name}'
+
+class Movie_Type(models.Model):
+    MType_ID = models.AutoField(primary_key=True)
+    M_ID = models.ForeignKey(Movie_M, on_delete=models.CASCADE,null=False,blank=False)
+    Type_ID = models.ForeignKey(Movie_Type_M, on_delete=models.CASCADE,null=False,blank=False)
+
+    def __str__(self):
+        return f'{self.M_ID.M_Name} - {self.Type_ID.Type_Name}'

@@ -62,7 +62,8 @@ class Seat_M(models.Model): #add showtime id to fatch
 class ShowTime_M(models.Model):
     ShowTime_ID  = models.AutoField(primary_key=True)
     M_ID= models.ForeignKey(Movie_M, on_delete=models.CASCADE,null=False,blank=False)
-    # M_Language_ID= models.ForeignKey(Movie_Language, on_delete=models.CASCADE,default=1)
+    M_Language= models.ForeignKey(Movie_Language_M, on_delete=models.CASCADE,default=1)
+    M_Type= models.ForeignKey(Movie_Type_M, on_delete=models.CASCADE,default=1)
     Screen_M= models.ForeignKey(Screen_M, on_delete=models.CASCADE,null=False,blank=False, related_name='showtimes')
     StartTime = models.TimeField(null=False,blank=False)
     Date = models.DateField(null=False,blank=False)
@@ -100,7 +101,7 @@ class SeatPrice(models.Model):
     SeatPrice_ID  = models.AutoField(primary_key=True)
     Seat_type_id= models.ForeignKey(SeatType, on_delete=models.CASCADE,null=False,blank=False, related_name='seatprice_set')
     ShowTime_ID= models.ForeignKey(ShowTime_M, on_delete=models.CASCADE,null=False,blank=False)
-    Price = models.DecimalField(max_digits=5,decimal_places=2)
+    Price = models.DecimalField(max_digits=10,decimal_places=2)
 
     def __str__(self):
         return f" Seat Type = {self.Seat_type_id} - Showtime = {self.ShowTime_ID} - Price {self.Price}  "

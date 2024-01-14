@@ -40,10 +40,10 @@ complete work fow with API
             
 APIs I have to make:
     1.api/sliderMB/
-    2.api/movies/
-    3.api/movies/<int:pk>
-    4.api/thaters/
-    5.api/thater/<int:pk>
+    2.api/movies/               (Done) 
+    3.api/movies/<int:pk>       (Done)
+    4.api/thaters/              (Done)
+    5.api/thater/<int:pk>       (Done)
     6./api/showtimes/
     7./api/seats/
     8./api/bookings/ 

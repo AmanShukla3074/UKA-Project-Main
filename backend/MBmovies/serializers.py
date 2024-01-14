@@ -91,6 +91,19 @@ class Movie_LanguageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class Movie_Type_MSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie_Type_M
+        fields ='__all__'
+
+class Movie_TypeSerializer(serializers.ModelSerializer):
+
+    Type_ID = Movie_Type_MSerializer()
+    class Meta:
+        model = Movie_Type
+        fields = '__all__'
+
+
 
 class MovieDetailsSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
@@ -99,6 +112,7 @@ class MovieDetailsSerializer(serializers.ModelSerializer):
     cast = serializers.SerializerMethodField()
     genre = serializers.SerializerMethodField()
     language = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
 
 
     def get_images(self,obj):
@@ -131,6 +145,11 @@ class MovieDetailsSerializer(serializers.ModelSerializer):
         serializer = Movie_LanguageSerializer(languages, many=True)
         return serializer.data 
 
+    def get_type(self,obj):
+        types = Movie_Type.objects.filter(M_ID=obj)
+        serializer = Movie_TypeSerializer(types, many=True)
+        return serializer.data 
+
     class Meta:
         model=Movie_M
-        fields=['M_ID','M_Name','M_Duration','M_Synopsis','M_Age_Certification','M_ReleaseDate','images','director','producer','cast','genre','language']
+        fields=['M_ID','M_Name','M_Duration','M_Synopsis','M_Age_Certification','M_ReleaseDate','images','director','producer','cast','genre','language','type']

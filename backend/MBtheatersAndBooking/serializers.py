@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-from MBmovies.serializers import Movie_ImgSerializer
+from MBmovies.serializers import *
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -47,10 +47,12 @@ class Screen2Serializer(serializers.ModelSerializer):
 class ShowtimeSerializer(serializers.ModelSerializer):
     Screen_M = Screen2Serializer()
     M_ID = MovieSerializer()
+    M_Language=Movie_Language_MSerializer()
+    M_Type=Movie_Type_MSerializer()
 
     class Meta:
         model = ShowTime_M
-        fields = ['ShowTime_ID','M_ID','Screen_M','StartTime','Date']
+        fields = ['ShowTime_ID','M_ID','Screen_M','StartTime','Date','M_Language','M_Type']
 
 
 
