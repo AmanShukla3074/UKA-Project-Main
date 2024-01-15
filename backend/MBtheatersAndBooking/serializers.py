@@ -15,8 +15,6 @@ class MovieSerializer(serializers.ModelSerializer):
         fields=['M_ID','M_Name','M_Age_Certification','images']
 
 
-
-
 class ScreenSerializer(serializers.ModelSerializer):
     Shows = serializers.SerializerMethodField()
    
@@ -92,13 +90,6 @@ class SeatInShowtimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeatInShowtime
         fields = ['id','seat','Price','is_booked','showtime']
-
-# class BookingSeatMSerializer(serializers.ModelSerializer):
-#     Seat_ID = SeatInShowtimeSerializer()
-    
-#     class Meta:
-#         model = Booking_Seat_M
-#         fields = ['Booking_Seat_ID', 'B_ID', 'Seat_ID', 'Price']
 
 
 class BookingPostSerializer(serializers.ModelSerializer):

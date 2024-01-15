@@ -33,19 +33,6 @@ class ShowtimeList(APIView):
         serializer = ShowtimeSerializer(queryset, many=True)
         return Response(serializer.data)
     
-        # if movie is not None:
-        #     movies = ShowTime_M.objects.filter(M_ID=movie)
-        #     serializer = ShowtimeSerializer(movies,many=True)
-        #     return Response(serializer.data)
-
-        # if theater is not None:
-        #     theaters = ShowTime_M.objects.filter(Screen_M__T_ID=theater)
-        #     serializer = ShowtimeSerializer(theaters,many=True)
-        #     return Response(serializer.data)
-        
-        # movies = ShowTime_M.objects.all()
-        # serializer = ShowtimeSerializer(movies, many=True)
-        # return Response(serializer.data)
        
 
 class SeatList(generics.ListCreateAPIView):
