@@ -24,10 +24,3 @@ class Product_List(APIView):
         products = Product_M.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
-    
-# class Product_ColorList(APIView):
-#     def get(self, request, *args, **kwargs):
-#         products = Product_Color.objects.all()
-#         serializer = Product_ColorSerializer(products, many=True)
-#         return Response(serializer.data)
-    
