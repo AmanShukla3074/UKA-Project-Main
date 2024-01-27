@@ -7,8 +7,6 @@ from rest_framework.response import Response
 
 
 
-
-
 class ShowtimeList(APIView):
     def get(self, request, *args, **kwargs):
         movie = self.request.query_params.get('movie')

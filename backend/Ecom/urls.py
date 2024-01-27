@@ -8,6 +8,7 @@ urlpatterns = [
    # Products
    path('products/', Product_List.as_view(), name='product-list'),
    path('products/<int:pk>/', Product_List.as_view(), name='product-detail'),
+   # path('cart/', CartDetailView.as_view(), name='cart-detail'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.PRODUCT_MEDIA_URL, document_root=settings.PRODUCT_MEDIA_ROOT)

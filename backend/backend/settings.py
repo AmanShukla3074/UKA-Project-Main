@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Ecom',
     'MBmovies',
     # 'MBtheatersAndBooking',
+    'MusicStreaming',
 
     'rest_framework',
     'rest_framework_simplejwt',
@@ -170,3 +171,11 @@ MOVIESGENREIMGS_MEDIA_ROOT = BASE_DIR / "media/GenreIMGs"
 # Movie Language Images
 MOVIESLANGUAGEIMGS_MEDIA_URL = '/media/LanguageIMGs/'
 MOVIESLANGUAGEIMGS_MEDIA_ROOT = BASE_DIR / "media/LanguageIMGs"
+
+# Music Audio
+MUSICAUDIO_MEDIA_URL = '/media/MusicAudio/'
+MUSICAUDIO_MEDIA_ROOT = BASE_DIR / "media/MusicAudio"
+
+# Music Cover Img
+MUSICCOVERIMGS_MEDIA_URL = '/media/MusicCoverIMGs/'
+MUSICCOVERIMGS_MEDIA_ROOT = BASE_DIR / "media/MusicCoverIMGs"

@@ -22,31 +22,10 @@ class Product_SizeSerializer(serializers.ModelSerializer):
         model = Product_Size
         fields = '__all__'
 
-
 class Product_Color_MSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_Color_M
         fields = '__all__'
-
-# class Product_ColorSerializer(serializers.ModelSerializer):
-#     color = Product_Color_MSerializer()
-#     sizes = serializers.SerializerMethodField()
-#     images = serializers.SerializerMethodField()
-
-#     def get_images(self,obj):
-#         product_img = Product_Img.objects.filter(product_color=obj)
-#         serializer = Product_ImgSerializer(product_img, many=True)
-#         return serializer.data 
-
-#     def get_sizes(self,obj):
-#         product_size = Product_Size.objects.filter(product_color=obj)
-#         serializer = Product_SizeSerializer(product_size, many=True)
-#         return serializer.data    
-#     class Meta:
-#         model=Product_Color
-#         fields=["color",'sizes','images']
-
-
 
 class ProductSerializer(serializers.ModelSerializer):
     Category = CategoriesSerializer()
@@ -67,3 +46,19 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product_M
         fields=['P_ID','P_Name','P_Desc','P_Price','Category','Color','Size','Images']
+
+
+
+# class CartItemSerializer(serializers.ModelSerializer):
+#     Size = Product_Size_MSerializer()
+
+#     class Meta:
+#         model = Cart_Details
+#         fields = ['Product_ID','ItemQuantity','SubTotal', 'Size']
+
+# class CartSerializer(serializers.ModelSerializer):
+#     Cart_Items = CartItemSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Cart_M
+#         fields = ['User_ID','total_price', 'Cart_Items']

@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/EC/', include('Ecom.urls')),
     path('api/Auth/', include('account.urls')),
     path('api/Movie/', include('MBmovies.urls')),
-    path('api/Movie/', include('MBtheatersAndBooking.urls'))
+    path('api/Movie/', include('MBtheatersAndBooking.urls')),
+    path('api/Music/', include('MusicStreaming.urls'))
 ]

@@ -1,0 +1,96 @@
+Artist Workflow:
+
+  Register and Login:
+
+    PUT /api/artist/register/
+    PUT /api/artist/login/
+
+  Profile Management:
+
+    GET /api/artist/profile/
+    PUT /api/artist/profile/
+
+  Upload Music:
+
+    GET /api/artist/music/
+    GET /api/artist/music/<music_id>/
+    POST /api/artist/music/
+    DELETE /api/artist/music/<music_id>/
+    PUT /api/artist/music/<music_id>/
+
+  Upload Album:
+
+    GET /api/artist/album/
+    GET /api/artist/album/<album_id>/
+    POST /api/artist/album/
+    DELETE /api/artist/album/<album_id>/
+    PUT /api/artist/album/<album_id>/
+
+
+User Workflow:
+
+  Search Music, Albums, and Artists:
+
+    GET /api/search/?query=<search_query>
+
+  Manage Playlists:
+
+    GET /api/user/playlists/
+    GET /api/user/playlists/<playlist_id>/
+    POST /api/user/playlists/
+    PUT /api/user/playlists/<playlist_id>/
+    DELETE /api/user/playlists/<playlist_id>/
+
+  Liked Music Playlist:
+
+    POST /api/user/liked-music/
+
+
+Admin Workflow:
+
+
+  Manage Music:
+
+    GET /api/admin/music/
+    POST /api/admin/music/
+    PUT /api/admin/music/<music_id>/
+    DELETE /api/admin/music/<music_id>/
+
+  Manage Albums:
+
+    GET /api/admin/album/
+    POST /api/admin/album/
+    PUT /api/admin/album/<album_id>/
+    DELETE /api/admin/album/<album_id>/
+
+  Manage Artists
+
+    GET /api/admin/artist/
+    POST /api/admin/artist/
+    PUT /api/admin/artist/<artist_id>/
+    DELETE /api/admin/artist/<artist_id>/
+
+
+
+APIs I have to make:
+
+  Artist:
+    /api/artist/register/
+    /api/artist/login/
+    /api/artist/profile/
+    /api/artist/music/
+    /api/artist/music/<music_id>/
+    /api/artist/album/
+    /api/artist/album/<album_id>/
+  User:
+    /api/search/?query=<search_query>
+    /api/user/playlists/
+    /api/user/playlists/<playlist_id>/
+    /api/user/liked-music
+  Admin:
+    /api/admin/music/
+    /api/admin/music/<music_id>/
+    /api/admin/album/
+    /api/admin/album/<album_id>/
+    /api/admin/artist/
+    /api/admin/artist/<artist_id>/
