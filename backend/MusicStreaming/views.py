@@ -428,3 +428,31 @@ class StreamMusicIncrement(APIView):
 
         return Response({"detail": "Music streamed successfully."},
                         status=status.HTTP_200_OK)
+    
+
+
+class AnalyticsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Retrieve the specific Analytics_M instance using the provided pk
+        analytics_id = kwargs.get('pk')
+
+        if analytics_id is not None:
+            try:
+                analytics_data = Analytics_M.objects.get(pk=analytics_id)
+                serializer = AnalyticsSerializer(analytics_data)
+                return Response(serializer.data)
+            except Analytics_M.DoesNotExist:
+                return Response({"detail": "Analytics entry not found."}, status=404)
+
+        # Retrieve the logged-in user's artist instances
+        user = request.user
+        queryset = Artist_M.objects.filter(User_ID=user)
+
+        # Retrieve analytics data related to the logged-in user's artists
+        analytics_data = Analytics_M.objects.filter(Artist_ID__in=queryset)
+        serializer = AnalyticsSerializer(analytics_data, many=True)
+        return Response(serializer.data)
+
+    

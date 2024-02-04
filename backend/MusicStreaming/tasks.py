@@ -4,7 +4,7 @@ from MusicStreaming.models import Artist_M
 class MonthlyAnalyticsJob(CronJobBase):
     # Schedule the job to run at midnight on the 1st day of every month
     schedule = Schedule(run_at_times=['00:00'])
-    code = 'MusicStreaming.update_monthly_analytics_job'  # A unique code for the cron job
+    # code = 'MusicStreaming.update_monthly_analytics_job'  # A unique code for the cron job
     # code = 'MusicStreaming.update_monthly_analytics_job'  # A unique code for the cron job
     code = 'monthly_analytics_job'
 
@@ -13,3 +13,4 @@ class MonthlyAnalyticsJob(CronJobBase):
         instances = Artist_M.objects.all()
         for instance in instances:
             instance.update_monthly_analytics()
+

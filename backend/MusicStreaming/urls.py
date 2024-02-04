@@ -12,8 +12,11 @@ urlpatterns = [
    #add artist in music
    path('music/<int:music_id>/add-artists/', AddArtistsToMusic.as_view(), name='add-artists-to-music'),
 
+   #Profile
+
+
    #Artist Search
-   path('artist/<int:artist_id>/', ArtistSearchView.as_view(), name='artist'),
+   path('artist-search/<int:artist_id>/', ArtistSearchView.as_view(), name='artist'),
 
    path('album/', AlbumApiView.as_view(), name='album-list'),
    path('album/<int:album_id>/', AlbumApiView.as_view(), name='album-detail'),
@@ -39,6 +42,9 @@ urlpatterns = [
    path('liked-music/<int:music_id>/', LikedMusicAPIView.as_view(), name='delete-liked-music'),
 
    path('search/', SearchView.as_view(), name='music_search'),
+
+   path('analytics/', AnalyticsView.as_view(), name='analytics-list'),
+   path('analytics/<int:pk>/', AnalyticsView.as_view(), name='analytics-detail'),
 
 ]
 if settings.DEBUG:

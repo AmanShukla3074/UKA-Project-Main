@@ -134,3 +134,10 @@ class LikedMusicSerializer(serializers.ModelSerializer):
         model = LikedMusic_Plalist
         fields = ['LikedMusic_Plalist_ID', 'User_ID', 'P_Created_Date', 'PlaylistMusic']
         read_only_fields = ['User_ID']
+
+class AnalyticsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Analytics_M
+        fields = '__all__'
+        

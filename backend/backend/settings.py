@@ -50,9 +50,14 @@ INSTALLED_APPS = [
     'MBtheatersAndBooking.apps.YourAppConfig',
 ]
 
+# CRON_CLASSES = [
+#     'your_app.tasks.MonthlyAnalyticsJob',
+# ]
+
 CRON_CLASSES = [
-    'your_app.tasks.MonthlyAnalyticsJob',
+    'MusicStreaming.tasks.MonthlyAnalyticsJob',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

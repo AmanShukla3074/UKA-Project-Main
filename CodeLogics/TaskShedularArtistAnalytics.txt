@@ -1,3 +1,5 @@
+created job Scheduler according to this
+
 In Windows, you can achieve the same periodic task scheduling using the Task Scheduler. Here's a step-by-step guide:
 
 1. **Open Task Scheduler**: You can search for "Task Scheduler" in the Start menu and open it.
@@ -39,9 +41,7 @@ INSTALLED_APPS = [
     # ... (other apps)
     'django_cron',
 ]
-CRON_CLASSES = [
-    'your_app.tasks.MonthlyAnalyticsJob',
-]
+
 
 models:
 
@@ -53,7 +53,7 @@ class Artist_M(models.Model):
     Date_Joined=models.DateField(auto_now_add=True)
     MS_Genre_ID=models.ForeignKey(MS_Genre_M, on_delete=models.CASCADE,null=True,blank=True)
 
-    
+
     def update_monthly_analytics(self):
         # Get the current month and year in the format 'MM-YYYY'
         current_month_year = timezone.now().strftime('%m-%Y')
@@ -66,6 +66,8 @@ class Artist_M(models.Model):
 
         # Update the total streams for the analytics entry by aggregating streams from associated music tracks
         total_streams = self.music_artist.aggregate(Sum('Music_ID__M_Streams'))['Music_ID__M_Streams__sum'] or 0
+
+        # Assuming 'TotalStreams' is a field in the Analytics_M model
         analytics_entry.TotalStreams = total_streams
 
         # Save the analytics entry
@@ -86,6 +88,16 @@ class Analytics_M(models.Model):
             return f"Analytics = {self.Analytics} - Artist_ID = {self.Artist_ID}"
     
     
+    
+class Music_Artist(models.Model):
+    M_Artist_ID=models.AutoField(primary_key=True)
+    Music_ID=models.ForeignKey(Music_M, on_delete=models.CASCADE,null=False,blank=False)
+    Artist_ID=models.ForeignKey(Artist_M, on_delete=models.CASCADE,null=False,blank=False, related_name='music_artist')
+
+    def __str__(self):
+            return f"M_Artist_ID = {self.M_Artist_ID} - Music_ID = {self.Music_ID} - Artist_ID = {self.Artist_ID}"
+
+
 made tasks.py in current app:
 
 tasks.py code:
@@ -93,10 +105,10 @@ tasks.py code:
 from django_cron import CronJobBase, Schedule
 from MusicStreaming.models import Artist_M
 
+
 class MonthlyAnalyticsJob(CronJobBase):
     # Schedule the job to run at midnight on the 1st day of every month
     schedule = Schedule(run_at_times=['00:00'])
-    code = 'MusicStreaming.update_monthly_analytics_job'  # A unique code for the cron job
     code = 'monthly_analytics_job'
 
     def do(self):
@@ -104,6 +116,13 @@ class MonthlyAnalyticsJob(CronJobBase):
         instances = Artist_M.objects.all()
         for instance in instances:
             instance.update_monthly_analytics()
+
+settings :
+
+CRON_CLASSES = [
+    'MusicStreaming.tasks.MonthlyAnalyticsJob',
+]
+
 
 
 executed this commands:

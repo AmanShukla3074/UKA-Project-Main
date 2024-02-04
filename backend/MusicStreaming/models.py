@@ -20,18 +20,6 @@ class Artist_M(models.Model):
     Date_Joined=models.DateField(auto_now_add=True)
     MS_Genre_ID=models.ForeignKey(MS_Genre_M, on_delete=models.CASCADE,null=True,blank=True)
 
-    # def update_monthly_analytics(self):
-    #     # Logic to calculate monthly analytics for the artist
-    #     # For example, counting streams in the last month
-    #     last_month = timezone.now() - timezone.timedelta(days=30)
-    #     monthly_streams = self.music_artist.filter(Music_ID__Release_Date__gte=last_month).count()
-
-    #     # Create or update Analytics_M entry for the current month
-    #     month_year = datetime.now().strftime("%B %Y")
-    #     analytics, created = Analytics_M.objects.get_or_create(Artist_ID=self, Month_Year=month_year)
-    #     analytics.TotalStreams = monthly_streams
-    #     analytics.save()
-
 
     def update_monthly_analytics(self):
         # Get the current month and year in the format 'MM-YYYY'
@@ -45,6 +33,8 @@ class Artist_M(models.Model):
 
         # Update the total streams for the analytics entry by aggregating streams from associated music tracks
         total_streams = self.music_artist.aggregate(Sum('Music_ID__M_Streams'))['Music_ID__M_Streams__sum'] or 0
+
+        # Assuming 'TotalStreams' is a field in the Analytics_M model
         analytics_entry.TotalStreams = total_streams
 
         # Save the analytics entry
@@ -54,8 +44,6 @@ class Artist_M(models.Model):
 
     def __str__(self):
             return f"Artist_ID = {self.Artist_ID} - Artist_Name = {self.Artist_Name}"
-
-
 
 class Album_M(models.Model):
     Album_ID=models.AutoField(primary_key=True)
@@ -147,7 +135,7 @@ class LikedMusic(models.Model):
 class Music_Artist(models.Model):
     M_Artist_ID=models.AutoField(primary_key=True)
     Music_ID=models.ForeignKey(Music_M, on_delete=models.CASCADE,null=False,blank=False)
-    Artist_ID=models.ForeignKey(Artist_M, on_delete=models.CASCADE,null=False,blank=False)
+    Artist_ID=models.ForeignKey(Artist_M, on_delete=models.CASCADE,null=False,blank=False, related_name='music_artist')
 
     def __str__(self):
             return f"M_Artist_ID = {self.M_Artist_ID} - Music_ID = {self.Music_ID} - Artist_ID = {self.Artist_ID}"
@@ -165,7 +153,7 @@ class Analytics_M(models.Model):
     Analytics=models.AutoField(primary_key=True)
     Artist_ID=models.ForeignKey(Artist_M, on_delete=models.CASCADE,null=False,blank=False)
     Month_Year=models.CharField(max_length=16,null=False,blank=False)
-    TotalStreams=models.IntegerField(null=False,blank=False)
+    TotalStreams=models.IntegerField(null=True,blank=True)
 
     def __str__(self):
             return f"Analytics = {self.Analytics} - Artist_ID = {self.Artist_ID}"
