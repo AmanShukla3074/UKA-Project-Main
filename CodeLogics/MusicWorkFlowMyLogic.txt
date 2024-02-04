@@ -77,13 +77,13 @@ APIs I have to make:
   Artist:
     /api/artist/register/
     /api/artist/login/
-    /api/artist/profile/
+    /api/artist/profile/ ?
     /api/artist/music/
     /api/artist/music/<music_id>/
     /api/artist/album/
     /api/artist/album/<album_id>/
   User:
-    /api/search/?query=<search_query>
+    /api/search/?query=<search_query> ?
     /api/user/playlists/
     /api/user/playlists/<playlist_id>/
     /api/user/liked-music

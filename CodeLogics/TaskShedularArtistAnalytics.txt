@@ -1,0 +1,112 @@
+In Windows, you can achieve the same periodic task scheduling using the Task Scheduler. Here's a step-by-step guide:
+
+1. **Open Task Scheduler**: You can search for "Task Scheduler" in the Start menu and open it.
+
+2. **Create a Basic Task**:
+   - On the right-hand side, click on "Create Basic Task..."
+   - Give your task a name and description.
+
+3. **Trigger Configuration**:
+   - Choose the trigger "Monthly."
+   - Set the day to "1."
+   - Choose the months you want the task to run (you can select all).
+
+4. **Action Configuration**:
+   - Choose the action "Start a Program."
+   - Browse and select the `python.exe` executable. You might find it in the `Scripts` folder of your virtual environment. The path may look like `C:\path\to\your\virtualenv\Scripts\python.exe`.
+   - In the "Add arguments" field, put the full path to your `manage.py` and the name of your custom management command. It should look like this:
+
+     ```
+     C:\path\to\your\project\manage.py runcrons
+     ```
+
+   - Set the "Start in" field to the directory where your `manage.py` file is located.
+
+5. **Finish**: Review your settings and click "Finish."
+
+Now, your Django management command will be executed automatically at midnight on the first day of each month. Make sure to test it to ensure everything is set up correctly.
+
+
+
+
+things i done for Monthly analytics
+
+Task Scheduler for every months 1st day 12 am
+
+
+settings:
+INSTALLED_APPS = [
+    # ... (other apps)
+    'django_cron',
+]
+CRON_CLASSES = [
+    'your_app.tasks.MonthlyAnalyticsJob',
+]
+
+models:
+
+class Artist_M(models.Model):
+    Artist_ID=models.AutoField(primary_key=True)
+    User_ID=models.ForeignKey(User, on_delete=models.CASCADE,null=False,blank=False ,related_name='artist_profile')
+    Bio=models.CharField(max_length=70)
+    Artist_Name=models.CharField(max_length=30,null=False,blank=False)
+    Date_Joined=models.DateField(auto_now_add=True)
+    MS_Genre_ID=models.ForeignKey(MS_Genre_M, on_delete=models.CASCADE,null=True,blank=True)
+
+    
+    def update_monthly_analytics(self):
+        # Get the current month and year in the format 'MM-YYYY'
+        current_month_year = timezone.now().strftime('%m-%Y')
+
+        # Check if an analytics entry for the current month already exists
+        analytics_entry, created = Analytics_M.objects.get_or_create(
+            Artist_ID=self,
+            Month_Year=current_month_year
+        )
+
+        # Update the total streams for the analytics entry by aggregating streams from associated music tracks
+        total_streams = self.music_artist.aggregate(Sum('Music_ID__M_Streams'))['Music_ID__M_Streams__sum'] or 0
+        analytics_entry.TotalStreams = total_streams
+
+        # Save the analytics entry
+        analytics_entry.save()
+
+        return analytics_entry
+
+    def __str__(self):
+            return f"Artist_ID = {self.Artist_ID} - Artist_Name = {self.Artist_Name}"
+
+class Analytics_M(models.Model):
+    Analytics=models.AutoField(primary_key=True)
+    Artist_ID=models.ForeignKey(Artist_M, on_delete=models.CASCADE,null=False,blank=False)
+    Month_Year=models.CharField(max_length=16,null=False,blank=False)
+    TotalStreams=models.IntegerField(null=False,blank=False)
+
+    def __str__(self):
+            return f"Analytics = {self.Analytics} - Artist_ID = {self.Artist_ID}"
+    
+    
+made tasks.py in current app:
+
+tasks.py code:
+
+from django_cron import CronJobBase, Schedule
+from MusicStreaming.models import Artist_M
+
+class MonthlyAnalyticsJob(CronJobBase):
+    # Schedule the job to run at midnight on the 1st day of every month
+    schedule = Schedule(run_at_times=['00:00'])
+    code = 'MusicStreaming.update_monthly_analytics_job'  # A unique code for the cron job
+    code = 'monthly_analytics_job'
+
+    def do(self):
+        # Get all instances of YourModel and call the update_monthly_analytics method for each instance
+        instances = Artist_M.objects.all()
+        for instance in instances:
+            instance.update_monthly_analytics()
+
+
+executed this commands:
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runcrons
