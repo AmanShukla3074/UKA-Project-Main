@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import get_object_or_404
 from .serializers import *
 from .models import *
 from rest_framework import generics,status,viewsets
@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
+
+
 
 class ArtistViewSet(viewsets.ModelViewSet):
     serializer_class = ArtistSerializer
@@ -43,7 +45,11 @@ class MusicAPIView(APIView):
             return Response(serializer.data)
         
         # Add logic for retrieving music instances if needed
-        music_instances = Music_M.objects.all()
+        # artist_id = request.user.artist_profile.Artist_ID  # Assuming the Artist model has a profile linked to the user
+        artist_id = Artist_M.objects.get(User_ID=request.user)
+        music_instances = Music_M.objects.filter(music_artist__Artist_ID__pk=artist_id.Artist_ID)
+        # music_instances = Music_M.objects.filter(music_artist__artist_id=artist_id)
+
         serializer = MusicSerializer(music_instances, many=True)
         return Response(serializer.data)
 
@@ -149,7 +155,8 @@ class AlbumApiView(APIView):
             return Response(serializer.data)
         
         # Add logic for retrieving music instances if needed
-        album = Album_M.objects.all()
+        artist_id = Artist_M.objects.get(User_ID=request.user)
+        album = Album_M.objects.filter(album_artist__Artist_ID__pk=artist_id.Artist_ID)
         serializer = AlbumSerializer(album, many=True)
         return Response(serializer.data)
 

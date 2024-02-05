@@ -1,22 +1,29 @@
 from django.urls import path
 from .views import *
+from .adminviews import *
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
+    
+   #Music
+
    path('music/', MusicAPIView.as_view(), name='music-list'),
    path('music/<int:music_id>/', MusicAPIView.as_view(), name='music-detail'),
+
+   #Increase Stream by 1
    path('music/<int:music_id>/stream/', StreamMusicIncrement.as_view(), name='stream_music'),
 
    #add artist in music
-   path('music/<int:music_id>/add-artists/', AddArtistsToMusic.as_view(), name='add-artists-to-music'),
 
-   #Profile
+   path('music/<int:music_id>/add-artists/', AddArtistsToMusic.as_view(), name='add-artists-to-music'),
 
 
    #Artist Search
    path('artist-search/<int:artist_id>/', ArtistSearchView.as_view(), name='artist'),
+
+   #album
 
    path('album/', AlbumApiView.as_view(), name='album-list'),
    path('album/<int:album_id>/', AlbumApiView.as_view(), name='album-detail'),
@@ -24,6 +31,8 @@ urlpatterns = [
    #add artist in album
    path('album/<int:album_id>/add-artists/', AddArtistsToAlbum.as_view(), name='add-artists-to-album'),
   
+   #artist
+
    path('artist/', ArtistViewSet.as_view({'get': 'list', 'post': 'create'}), name='music-list'),
    path('artist/<int:pk>/', ArtistViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='music-detail'),
 
@@ -36,8 +45,6 @@ urlpatterns = [
    path('playlist-Music/', PlaylistMusicViews.as_view(), name='playlist-Music-list'),
    path('playlist-Music/<int:pk>/', PlaylistMusicViews.as_view(), name='playlist-Music-detail'),
   
-   # path('playlist-Music/', PlaylistMusicViews.as_view({'get': 'list', 'post': 'create'}), name='playlist-Music-list'),
-   # path('playlist-Music/<int:pk>/', PlaylistMusicViews.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-Music-detail'),
    path('liked-music/', LikedMusicAPIView.as_view(), name='liked-music'),
    path('liked-music/<int:music_id>/', LikedMusicAPIView.as_view(), name='delete-liked-music'),
 
@@ -45,6 +52,21 @@ urlpatterns = [
 
    path('analytics/', AnalyticsView.as_view(), name='analytics-list'),
    path('analytics/<int:pk>/', AnalyticsView.as_view(), name='analytics-detail'),
+
+
+
+   #admin
+
+   path('admin/artists/', AdminArtistViewSet.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   path('admin/artists/<int:pk>/', AdminArtistViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+
+   path('admin/albums/', AdminAlbumViewSet.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   path('admin/albums/<int:pk>/', AdminAlbumViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+
+   path('admin/musics/', AdminMusicViewSet.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   path('admin/musics/<int:pk>/', AdminMusicViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+
+   
 
 ]
 if settings.DEBUG:
