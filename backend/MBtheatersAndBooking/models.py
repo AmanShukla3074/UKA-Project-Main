@@ -10,6 +10,7 @@ from MBmovies.models import *
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from decimal import Decimal
+from account.models import *
 
 
 class Theater_M(models.Model):
@@ -17,7 +18,8 @@ class Theater_M(models.Model):
     T_Name = models.CharField(max_length=50,null=False,blank=False)
     T_Flat_Add = models.CharField(max_length=200,null=False,blank=False)
     T_Street_Add = models.CharField(max_length=200,null=False,blank=False)
-    # City_ID= models.ForeignKey(Movie_M, on_delete=models.CASCADE,null=False,blank=False)
+    City_ID= models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True)
+    # City_ID= models.ForeignKey(Movie_M, on_delete=models.CASCADE,null=True,blank=True)
     T_Pin = models.IntegerField(null=False,blank=False) 
     T_Open_Date = models.DateField()
     T_No_Of_Screen = models.IntegerField(null=False,blank=False) 
