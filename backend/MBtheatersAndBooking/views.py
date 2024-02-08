@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from .serializers import *
 from .models import *
-from rest_framework import generics,status
+from rest_framework import generics,status,viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 class ShowtimeList(APIView):
@@ -14,8 +14,14 @@ class ShowtimeList(APIView):
         theater = self.request.query_params.get('theater')
         movie_type = self.request.query_params.get('movie_type')
         language = self.request.query_params.get('language')
-
+        showtime_id=kwargs.get('pk')
         queryset = ShowTime_M.objects.all()
+
+        if showtime_id:
+            queryset = ShowTime_M.objects.filter(ShowTime_ID=showtime_id)
+            serializer = ShowtimeGetSerializer(queryset, many=True)
+            return Response(serializer.data)
+
 
         if movie:
             queryset = queryset.filter(M_ID=movie)
@@ -29,17 +35,139 @@ class ShowtimeList(APIView):
         if language:
             queryset = queryset.filter(M_Language=language)
 
-        serializer = ShowtimeSerializer(queryset, many=True)
+        serializer = ShowtimeGetSerializer(queryset, many=True)
         return Response(serializer.data)
     
+    def post(self,request):
+        serializer = ShowtimePostSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'msg':'showtime added'},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        showtime_id = kwargs.get('pk')
+        instance = get_object_or_404(ShowTime_M, ShowTime_ID=showtime_id)
+        serializer = ShowtimePostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        showtime_id = kwargs.get('pk')
+        instance = get_object_or_404(ShowTime_M, ShowTime_ID=showtime_id)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
        
 
-class SeatList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = Seat_M.objects.all()
-    serializer_class = SeatSerializer
 
-class SeatInShowtimeList(generics.ListAPIView):
+class SeatTypeList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = SeatType.objects.all()
+    serializer_class = SeatTypeSerializer
+
+
+class SeatPriceList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = SeatPrice.objects.all()
+    serializer_class = SeatPriceSerializer
+    
+
+
+class Payment_ModeList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Payment_Mode.objects.all()
+    serializer_class = Payment_ModeSerializer
+    
+class SeatList(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        screen = self.request.query_params.get('screen')
+        queryset = Seat_M.objects.all()
+        seat_id = kwargs.get('pk')
+
+        if seat_id is not None:
+            theater = get_object_or_404(Seat_M, pk=seat_id)
+            serializer = SeatGetSerializer(theater)
+            return Response(serializer.data)
+
+        if screen:
+            queryset = queryset.filter(Screen_ID=screen)
+
+        serializer = SeatGetSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer = SeatPostSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'msg':'seat added'},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        seat_id = kwargs.get('pk')
+        instance = get_object_or_404(Seat_M, Seat_ID=seat_id)
+        serializer = SeatPostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        seat_id = kwargs.get('pk')
+        instance = get_object_or_404(Seat_M, Seat_ID=seat_id)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
+       
+    
+class ScreenList(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        screen = self.request.query_params.get('screen')
+        queryset = Screen_M.objects.all()
+        screen_id = kwargs.get('pk')
+
+        if screen_id is not None:
+            screen = get_object_or_404(Screen_M, pk=screen_id)
+            serializer = ScreenGetSerializer(screen)
+            return Response(serializer.data)
+
+        if screen:
+            queryset = queryset.filter(T_ID=screen)
+
+        serializer = ScreenGetSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer = ScreenPostSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'msg':'screen added'},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        screen_id = kwargs.get('pk')
+        instance = get_object_or_404(Screen_M, Screen_ID=screen_id)
+        serializer = ScreenPostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        screen_id = kwargs.get('pk')
+        instance = get_object_or_404(Screen_M, Screen_ID=screen_id)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
+       
+
+
+# class SeatInShowtimeList(generics.ListAPIView):
+class SeatInShowtimeList(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SeatInShowtimeSerializer
 
@@ -56,7 +184,7 @@ class TheaterList(APIView):
         movie = self.request.query_params.get('movie')
 
         if theater_id is not None:
-            theater = Theater_M.objects.get(pk=theater_id)
+            theater = get_object_or_404(Theater_M, pk=theater_id)
             serializer = TheaterSerializer(theater)
             return Response(serializer.data)
 
@@ -75,24 +203,34 @@ class TheaterList(APIView):
             serializer.save()
             return Response({'msg':'Theater added'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        theater_id = kwargs.get('pk')
+        instance = get_object_or_404(Theater_M, T_ID=theater_id)
+        serializer = TheaterSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+    def delete(self, request, *args, **kwargs):
+        theater_id = kwargs.get('pk')
+        instance = get_object_or_404(Theater_M, T_ID=theater_id)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ComplaintView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        # serializer = ComplaintGetSerializer(data=request.data)
         user_id = request.user.id
-
-        # Adding User_ID to the request data
         request_data = {**request.data, 'User_ID': user_id}
 
-        # serializer = ComplaintPostSerializer(data=request_data)
+       
         serializer = ComplaintPostSerializer(data=request_data)
-        # Adding User_ID to the request data
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            # Complaint_MB=serializer.save()
             return Response({'msg':'Complaint Submitted'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
@@ -102,7 +240,7 @@ class ComplaintView(APIView):
         theater = self.request.query_params.get('theater')
 
         if complaint_id is not None:
-            theater = Complaint_MB.objects.get(pk=complaint_id)
+            theater = get_object_or_404(Complaint_MB,pk=complaint_id)
             serializer = ComplaintGetSerializer(theater)
             return Response(serializer.data)
 
@@ -121,18 +259,55 @@ class ComplaintView(APIView):
         serializer = ComplaintGetSerializer(complaint, many=True)
         return Response(serializer.data)
 
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        complaint_id = kwargs.get('pk')
+        instance = get_object_or_404(Complaint_MB, Complaint_ID=complaint_id)
+        serializer = ComplaintPostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, *args, **kwargs):
+        complaint_id = kwargs.get('pk')
+        instance = get_object_or_404(Complaint_MB, Complaint_ID=complaint_id)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class BookingSeatView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         # serializer = ComplaintGetSerializer(data=request.data)
-        serializer = BookingSeatPostSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            # Complaint_MB=serializer.save()
-            return Response({'msg':'Seat Submitted'},status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+        b_id = request.data.get('B_ID')
+
+        try:
+            # Retrieve the specific music instance
+            b_id = Booking_M.objects.get(B_ID=b_id)
+        except Booking_M.DoesNotExist:
+            return Response({"detail": "Booking does not exist."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        seat_ids = request.data.get('seat_ids', [])
+        for seat_id in seat_ids:
+            try:
+                seat = SeatInShowtime.objects.get(id=seat_id)
+                print(seat)
+                Booking_Seat_M.objects.create(B_ID=b_id, Seat_ID=seat)
+            except SeatInShowtime.DoesNotExist:
+                return Response({"detail": f"Seat with ID {seat_id} does not exist."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"detail": "Artists added successfully."},
+                        status=status.HTTP_201_CREATED)
+        # serializer = BookingSeatPostSerializer(data=request.data)
+        # if serializer.is_valid(raise_exception=True):
+        #     serializer.save()
+        #     # Complaint_MB=serializer.save()
+        #     return Response({'msg':'Seat Submitted'},status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args, **kwargs):
                
@@ -147,12 +322,26 @@ class BookingView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         # serializer = ComplaintGetSerializer(data=request.data)
-        serializer = BookingPostSerializer(data=request.data)
+
+        user_id = request.user.id
+        request_data = {**request.data, 'User_ID': user_id}
+
+       
+        serializer = BookingPostSerializer(data=request_data)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            # Complaint_MB=serializer.save()
-            return Response({'msg':'Seat Submitted'},status=status.HTTP_201_CREATED)
+            return Response({'msg':'Booking Succesfull'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+        # serializer = BookingPostSerializer(data=request.data)
+        
+        # if serializer.is_valid(raise_exception=True):
+        #     serializer.save()
+        #     # Complaint_MB=serializer.save()
+        #     return Response({'msg':'Seat Submitted'},status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args, **kwargs):
         # complaint_id = kwargs.get('pk')

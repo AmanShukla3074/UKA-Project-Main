@@ -15,17 +15,22 @@ class MovieSerializer(serializers.ModelSerializer):
         fields=['M_ID','M_Name','M_Age_Certification','images']
 
 
-class ScreenSerializer(serializers.ModelSerializer):
+class ScreenGetSerializer(serializers.ModelSerializer):
     Shows = serializers.SerializerMethodField()
    
     def get_Shows(self,obj):
         movie_Img = ShowTime_M.objects.filter(Screen_M=obj)
-        serializer = ShowtimeSerializer(movie_Img, many=True)
+        serializer = ShowtimeGetSerializer(movie_Img, many=True)
         return serializer.data  
 
     class Meta:
         model = Screen_M
         fields = ['Screen_ID','Screen_Name','T_ID','Shows']
+
+class ScreenPostSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Screen_M
+        fields = '__all__'
 
 
 
@@ -42,7 +47,18 @@ class Screen2Serializer(serializers.ModelSerializer):
 
 
 
-class ShowtimeSerializer(serializers.ModelSerializer):
+class ShowtimePostSerializer(serializers.ModelSerializer):
+    # Screen_M = Screen2Serializer()
+    # M_ID = MovieSerializer()
+    # M_Language=Movie_Language_MSerializer()
+    # M_Type=Movie_Type_MSerializer()
+
+    class Meta:
+        model = ShowTime_M
+        fields = ['ShowTime_ID','M_ID','Screen_M','StartTime','Date','M_Language','M_Type']
+
+
+class ShowtimeGetSerializer(serializers.ModelSerializer):
     Screen_M = Screen2Serializer()
     M_ID = MovieSerializer()
     M_Language=Movie_Language_MSerializer()
@@ -65,16 +81,28 @@ class SeatPriceSerializer(serializers.ModelSerializer):
         model = SeatPrice
         fields = '__all__'
 
+class Payment_ModeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment_Mode
+        fields = '__all__'
 
-class SeatSerializer(serializers.ModelSerializer):
-    Seat_Type = SeatTypeSerializer()
+
+class SeatGetSerializer(serializers.ModelSerializer):
+    Seat_Type = SeatTypeSerializer(read_only=True)
+
+    class Meta:
+        model = Seat_M
+        fields = '__all__'
+
+class SeatPostSerializer(serializers.ModelSerializer):
+    # Seat_Type = SeatTypeSerializer(read_only=True)
 
     class Meta:
         model = Seat_M
         fields = '__all__'
 
 class SeatInShowtimeSerializer(serializers.ModelSerializer):
-    seat = SeatSerializer()
+    seat = SeatGetSerializer()
     Price = serializers.SerializerMethodField()
 
     def get_Price(self,obj):
@@ -149,18 +177,19 @@ class TheaterSerializer(serializers.ModelSerializer):
 
     def get_Screen(self,obj):
         shows = Screen_M.objects.filter(T_ID=obj)
-        serializer = ScreenSerializer(shows, many=True)
+        serializer = ScreenGetSerializer(shows, many=True)
         return serializer.data 
 
 
     def get_Movies(self,obj):
         shows = Movie_M.objects.filter(T_ID=obj)
-        serializer = ScreenSerializer(shows, many=True)
+        serializer = ScreenGetSerializer(shows, many=True)
         return serializer.data 
     
     class Meta:
         model = Theater_M
-        fields = ['T_ID','T_Name','T_Flat_Add','T_Street_Add','T_Pin','Screen','screens']
+        fields = ['T_ID','T_Name','T_Flat_Add','T_Street_Add','City_ID','T_Pin','T_Open_Date','T_No_Of_Screen','Theater_Manager_ID','Screen']
+        # fields = ['T_ID','T_Name','T_Flat_Add','T_Street_Add','T_Pin','City_ID','Screen','screens']
 
 
 
