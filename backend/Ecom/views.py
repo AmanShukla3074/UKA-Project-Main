@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from .serializers import *
 from .models import *
-from rest_framework import generics,status
+from rest_framework import generics,status,viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 
 class Product_List(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         product_id = kwargs.get('pk')
         category = self.request.query_params.get('category')
@@ -25,6 +28,107 @@ class Product_List(APIView):
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
     
+    def post(self,request):
+        serializer = ProductPostSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'msg':'product added'},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        pro_size = kwargs.get('pk')
+        instance = get_object_or_404(Product_M, P_Size_ID=pro_size)
+        serializer = ProductPostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        pro_size = kwargs.get('pk')
+        instance = get_object_or_404(Product_M, P_Size_ID=pro_size)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
+    
+class CategoriesList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    
+class Product_Color_MList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Product_Color_M.objects.all()
+    serializer_class = Product_Color_MSerializer
+    
+class Product_Size_MList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Product_Size_M.objects.all()
+    serializer_class = Product_Size_MSerializer
+    
+class Product_SizeList(APIView):
+    def get(self, request, *args, **kwargs):
+        product = self.request.query_params.get('product')
+        pro_size=kwargs.get('pk')
+        queryset = Product_Size.objects.all()
+
+        if pro_size:
+            queryset = Product_Size.objects.filter(P_Size_ID=pro_size)
+            serializer = Product_SizeSerializer(queryset, many=True)
+            return Response(serializer.data)
+        
+        if product:
+            queryset = queryset.filter(Product_ID=product)
+
+        serializer = Product_SizeSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer = Product_SizePostSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'msg':'product size and stocks added'},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        # Add logic for updating a music instance if needed
+        pro_size = kwargs.get('pk')
+        instance = get_object_or_404(Product_Size, P_Size_ID=pro_size)
+        serializer = Product_SizePostSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        pro_size = kwargs.get('pk')
+        instance = get_object_or_404(Product_Size, P_Size_ID=pro_size)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)   
+    
+class Product_ImgList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Product_Img.objects.all()
+    serializer_class = Product_ImgSerializer
+    
+class Status_MList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Status_M.objects.all()
+    serializer_class = Status_MSerializer
+    
+class Offer_MList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Offer_M.objects.all()
+    serializer_class = Offer_MSerializer
+    
+class Payment_ModeList(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Payment_Mode.objects.all()
+    serializer_class = Payment_ModeSerializer
+
+
+
+
 
 # class CartDetailView(APIView):
 #     def get_cart_for_user(self, user):

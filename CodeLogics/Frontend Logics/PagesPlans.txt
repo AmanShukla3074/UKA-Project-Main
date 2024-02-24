@@ -1,0 +1,115 @@
+Pages:
+
+UKA Main Home Page - U
+
+Login Related Pages:
+
+    Register
+    Login
+    Forgot Password
+    Change Password
+    Address
+    OTP
+    Profile Manage
+
+Ecommerce:
+
+    Home
+    Product Detailed Page  
+    Cart
+    Payment
+    Payment sucess
+    Payment Unsucess
+    Order
+    Wishlist
+    Reminder
+    Refund
+    Cancled Order
+    Category
+
+Movie Tickets Booking:
+
+    Home  
+    Movie Details
+    Teater Details
+    Showtime
+    seats
+    Tickets
+    Booking
+    Booking Details
+
+
+Music Streaming:
+
+    Home
+    Album  
+    music
+    Artist
+    Playlist
+    Artist-Dashboard
+
+
+Dashboards:
+    Admin
+    DelvP
+    Theater Manager
+    Artist
+
+
+Footers:
+
+    Know More:
+            About Us
+            T&C
+            Privacy Policies
+            Contact Us
+
+    My Account
+            Sing In
+            My Cart  
+            Whishlist
+            Trake Order
+            Help
+
+    Categories
+            All Category 
+
+    Social Handles
+            IG X(Twitter) FB
+
+    Copyright Logo
+
+
+<Register/>
+    basic Details ->
+    
+    first_name
+    last_name
+    mobile_no 
+    email (not required)
+    password
+    dob
+    Gender
+    Profile_Picture (not required)
+
+    Address ->
+    House_Add
+    Street_Add
+    Landmark
+    Pincode
+    <city state drop down>
+
+<OTP/>
+
+<Login>
+    mobile_no
+    pass
+    forget password
+
+<Forgot Password>
+    New Password
+    Confirm Password
+
+<Change Password>
+    New Password
+    Confirm Password

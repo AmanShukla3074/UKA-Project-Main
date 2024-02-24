@@ -17,7 +17,12 @@ class Product_Size_MSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class Product_SizeSerializer(serializers.ModelSerializer):
-    size = Product_Size_MSerializer()   
+    size = Product_Size_MSerializer(read_only=True)   
+    class Meta:
+        model = Product_Size
+        fields = '__all__'
+
+class Product_SizePostSerializer(serializers.ModelSerializer):  
     class Meta:
         model = Product_Size
         fields = '__all__'
@@ -47,7 +52,27 @@ class ProductSerializer(serializers.ModelSerializer):
         model=Product_M
         fields=['P_ID','P_Name','P_Desc','P_Price','Category','Color','Size','Images']
 
+class ProductPostSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model=Product_M
+        fields='__all__'
+
+
+class Status_MSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status_M
+        fields = '__all__'
+
+class Offer_MSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer_M
+        fields = '__all__'
+
+class Payment_ModeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment_Mode
+        fields = '__all__'
 
 # class CartItemSerializer(serializers.ModelSerializer):
 #     Size = Product_Size_MSerializer()
