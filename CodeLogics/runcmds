@@ -1,0 +1,7 @@
+& a:/UKA-Project-Main/env/Scripts/Activate.ps1
+cd .\backend\
+python manage.py runserver
+
+
+PS A:\UKA-Project-Main> cd .\frontend
+PS A:\UKA-Project-Main\frontend> npm start  

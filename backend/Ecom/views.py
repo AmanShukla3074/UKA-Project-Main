@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 
 
 class Product_List(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         product_id = kwargs.get('pk')
         category = self.request.query_params.get('category')

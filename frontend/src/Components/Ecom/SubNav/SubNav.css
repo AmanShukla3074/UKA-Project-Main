@@ -1,0 +1,122 @@
+.sub-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+  }
+  
+  .sub-nav nav {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .sub-nav nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .sub-nav nav li {
+    margin: 0 10px;
+  }
+  
+  .sub-nav nav a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .sub-nav nav a:hover {
+    color: #ccc;
+  }
+  
+  .search-box {
+    display: flex;
+    align-items: center;
+    background-color: #444;
+    padding: 5px 10px;
+    border-radius: 5px;
+    /* flex-grow: 1; */
+    width: 30%;
+  }
+  
+  .search-box input[type="text"] {
+    border: none;
+    background-color: transparent;
+    color: #fff;
+    padding: 5px;
+    flex-grow: 1;
+  }
+  
+  .search-box button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-box button:hover {
+    background-color: #3e8e41;
+  }
+  
+/* 
+.sub-nav {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .sub-nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+  
+  .sub-nav li {
+    margin-right: 10px;
+  }
+  
+  .sub-nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sub-nav a:hover {
+    background-color: #ddd;
+  }
+  
+  .search-box {
+    margin-left: auto; 
+  }
+  
+  .search-box input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .search-box button {
+    padding: 8px 12px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .search-box button:hover {
+    background-color: #45a049;
+  }
+   */

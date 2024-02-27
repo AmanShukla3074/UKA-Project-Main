@@ -1,0 +1,1 @@
+use SearchParams and setSearchParmas from react router dom
