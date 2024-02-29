@@ -1,11 +1,31 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink,useLocation  } from 'react-router-dom';
 import './Navbar.css'
 import uka_logo from '../Assets/uka_logo2.png'
 
 const Navbar = () => {
-    return (
-      <nav className="navbar">
+
+  const location = useLocation();
+  const [navbarSolid, setNavbarSolid] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavbarSolid(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+ 
+  const isEcommerceRoute = location.pathname.startsWith('/ecommerce');
+
+  return (
+    <nav className={`navbar ${!navbarSolid && isEcommerceRoute ? 'transparent' : 'solid'}`}>
+
         <div className="logo">
         <NavLink to="/"><img src={uka_logo} alt="Logo" /></NavLink>
         </div>
