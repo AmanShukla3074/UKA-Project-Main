@@ -24,15 +24,18 @@
 
     transition: background-color 0.5s ease; 
   }
+
+ 
+
   .navbar.transparent {
     background-color: transparent;
   }
   .navbar.solid {
-    background-color: #333; /* Change to your solid color */
+    background-color: #e2d5d5; /* Change to your solid color */
   }
 
   .nav-links .active{
-    color: #4CAF50;
+    color: #b85ee6;
   }
   
   .logo img {
@@ -52,13 +55,14 @@
   
   .nav-links a {
     text-decoration: none;
-    color: white;
+    color: black;
     font-weight: bold;
+    font-size: 19px;
   }
-  
+/*   
   .nav-links a:hover {
-    color: #ffcc00; /* Change the color on hover as per your preference */
-  }
+    color: #25037a; 
+  } */
   
   .user-actions button {
     margin-left: 10px;

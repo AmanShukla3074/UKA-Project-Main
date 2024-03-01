@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navbar, MovieBooking, MusicStreaming, Ecommerce } from './Components';
+import { Navbar, MovieBooking, MusicStreaming, Ecommerce,Cart, Footer } from './Components';
 import { Home } from './Pages';
-import { Cart } from './Components/Ecom/index';
+// import { Cart } from './Components/Ecom/index';
 
 function App() {
   return (
@@ -12,12 +12,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ecommerce" element={<Ecommerce />} >
-        <Route path="cart" element={<Cart />} />
+          <Route path="cart" element={<Cart />} />
         </Route>
         <Route path="/moviebooking" element={<MovieBooking />} />
         <Route path="/musicstreaming/" element={<MusicStreaming />}/>
           
       </Routes>
+      <Footer/>
+      {/* <br/> */}
     </div>
   </Router>
   );
