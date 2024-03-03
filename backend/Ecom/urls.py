@@ -36,7 +36,8 @@ urlpatterns = [
 
 
    # path('cart/', CartDetailView.as_view(), name='cart-detail'),
-]
-if settings.DEBUG:
-    urlpatterns += static(settings.PRODUCT_MEDIA_URL, document_root=settings.PRODUCT_MEDIA_ROOT)
-    urlpatterns += static(settings.PROFILE_MEDIA_URL, document_root=settings.PROFILE_MEDIA_ROOT)
+]+static(settings.PRODUCT_MEDIA_URL, document_root=settings.PRODUCT_MEDIA_ROOT)
+
+# if settings.DEBUG:
+#       urlpatterns += static(settings.PRODUCT_MEDIA_URL, document_root=settings.PRODUCT_MEDIA_ROOT)
+#       urlpatterns += static(settings.PROFILE_MEDIA_URL, document_root=settings.PROFILE_MEDIA_ROOT)

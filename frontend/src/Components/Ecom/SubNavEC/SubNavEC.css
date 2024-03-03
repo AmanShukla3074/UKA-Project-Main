@@ -41,8 +41,13 @@
 
 .sub-nav nav .left-side li{
   margin: 0 20px;
-  font-size: 18px;
+  font-size: 18px;  
 }
+
+.left-side li.active a {
+  color: #b85ee6; /* Set the color to red for the active menu item */
+}
+
 .sub-nav nav .right-side li {
   margin: 0 10px;
 }

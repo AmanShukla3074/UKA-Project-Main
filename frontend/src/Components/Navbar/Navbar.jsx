@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink,useLocation  } from 'react-router-dom';
 import './Navbar.css'
 import uka_logo from '../Assets/uka_logo2.png'
+import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
 
@@ -37,7 +38,8 @@ const Navbar = () => {
           <li><NavLink to="/musicstreaming">Contact US</NavLink></li>
         </ul>
         <div className="user-actions">
-          <button className="profile-btn">Profile</button>
+          <button className="profile-btn"><CgProfile/></button>
+          {/* <button className="profile-btn">Profile</button> */}
           <button className="login-btn">Login</button>
         </div>
       </nav>

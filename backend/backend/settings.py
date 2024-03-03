@@ -222,11 +222,16 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
+import os
+
 
 
 # Product Images
-PRODUCT_MEDIA_URL = '/media/product/'
-PRODUCT_MEDIA_ROOT = BASE_DIR / "media/product"
+PRODUCT_MEDIA_URL = '/product_images/'
+PRODUCT_MEDIA_ROOT = os.path.join(BASE_DIR , "product_images")
+# PRODUCT_MEDIA_ROOT = BASE_DIR / "product_images"
+
+
 
 # Profile Images
 PROFILE_MEDIA_URL = '/media/profile/'

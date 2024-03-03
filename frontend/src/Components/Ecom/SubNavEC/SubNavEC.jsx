@@ -1,14 +1,14 @@
-// SubNav.js
+// SubNavEC.js
 
 import React, { useState, useEffect } from 'react';
-import { Outlet , Link} from 'react-router-dom';
-import { FaSearch ,  FaShoppingCart, FaHeart} from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { FaSearch, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import './SubNavEC.css';
-// import { SubNavEC } from '../..';
 
 function SubNavEC() {
   const [subnavSolid, setSubnavSolid] = useState(false);
   const [isSearchBoxVisible, setSearchBoxVisibility] = useState(false);
+  const [menu, setMenu] = useState("Home");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,49 +26,54 @@ function SubNavEC() {
     };
   }, []);
 
-
   const toggleSearchBox = () => {
     setSearchBoxVisibility(!isSearchBoxVisible);
   };
+
   return (
     <div className={`sub-nav ${subnavSolid ? 'solid' : ''}`}>
       <nav>
         <div className="wapperNav">
-        <ul className="left-side">
-          <li>
-            <Link to="">Hoodie</Link>
-          </li>
-          <li>
-            <Link to="">Sweatshirts</Link>
-          </li>
-          <li>
-            <Link to="">Tees</Link>
-          </li>
-          <li>
-            <Link to="">Caps</Link>
-          </li>
-          <li>
-            <Link to="">Shoes</Link>
-          </li>
-        </ul>
-        <ul className="right-side">
-          <li>
-            <Link to="cart">
-              <FaShoppingCart />
-            </Link>
-          </li>
-          <li>
-            <Link to="wishlist">
-              <FaHeart />
-            </Link>
-          </li>
-          <li>
-            <button className="search-btn-icon" onClick={toggleSearchBox}>
-              <FaSearch />
-            </button>
-          </li>
-        </ul>
-        <Outlet />
+          <ul className="left-side">
+            <li className={menu === "Home" ? 'active' : ''} onClick={() => { setMenu("Home") }}>
+              <Link to="/ecommerce/home">Home</Link>
+            </li>
+            <li className={menu === "Hoodie" ? 'active' : ''} onClick={() => { setMenu("Hoodie") }}>
+              <Link to="/ecommerce/Hoodie">Hoodie</Link>
+            </li>
+            <li className={menu === "Sweatshirts" ? 'active' : ''} onClick={() => { setMenu("Sweatshirts") }}>
+              <Link to="/ecommerce/Sweatshirts">Sweatshirts</Link>
+            </li>
+            <li className={menu === "Tees" ? 'active' : ''} onClick={() => { setMenu("Tees") }}>
+              <Link to="/ecommerce/Tees">Tees</Link>
+            </li>
+            <li className={menu === "Caps" ? 'active' : ''} onClick={() => { setMenu("Caps") }}>
+              <Link to="/ecommerce/Caps">Caps</Link>
+            </li>
+            <li className={menu === "Jeans" ? 'active' : ''} onClick={() => { setMenu("Jeans") }}>
+              <Link to="/ecommerce/Jeans">Jeans</Link>
+            </li>
+            <li className={menu === "Shoes" ? 'active' : ''} onClick={() => { setMenu("Shoes") }}>
+              <Link to="/ecommerce/Shoes">Shoes</Link>
+            </li>
+          </ul>
+          <ul className="right-side">
+            <li>
+              <Link to="cart">
+                <FaShoppingCart />
+              </Link>
+            </li>
+            <li>
+              <Link to="wishlist">
+                <FaHeart />
+              </Link>
+            </li>
+            <li>
+              <button className="search-btn-icon" onClick={toggleSearchBox}>
+                <FaSearch />
+              </button>
+            </li>
+          </ul>
         </div>
       </nav>
       <div className={`search-box ${isSearchBoxVisible ? 'visible' : ''}`}>
@@ -82,32 +87,5 @@ function SubNavEC() {
     </div>
   );
 }
-//   return (
-//     <div className={`sub-nav ${subnavSolid ? 'solid' : ''}`}>
-//       <nav>
-//         <ul>
-//           <li>
-//             <Link to="">Hoodie</Link>
-//           </li>
-//           <li>
-//             <Link to="">Shoes</Link>
-//           </li>
-//           <Outlet />
-//         </ul>
-//       </nav>
-//       <div className={`search-box ${isSearchBoxVisible ? 'visible' : ''}`}>
-//         <button onClick={toggleSearchBox}>
-//           <FaSearch /> {/* Use the search icon */}
-//         </button>
-//         {isSearchBoxVisible && (
-//           <>
-//             <input type="text" placeholder="Search..." />
-//             <button>Submit</button>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
 
 export default SubNavEC;
