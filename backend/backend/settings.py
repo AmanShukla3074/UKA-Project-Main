@@ -209,6 +209,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -227,11 +229,20 @@ import os
 
 
 # Product Images
-PRODUCT_MEDIA_URL = '/product_images/'
-PRODUCT_MEDIA_ROOT = os.path.join(BASE_DIR , "product_images")
+# PRODUCT_MEDIA_URL = '/product_images/'
+# PRODUCT_MEDIA_ROOT = os.path.join(BASE_DIR , "product_images")
 # PRODUCT_MEDIA_ROOT = BASE_DIR / "product_images"
+# BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+from pathlib import Path
+import os
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Profile Images
 PROFILE_MEDIA_URL = '/media/profile/'

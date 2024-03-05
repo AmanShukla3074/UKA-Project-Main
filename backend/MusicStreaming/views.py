@@ -283,6 +283,7 @@ class PlaylistViews(viewsets.ModelViewSet):
     def get_queryset(self):
         # Get the currently logged-in user
         user = self.request.user
+        # user = 4
 
         # Filter the queryset to get the artist profile associated with the user
         queryset = Playlist_M.objects.filter(User_ID=user)

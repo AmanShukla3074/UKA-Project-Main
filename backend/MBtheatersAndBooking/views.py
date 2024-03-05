@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 class ShowtimeList(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         movie = self.request.query_params.get('movie')
         theater = self.request.query_params.get('theater')

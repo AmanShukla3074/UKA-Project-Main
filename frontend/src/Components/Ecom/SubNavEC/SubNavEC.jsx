@@ -1,22 +1,16 @@
-// SubNavEC.js
-
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link , useLocation } from 'react-router-dom';
 import { FaSearch, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import './SubNavEC.css';
 
 function SubNavEC() {
-  const [subnavSolid, setSubnavSolid] = useState(false);
+  const [subnavSolid, setSubnavSolid] = useState(true);
   const [isSearchBoxVisible, setSearchBoxVisibility] = useState(false);
   const [menu, setMenu] = useState("Home");
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setSubnavSolid(true);
-      } else {
-        setSubnavSolid(false);
-      }
+      setSubnavSolid(window.scrollY <= 10);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -26,12 +20,15 @@ function SubNavEC() {
     };
   }, []);
 
+
   const toggleSearchBox = () => {
     setSearchBoxVisibility(!isSearchBoxVisible);
   };
+  const location = useLocation();
+  const isEChomeRoute = location.pathname === '/ecommerce/home' || location.pathname === '/ecommerce'
 
   return (
-    <div className={`sub-nav ${subnavSolid ? 'solid' : ''}`}>
+    <div className={`sub-nav ${subnavSolid && isEChomeRoute ? ' transparent' : 'solid'}`}>
       <nav>
         <div className="wapperNav">
           <ul className="left-side">

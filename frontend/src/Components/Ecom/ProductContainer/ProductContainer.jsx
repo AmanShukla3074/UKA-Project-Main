@@ -12,28 +12,30 @@ const ProductContainer = (props) => {
         if(props.category == null){
         const response = await axios.get('http://127.0.0.1:8000/api/EC/products/');
               setData(response.data);
-      }
-      else{
+            }
+            else{
         const response = await axios.get(`http://127.0.0.1:8000/api/EC/products?category=${props.category}`);
               setData(response.data);
         }
-        
-      // setData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
       }
     };
     fetchData();
   }, []);
 
+  
   return (
     <div>
+
       <h1>{props.header}</h1>
 
       <div className="products">
         {data.map((item) => (
         <Item
           key={item.P_ID}
+          id={item.P_ID}
           name={item.P_Name}
           price={item.P_Price}
           size={item.Size}

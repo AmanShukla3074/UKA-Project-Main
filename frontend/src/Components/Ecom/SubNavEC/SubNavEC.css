@@ -4,17 +4,14 @@
   top: 52px;
   left: 0;
   right: 0;
-  /* display: flex;
-  justify-content: space-between;
-  align-items: center; */
-  background-color: transparent;
+  /* background-color: transparent; */
   padding: 10px 20px;
   transition: background-color 0.5s ease;
   z-index: 1; 
 }
-/* .sub-nav:hover{
-  background-color: #333; 
-} */
+.sub-nav.transparent {
+  background-color: transparent;
+}
 .sub-nav.solid {
   background-color: #e2d5d5; 
 }

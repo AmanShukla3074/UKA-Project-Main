@@ -53,8 +53,11 @@ class Product_Img(models.Model):
     Product_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE,null=True)
     img = models.ImageField(upload_to='product_images/',default='default_image.jpg')
 
-    def get_img_url(self):
-        return self.img.url
+    # def get_img_url(self):
+    #     return self.img.url
+    # def get_image_url(self) -> str:
+    #   if self.img and hasattr(self.image_file, 'url'):
+    #      return f"http://localhost:8000{self.img.url}"
     def __str__(self):
         return f'{self.Product_ID.P_Name} - {self.img.name}'
 

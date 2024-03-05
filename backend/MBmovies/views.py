@@ -8,9 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 
     
 class MovieList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Movie_M.objects.all()
-    serializer_class = MovieSerializer
+    serializer_class = MovieDetailsSerializer
     
 class MovieImgList(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

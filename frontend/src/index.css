@@ -5,7 +5,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Roboto Condensed';
+  /* font-family: 'Roboto Condensed'; */
+  /* font-family: 'Mukta'; */
+  font-family: 'Merriweather';
+  /* font-family: 'Crimson Text'; */
+
 }
 
 code {

@@ -4,8 +4,8 @@ function EChome() {
   return (
     <div>
       <Hero/>
-      <ProductContainer/>
-      
+      <ProductContainer header="POPULAR PRODUCTS!"/>
+      <ProductContainer category="hoodie" header="SHOP HOODIES!"/> 
     </div>
   )
 }
