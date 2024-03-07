@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useParams ,useHistory, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./MovieDetails.css";
 import Movie_Item from "../Movie_Item/Movie_Item";
+import { BookingPopUp } from "../..";
 
 const MovieDetails = () => {
   const { movieId } = useParams();
   const [data, setData] = useState({});
   const [recomendationmovie, setRecomendationmovie] = useState([]);
+  const [showtimeData, setShowtimeData] = useState([]);
+  const [isLoadingShowtime, setIsLoadingShowtime] = useState(false);
+  const [sortedData, setSortedData] = useState({});
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,7 +22,7 @@ const MovieDetails = () => {
         );
         setData(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching movie data:", error);
       }
     };
 
@@ -32,16 +37,71 @@ const MovieDetails = () => {
         );
         setRecomendationmovie(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching recommended movies data:", error);
       }
     };
 
     fetchData();
   }, []);
 
-  //   if (data) {
-  //     return <div>Loading...</div>;
-  //   }
+  const fetchShowtimeData = async () => {
+    try {
+      setIsLoadingShowtime(true);
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/Movie/showtimes?movie=${movieId}`
+      );
+      setShowtimeData(response.data);
+
+      const showtimeData = response.data;
+
+      const groupedByLanguage = showtimeData.reduce((result, showtime) => {
+        const languageID = showtime.M_Language.Language_ID;
+        if (!result[languageID]) {
+          result[languageID] = [];
+        }
+        result[languageID].push(showtime);
+        return result;
+      }, {});
+
+      const sortedData = {};
+      for (const languageID in groupedByLanguage) {
+        const languageGroup = groupedByLanguage[languageID];
+        const groupedByShowType = languageGroup.reduce((result, showtime) => {
+          const typeID = showtime.M_Type.Type_ID;
+          if (!result[typeID]) {
+            result[typeID] = [];
+          }
+          result[typeID].push(showtime);
+          return result;
+        }, {});
+        sortedData[languageID] = groupedByShowType;
+      }
+
+      setSortedData(sortedData);
+      //   console.log(sortedData);
+      //   for (const languageID in sortedData) {
+      //     console.log(`Language ID: ${languageID}`);
+      //     const languageGroup = sortedData[languageID];
+
+      //     for (const typeID in languageGroup) {
+      //       console.log(`  Show Type ID: ${typeID}`);
+      //       // You can add more information here if needed
+      //     }
+      //   }
+    } catch (error) {
+      console.error("Error fetching showtime data:", error);
+    } finally {
+      setIsLoadingShowtime(false);
+    }
+  };
+
+  const navigateToAnotherRoute = () => {
+    if (showtimeData.length === 0 && !isLoadingShowtime) {
+      fetchShowtimeData();
+    }
+
+    setShowModal(true);
+  };
 
   const baseUrl = "http://127.0.0.1:8000";
   const firstImage =
@@ -55,17 +115,13 @@ const MovieDetails = () => {
     data.language &&
     data.language.map((genre) => genre.Language_ID.Language_Name);
   const type = data.type && data.type.map((genre) => genre.Type_ID.Type_Name);
- 
-  const cast=data.cast;
-  const director=data.director;
-  const producer=data.producer;
 
+  const cast = data.cast;
+  const director = data.director;
+  const producer = data.producer;
 
-  const navigate = useNavigate();
-
-  const navigateToAnotherRoute = () => {
-    // Replace '/path-to-another-route' with the actual path you want to navigate to
-    navigate('/moviebooking/theater');
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -81,7 +137,6 @@ const MovieDetails = () => {
             <p className="movie-release-date">
               Release Date : {data.M_ReleaseDate}
             </p>
-            {/* <p className="movie-genre">{data.genre}</p> */}
             <div className="movie-genre">
               <div className="genres">
                 {" "}
@@ -120,7 +175,6 @@ const MovieDetails = () => {
                   ))}
               </div>
             </div>
-
             <p className="movie-certification">
               Age Certification: {data.M_Age_Certification}
             </p>
@@ -128,67 +182,97 @@ const MovieDetails = () => {
               Synopsis: <br />
               {data.M_Synopsis}
             </p>
-            <button onClick={navigateToAnotherRoute}>BOOK TICKETS</button>
+            <button
+              onClick={navigateToAnotherRoute}
+              disabled={isLoadingShowtime}
+            >
+              {isLoadingShowtime ? "Loading..." : "BOOK TICKETS"}
+            </button>
+            {/* <BookingPopUp show={showModal} onClose={handleCloseModal}> */}
+            <BookingPopUp show={showModal} onClose={handleCloseModal} movieId={movieId} sortedData={sortedData}>
+              {Object.entries(sortedData).map(([languageID, languageGroup]) => (
+                <div key={languageID} className="modal-language">
+                  <h3>
+                    {languageGroup[0]?.[0]?.M_Language?.Language_Name ||
+                      languageGroup[1]?.[0]?.M_Language?.Language_Name}
+                  </h3>
+                  <ul>
+                    {Object.entries(languageGroup).map(
+                      ([typeID, showTypeGroup]) => (
+                        <div key={typeID} className="modal-showtype">
+                          <h4>
+                            {/* Show Type:{" "} */}
+                            {showTypeGroup[0] &&
+                              showTypeGroup[0].M_Type &&
+                              showTypeGroup[0].M_Type.Type_Name}
+                          </h4>
+                        </div>
+                      )
+                    )}
+                  </ul>
+                </div>
+              ))}
+            </BookingPopUp>
           </div>
         </div>
       </div>
-     
 
       <div className="castAndCrew">
         <h1>Cast and crew</h1>
-         
-          <h2>Cast</h2>
+
+        <h2>Cast</h2>
         <div className="cast-container">
-  
           <div className="cast-scroll-container">
-            {cast && cast.map((castMember) => (
-              <div className="cast-card" key={castMember.MCast_ID}>
-                <div className="img">
-                <img
-                  src={`http://127.0.0.1:8000${castMember.Cast_ID.Cast_img}`}
-                  alt={castMember.Cast_ID.Cast_Name}
-                />
+            {cast &&
+              cast.map((castMember) => (
+                <div className="cast-card" key={castMember.MCast_ID}>
+                  <div className="img">
+                    <img
+                      src={`http://127.0.0.1:8000${castMember.Cast_ID.Cast_img}`}
+                      alt={castMember.Cast_ID.Cast_Name}
+                    />
+                  </div>
+                  <div className="cast-details">
+                    <h3>{castMember.Cast_ID.Cast_Name}</h3>
+                  </div>
                 </div>
-                <div className="cast-details">
-                  <h3>{castMember.Cast_ID.Cast_Name}</h3>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
-         
-          <h2>Directors - Producers</h2>
+
+        <h2>Directors - Producers</h2>
         <div className="cast-container">
-  
           <div className="cast-scroll-container">
-            {director && director.map((castMember) => (
-              <div className="cast-card" key={castMember.Md_ID}>
-                <div className="img">
-                <img
-                  src={`http://127.0.0.1:8000${castMember.Director_ID.Director_img}`}
-                  alt={`${castMember.Director_ID.Director_Name}`}
-                />
+            {director &&
+              director.map((castMember) => (
+                <div className="cast-card" key={castMember.Md_ID}>
+                  <div className="img">
+                    <img
+                      src={`http://127.0.0.1:8000${castMember.Director_ID.Director_img}`}
+                      alt={`${castMember.Director_ID.Director_Name}`}
+                    />
+                  </div>
+                  <div className="cast-details">
+                    <h3>{castMember.Director_ID.Director_Name}</h3>
+                    <p>Director</p>
+                  </div>
                 </div>
-                <div className="cast-details">
-                  <h3>{castMember.Director_ID.Director_Name}</h3>
-                  <p>Director</p>
+              ))}
+            {producer &&
+              producer.map((castMember) => (
+                <div className="cast-card" key={castMember.Mp_ID}>
+                  <div className="img">
+                    <img
+                      src={`http://127.0.0.1:8000${castMember.Producer_ID.Producer_img}`}
+                      alt={`${castMember.Producer_ID.Producer_Name}`}
+                    />
+                  </div>
+                  <div className="cast-details">
+                    <h3>{castMember.Producer_ID.Producer_Name}</h3>
+                    <p>Producer</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {producer && producer.map((castMember) => (
-              <div className="cast-card" key={castMember.Mp_ID}>
-                <div className="img">
-                <img
-                  src={`http://127.0.0.1:8000${castMember.Producer_ID.Producer_img}`}
-                  alt={`${castMember.Producer_ID.Producer_Name}`}
-                />
-                </div>
-                <div className="cast-details">
-                  <h3>{castMember.Producer_ID.Producer_Name}</h3>
-                  <p>Producer</p>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -216,26 +300,3 @@ const MovieDetails = () => {
 };
 
 export default MovieDetails;
-
-
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-// const MyComponent = () => {
-//   const navigate = useNavigate();
-
-//   const navigateToAnotherRoute = (id) => {
-//     // Replace '/path-to-another-route' with the actual path you want to navigate to
-//     navigate(`/path-to-another-route/${id}`);
-//   };
-
-//   return (
-//     <div>
-//       <p>Your component content goes here.</p>
-//       <button onClick={() => navigateToAnotherRoute(123)}>Go to Another Route with ID 123</button>
-//       {/* Replace 123 with the actual ID you want to pass */}
-//     </div>
-//   );
-// };
-
-// export default MyComponent;

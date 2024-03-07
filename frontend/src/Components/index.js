@@ -17,4 +17,6 @@ export { default as imgSlider } from './Movie_Booking/img_slider/imgSlider';
 export { default as Movie_Container } from './Movie_Booking/Movie_Container/Movie_Container';
 export { default as Movie_Item } from './Movie_Booking/Movie_Item/Movie_Item';
 export { default as MovieDetails  } from './Movie_Booking/MovieDetails/MovieDetails';
+export { default as BookingPopUp  } from './Movie_Booking/BookingPopUp/BookingPopUp';
+export { default as Showtimes  } from './Movie_Booking/Showtimes/Showtimes';
 // export { default as OtherComponent } from './OtherComponent/OtherComponent';

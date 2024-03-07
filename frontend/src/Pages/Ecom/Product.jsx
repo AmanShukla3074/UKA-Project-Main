@@ -18,7 +18,7 @@ const ProductContainer = (props) => {
       fetchData();
     }, []);
   
-    
+    console.log(data);
     return (
       <div>
   

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navbar, MovieBooking, MusicStreaming, Ecommerce,Cart, Footer, MovieDetails } from './Components';
+import { Navbar, MovieBooking, MusicStreaming, Ecommerce,Cart, Footer, MovieDetails, Showtimes } from './Components';
 import { Home , EChome , ECCategory,ECProductDetail,MBhome} from './Pages/index.js';
 // import { Cart } from './Components/Ecom/index';
 
@@ -31,7 +31,11 @@ function App() {
           <Route path="movie" element={<MovieDetails />} >
             <Route path=":movieId" element={<MovieDetails />} />
           </Route>
-          <Route path="theater" element={<MBhome />} />
+          {/* <Route path="showtimes" element={<showtimes />} >
+            <Route path=":movieId/:movieType/:movieLang" element={<Showtimes />} />
+          </Route> */}
+          <Route path="showtimes/:movieId/:movieType/:movieLang?" element={<Showtimes />} />
+          {/* <Route path="showtimes" element={<MBhome />} /> */}
         </Route>
         <Route path="/musicstreaming/" element={<MusicStreaming />}/>
       </Routes>
