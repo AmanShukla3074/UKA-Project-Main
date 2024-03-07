@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Hero, ProductContainer } from '../../Components'
+import axios from 'axios';
+
+
 function EChome() {
+  
   return (
     <div>
       <Hero/>

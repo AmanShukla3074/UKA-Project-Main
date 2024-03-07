@@ -275,24 +275,55 @@ class ArtistSearchView(APIView):
     
 
 #Playlist
-    
+import logging
+
+logger = logging.getLogger(__name__)
+import jwt
+
 class PlaylistViews(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
     queryset = Playlist_M.objects.all()
     serializer_class = PlaylistSerializer
 
     def get_queryset(self):
         # Get the currently logged-in user
+        # print("Raw Headers:", self.request.headers)
+       
         user = self.request.user
+       
+        logger.info(f"User: {user}")
+        print(user,"aa")
         # user = 4
-
-        # Filter the queryset to get the artist profile associated with the user
-        queryset = Playlist_M.objects.filter(User_ID=user)
+        print("Decoded Token:", user.id)
+        queryset = Playlist_M.objects.filter(User_ID=user.id)
 
         return queryset
 
+
+
+    #     auth_header = self.request.headers.get("Authorization", "")
+    #     token = auth_header.replace("Bearer ", "")
+
+    # # Manually decode the token
+    #     decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
+
+    # # Print the decoded token
+    #     print("Decoded Token:", decoded_token)
+
+    # # Extract user information
+    #     user_id = decoded_token.get("user_id", None)
+    #     queryset = Playlist_M.objects.filter(User_ID=user_id)
+
+    #     return queryset
+        # Filter the queryset to get the artist profile associated with the user
+       
+
+    # def perform_create(self, serializer):
+    #     # Automatically set the user to the one making the request
+    #     serializer.save(User_ID=self.request.user)
     def perform_create(self, serializer):
-        # Automatically set the user to the one making the request
-        serializer.save(User_ID=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(User_ID=self.request.user)
 
 # class PlaylistMusicViews(viewsets.ModelViewSet):
 #     queryset = Playlist_Music_M.objects.all()

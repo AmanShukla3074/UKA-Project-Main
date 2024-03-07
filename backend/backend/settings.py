@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'account',    
     'Ecom',
     'MBmovies',
-    # 'MBtheatersAndBooking',
     'MusicStreaming',
 
     'rest_framework',
@@ -58,17 +57,35 @@ INSTALLED_APPS = [
 CRON_CLASSES = [
     'MusicStreaming.tasks.MonthlyAnalyticsJob',
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 
+# MIDDLEWARE = [
+#     # 'rest_framework_simplejwt.middleware.JWTAuthenticationMiddleware',
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'corsheaders.middleware.CorsMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+# ]
 MIDDLEWARE = [
+    
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -159,7 +176,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
-
+    # "SECRET_KEY" : 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m',
     "ALGORITHM": "HS256",
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
@@ -202,9 +219,6 @@ REST_FRAMEWORK = {
 }
 
 
-API_KEY = "3d739b9e-ab26-11ee-8cbb-0200cd936042" #"f52019e2-aa6b-11ee-8cbb-0200cd936042"
-
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
@@ -225,20 +239,9 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
 import os
-
-
-
-# Product Images
-# PRODUCT_MEDIA_URL = '/product_images/'
-# PRODUCT_MEDIA_ROOT = os.path.join(BASE_DIR , "product_images")
-# PRODUCT_MEDIA_ROOT = BASE_DIR / "product_images"
-# BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 from pathlib import Path
-import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 MEDIA_URL = '/media/'
