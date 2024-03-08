@@ -24,12 +24,12 @@ import {
   ForgotPassPage,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
-
+import {AuthProvider} from './Context/AuthContext';
 
 function App() {
   return (
     <Router>
-      <div>
+      <AuthProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -76,7 +76,8 @@ function App() {
           <Route path="/musicstreaming/" element={<MusicStreaming />} />
         </Routes>
         <Footer />
-      </div>
+      </AuthProvider>
+      
     </Router>
   );
 }

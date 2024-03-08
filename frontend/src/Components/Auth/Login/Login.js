@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Login.css';
 import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../../../Context/AuthContext';
 
 const Login = ({ onNext }) => {
+
+
+  let {loginUser} = useContext(AuthContext)
+
   const navigate = useNavigate();
 
   const [mobileNumber, setMobileNumber] = useState('');
@@ -29,7 +34,6 @@ const Login = ({ onNext }) => {
 
     // Check if all inputs are valid before proceeding to the next page
     if (isMobileValid && isPasswordValid) {
-      console.log({ mobileNumber, password });
 
       // Call the parent component's onNext function
       onNext && onNext();
@@ -44,12 +48,13 @@ const Login = ({ onNext }) => {
   return (
     <div className='loginForm'>
       <h2>Login</h2>
-      <form>
+      <form onSubmit={loginUser}>
         <label>
           Mobile Number:
           <input
             type="text"
             value={mobileNumber}
+            name='mobile'
             onChange={(e) => setMobileNumber(e.target.value)}
             onBlur={validateMobileNumber}
             className={!isMobileNumberValid ? 'invalid' : ''}
@@ -61,6 +66,7 @@ const Login = ({ onNext }) => {
           <input
             type="password"
             value={password}
+            name='password'
             onChange={(e) => setPassword(e.target.value)}
             onBlur={validatePassword}
             className={!isPasswordValid ? 'invalid' : ''}
@@ -68,13 +74,14 @@ const Login = ({ onNext }) => {
           {!isPasswordValid && <span className="error">Password must be at least 6 characters</span>}
         </label>
         <label className='forgotPass'>
-          <Link to="/ForgetPassword" className='forgotPassLink'>
+          <Link to="/forgotpassword" className='forgotPassLink'>
             <span>Forget Password?</span>
           </Link>
         </label>
         <button type="button" onClick={handleNext}>
           Next
         </button>
+        <input type="submit" value="aa" />
         <label className="custom-label">
         <span>
         <Link to="/Registration" className="custom-link">

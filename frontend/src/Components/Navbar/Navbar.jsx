@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import uka_logo from '../Assets/uka_logo2.png';
 import { CgProfile } from 'react-icons/cg';
+import AuthContext from '../../Context/AuthContext';
 
 const Navbar = () => {
   const location = useLocation();
   const [navbarTransparent, setNavbarTransparent] = useState(true);
+  const {user,logoutUser} = useContext(AuthContext)
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +40,9 @@ const Navbar = () => {
           <NavLink to="/ecommerce">Ecommerce</NavLink>
         </li>
         <li>
+          <NavLink to="/ecommerce">{user && <p onClick={logoutUser}>{user.username}</p> }</NavLink>
+        </li>
+        <li>
           <NavLink to="/moviebooking">Movie Booking</NavLink>
         </li>
         <li>
@@ -52,7 +59,9 @@ const Navbar = () => {
         <button className="profile-btn">
           <CgProfile />
         </button>
+        <Link to="/login">
         <button className="login-btn">Login</button>
+        </Link>
       </div>
     </nav>
   );
