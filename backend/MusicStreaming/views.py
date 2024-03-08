@@ -289,32 +289,32 @@ class PlaylistViews(viewsets.ModelViewSet):
         # Get the currently logged-in user
         # print("Raw Headers:", self.request.headers)
        
-        user = self.request.user
+        # user = self.request.user
        
-        logger.info(f"User: {user}")
-        print(user,"aa")
-        # user = 4
-        print("Decoded Token:", user.id)
-        queryset = Playlist_M.objects.filter(User_ID=user.id)
+        # logger.info(f"User: {user}")
+        # print(user,"aa")
+        # # user = 4
+        # print("Decoded Token:", user.id)
+        # queryset = Playlist_M.objects.filter(User_ID=user.id)
+
+        # return queryset
+
+
+
+        auth_header = self.request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+    # Manually decode the token
+        decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
+
+    # Print the decoded token
+        print("Decoded Token:", decoded_token)
+
+    # Extract user information
+        user_id = decoded_token.get("user_id", None)
+        queryset = Playlist_M.objects.filter(User_ID=user_id)
 
         return queryset
-
-
-
-    #     auth_header = self.request.headers.get("Authorization", "")
-    #     token = auth_header.replace("Bearer ", "")
-
-    # # Manually decode the token
-    #     decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
-
-    # # Print the decoded token
-    #     print("Decoded Token:", decoded_token)
-
-    # # Extract user information
-    #     user_id = decoded_token.get("user_id", None)
-    #     queryset = Playlist_M.objects.filter(User_ID=user_id)
-
-    #     return queryset
         # Filter the queryset to get the artist profile associated with the user
        
 

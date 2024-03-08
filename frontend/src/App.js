@@ -16,6 +16,12 @@ import {
   ECCategory,
   ECProductDetail,
   MBhome,
+  RegiPage,
+  LoginPage,
+  OTPPage,
+  AddressPage,
+  ChangePassPage,
+  ForgotPassPage,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
 
@@ -27,6 +33,14 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/registration" element={<RegiPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/otp" element={<OTPPage />} />
+          <Route path="/address" element={<AddressPage />} />
+          <Route path="/changepassword" element={<ChangePassPage />} />
+          <Route path="/forgotpassword" element={<ForgotPassPage />} />
+
+
           <Route path="/ecommerce" element={<Ecommerce />}>
             <Route index element={<EChome />} />
             <Route path="home" element={<EChome />} />
