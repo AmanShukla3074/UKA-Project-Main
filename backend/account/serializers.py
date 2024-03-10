@@ -82,6 +82,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
         #Add custom claims
         token['username'] = user.get_full_name()
+        # token['Role'] = user.Role.name
+        if hasattr(user, 'Role'):
+            # If 'Role' is a model instance, you might want to serialize it to a string
+            # or a dictionary. Here, we're assuming it has a 'name' attribute.
+            token['Role'] = user.Role.Role_Name if user.Role else None
+        else:
+            # If 'Role' is not an attribute of the user, handle accordingly
+            token['Role'] = None
+        
 
         return token
     
@@ -103,3 +112,39 @@ class AddressGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = '__all__'
+
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("New passwords must match")
+        return attrs
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is not correct")
+        return value
+    
+class ForgetPasswordSerializer(serializers.Serializer):
+    mobileno=serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("New passwords must match")
+        return attrs
+    
+
+class MobileNumberSerializer(serializers.Serializer):
+    mobile_no = serializers.CharField(max_length=15)
+
+
+class MobileNumberSerializer2(serializers.Serializer):
+    mobile_no = serializers.CharField(max_length=15)
+    otp = serializers.CharField(max_length=6)

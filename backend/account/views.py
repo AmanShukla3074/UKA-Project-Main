@@ -5,13 +5,14 @@ from rest_framework.exceptions import AuthenticationFailed
 
 from backend.settings import EMAIL_HOST_USER
 from .serializers import *
-from .models import User, Roles, Status, Address, City, State
+from .models import *
 from rest_framework.decorators import api_view # date:3/01 for otp
 from .otpapi import send_otp_to_mobile # date:3/01
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
 # Create your views here.
 
+from rest_framework import status
 
 
 
@@ -72,7 +73,7 @@ class AddressView(APIView):
         serializer = AddressGetSerializer(address_obj, many=True)
         return Response(serializer.data)
   
-
+from .otpapi import *
 #===================== LOGIN ====================
 class LoginView(APIView): 
     def post(self,request):
@@ -87,9 +88,22 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect password! \nPlease enter the correct password.')
 
+      #-------------- using 2factor --------------
         # Generate and send OTP
         otp = send_otp_to_mobile(mobile_no)
         user.otp = otp
+        #--------------- using twilio --------------
+        # otp = send_sms(mobile_no)
+        # message = client.messages \
+        #                 .create(
+        #                     from_ = '+15169732425',
+        #                     body = f"Your OTP is {otp} .",
+        #                     # body = f"Hello , to reset password click this link http://127.0.0.1:8000/api/register/ ",
+        #                     # to = '+91 90543 95987'
+        #                     to = '+91'+mobile_no
+        #                 )
+
+
         user.save()
 
         return Response({
@@ -233,3 +247,65 @@ def resend_otp(request):
         'status': 200,
         'message': 'OTP Resent'
     })
+
+
+
+class ChangePasswordView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = request.user
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({"message": "Password changed successfully"})
+        
+class ForgetPasswordView(APIView):
+    def post(self,request):
+        serializer = ForgetPasswordSerializer(data=request.data,context={'request': request})
+        if serializer.is_valid():
+            mobileno = serializer.validated_data['mobileno']
+            try:
+                user = User.objects.get(mobile_no=mobileno)
+            except User.DoesNotExist:
+                return Response({"message": "User not found"})
+            
+            if serializer.validated_data['new_password'] != serializer.validated_data['confirm_password']:
+                return Response({"message": "New passwords must match"})
+
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({"message": "Password (forget)changed successfully"})
+        else:
+            return Response(serializer.errors)
+        
+
+@api_view(['POST'])
+def send_otp_to_mobile_view(request):
+    serializer = MobileNumberSerializer(data=request.data)
+
+    if serializer.is_valid():
+        mobile_no = serializer.validated_data['mobile_no']
+        otp = send_otp_to_mobile(mobile_no)
+
+        if otp is not None:
+            return Response({'otp': otp}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Failed to send OTP'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['POST'])
+def verify_otp_view_register(request):
+    serializer = MobileNumberSerializer2(data=request.data)
+
+    if serializer.is_valid():
+        mobile_no = serializer.validated_data['mobile_no']
+        otp = serializer.validated_data['otp']
+        entered_otp = request.data.get('otp')  
+        if entered_otp == otp:
+            return Response("verifired")
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)                                                                              
