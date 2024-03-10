@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Address.css";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Address = ({ onNext, onSkip }) => {
   const [houseAdd, setHouseAdd] = useState("");
@@ -8,7 +9,7 @@ const Address = ({ onNext, onSkip }) => {
   const [pincode, setPincode] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-
+  const navigate=useNavigate()
   const [validationErrors, setValidationErrors] = useState({
     houseAdd: "",
     streetAdd: "",
@@ -52,7 +53,8 @@ const Address = ({ onNext, onSkip }) => {
 
   const handleSkip = () => {
     // Call the parent component's onSkip function to handle the skip action
-    onSkip && onSkip();
+    // onSkip && onSkip();
+    navigate("/");
   };
 
   return (

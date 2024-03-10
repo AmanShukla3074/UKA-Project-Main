@@ -111,7 +111,7 @@ const ForgotPassword = () => {
       <h2>Forgot Password</h2>
       {currentStep === 1 && (
         <div>
-          <p>Please enter your mobile number to receive an OTP.</p>
+          <p className="forgotPass-p">Please enter your mobile number to receive an OTP.</p>
           <form>
             <label>
               Mobile Number:
@@ -130,7 +130,7 @@ const ForgotPassword = () => {
       )}
       {currentStep === 2 && (
         <div>
-          <p>Enter the OTP sent to your mobile number.</p>
+          <p className="forgotPass-p">Enter the OTP sent to your mobile number.</p>
           <form>
             <label>
               OTP:
@@ -151,7 +151,7 @@ const ForgotPassword = () => {
       )}
       {currentStep === 3 && (
         <div>
-          <p>OTP verified. Please set a new password.</p>
+          <p className="forgotPass-p">OTP verified. Please set a new password.</p>
           <form>
             <label>
               New Password:
@@ -176,7 +176,7 @@ const ForgotPassword = () => {
             </button>
           </form>
           {passwordResetSuccess && (
-            <p>Your password has been successfully changed.</p>
+            <p className="forgotPass-p">Your password has been successfully changed.</p>
           )}
         </div>
       )}

@@ -55,14 +55,27 @@ const Navbar = () => {
           <NavLink to="/contact">Contact US</NavLink>
         </li>
       </ul>
-      <div className="user-actions">
+      {/* <div className="user-actions">
         <button className="profile-btn">
           <CgProfile />
         </button>
         <Link to="/login">
         <button className="login-btn">Login</button>
         </Link>
-      </div>
+      </div> */}
+      <div className="user-actions">
+      {user ? (
+        <>
+          <button className="profile-btn">
+            <CgProfile />
+          </button>
+        </>
+      ) : (
+        <Link to="/login">
+          <button className="login-btn">Login</button>
+        </Link>
+      )}
+    </div>
     </nav>
   );
 };

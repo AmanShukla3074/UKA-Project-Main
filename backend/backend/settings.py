@@ -282,3 +282,5 @@ MUSICAUDIO_MEDIA_ROOT = BASE_DIR / "media/MusicAudio"
 # Music Cover Img
 MUSICCOVERIMGS_MEDIA_URL = '/media/MusicCoverIMGs/'
 MUSICCOVERIMGS_MEDIA_ROOT = BASE_DIR / "media/MusicCoverIMGs"
+
+API_KEY="a48416cb-dc6a-11ee-8cbb-0200cd936042"

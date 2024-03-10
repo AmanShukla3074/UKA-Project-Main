@@ -4,8 +4,7 @@
   top: 52px;
   left: 0;
   right: 0;
-  /* background-color: transparent; */
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   transition: background-color 0.5s ease;
   z-index: 1; 
 }
@@ -13,7 +12,7 @@
   background-color: transparent;
 }
 .sub-nav.solid {
-  background-color: #e2d5d5; 
+  background-color: #ebd4f6; 
 }
 .wapperNav{
   display: flex;
@@ -69,23 +68,20 @@
   text-decoration: none;
   transition: color 0.3s ease;
 }
-/* 
-.sub-nav nav a:hover {
-  color: #ccc;
-} */
+
 .sub-nav nav a:hover,
 .sub-nav nav button:hover {
   color: #ccc;
 }
-.search-box {
+.search-box-ec {
   display: flex;
   align-items: center;
-  background-color: #444;
+  background-color: #fff;
   /* padding: 5px 10px; */
   border-radius: 5px;
   width: 80%;
   justify-content: space-around;
-  margin: 5px auto 0px;
+  margin: 0 auto 5px;
 }
 
 .search-box input[type="text"] {
@@ -98,13 +94,7 @@
 
 .sub-nav .right-side .search-btn-icon,
 .sub-nav .right-side li a{
-  /* background-color: #4CAF50;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease; */
+
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -113,27 +103,65 @@
   /* font-size: 20px; */
   color: black;
 }
-/* 
-.search-box button:hover {
-  background-color: #3e8e41;
-  opacity: 0.8;
-} */
-/* .sub-nav .search-box button:hover {
-  background-color: #3e8e41;
-} */
+
 .sub-nav .search-box button {
- height: 30px;
+ /* height: 30px; */
+ width: 20%;
 }
+
+.search-btn{
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0;
+}
+
 .search-box input[type="text"] {
   /* ... your existing styles ... */
   opacity: 0; /* Initially, hide the input */
   transition: opacity 0.3s ease; /* Add fade-in transition */
 }
 
-.search-box.visible{
-  padding: 5px;
-}
 
 .search-box.visible input[type="text"] {
   opacity: 1;
 }
+
+
+
+
+/* Existing styles */
+
+/* Search button styles */
+.search-btn-ec {
+  background-color: black; /* Black background on hover */
+  color: white; /* White text on hover */
+  padding: 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  width: 20%;
+ }
+
+ 
+ /* Search field styles */
+ .search-field {
+  border: none;
+  background-color: transparent;
+  color: black;
+  padding: 10px;
+  flex-grow: 1;
+  transition: opacity 0.3s ease;
+  margin: 0;
+ }
+ 
+ .search-box.visible .search-field {
+  opacity: 1;
+ }
+ 

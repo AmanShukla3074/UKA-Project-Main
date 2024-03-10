@@ -8,22 +8,22 @@ const AuthContext = createContext();
 export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
-  let [loading, setLoading] = useState(true);
+ const navigate = useNavigate();
+ let [loading, setLoading] = useState(true);
 
-  let [authTokens, setAuthTokens] = useState(() =>
+ let [authTokens, setAuthTokens] = useState(() =>
     localStorage.getItem("authTokens")
       ? JSON.parse(localStorage.getItem("authTokens"))
       : null
-  );
+ );
 
-  let [user, setUser] = useState(() =>
+ let [user, setUser] = useState(() =>
     localStorage.getItem("authTokens")
       ? jwtDecode(localStorage.getItem("authTokens"))
       : null
-  );
+ );
 
-  let loginUser = async (e) => {
+ let loginUser = async (e) => {
     e.preventDefault();
 
     try {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         setAuthTokens(data);
         setUser(jwtDecode(data.access));
         localStorage.setItem("authTokens", JSON.stringify(data));
-        navigate("/");
+        // navigate("/"); // Uncomment this if you want to navigate after login
       } else {
         alert("Something went wrong!");
       }
@@ -45,16 +45,16 @@ export const AuthProvider = ({ children }) => {
       console.error("Error during login:", error.message);
       alert("An error occurred during login.");
     }
-  };
+ };
 
-  let logoutUser = () => {
+ let logoutUser = () => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    navigate("/login");
-  };
+    // navigate("/login"); // Uncomment this if you want to navigate after logout
+ };
 
-  let updateToken = async () => {
+ let updateToken = async () => {
     try {
       let response = await axios.post(
         "http://127.0.0.1:8000/api/Auth/token/refresh/",
@@ -79,9 +79,9 @@ export const AuthProvider = ({ children }) => {
       console.error("Error during token refresh:", error.message);
       logoutUser();
     }
-  };
+ };
 
-  useEffect(() => {
+ useEffect(() => {
     if (loading) {
       updateToken();
     }
@@ -95,18 +95,20 @@ export const AuthProvider = ({ children }) => {
     }, fourMinutes);
 
     return () => clearInterval(interval);
-  }, [authTokens, loading]);
+ }, [authTokens, loading]);
 
-  let contextData = {
+ // Removed the useEffect hook that navigates to /login based on user or loading state
+
+ let contextData = {
     user: user,
     authTokens: authTokens,
     loginUser: loginUser,
     logoutUser: logoutUser,
-  };
+ };
 
-  return (
+ return (
     <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
-  );
+ );
 };
 
 // import { createContext, useEffect, useState } from "react";
@@ -135,21 +137,27 @@ export const AuthProvider = ({ children }) => {
 //   );
 
 //   let loginUser = async (e) => {
+//     alert("authcon")
 //     e.preventDefault();
 
-//     let response = await axios.post("http://127.0.0.1:8000/api/Auth/token/", {
-//       mobile_no: e.target.mobile.value,
-//       password: e.target.password.value,
-//     });
-//     let data = await response.data;
+//     try {
+//       let response = await axios.post("http://127.0.0.1:8000/api/Auth/token/", {
+//         mobile_no: e.target.mobile.value,
+//         password: e.target.password.value,
+//       });
 
-//     if (response.status === 200) {
-//       setAuthTokens(data);
-//       setUser(jwtDecode(data.access));
-//       localStorage.setItem("authTokens", JSON.stringify(data));
-//       navigate("/");
-//     } else {
-//       alert("Something went wrong!");
+//       if (response.status === 200) {
+//         const data = response.data;
+//         setAuthTokens(data);
+//         setUser(jwtDecode(data.access));
+//         localStorage.setItem("authTokens", JSON.stringify(data));
+//         // navigate("/");
+//       } else {
+//         alert("Something went wrong!");
+//       }
+//     } catch (error) {
+//       console.error("Error during login:", error.message);
+//       alert("An error occurred during login.");
 //     }
 //   };
 

@@ -78,16 +78,7 @@ const MovieDetails = () => {
       }
 
       setSortedData(sortedData);
-      //   console.log(sortedData);
-      //   for (const languageID in sortedData) {
-      //     console.log(`Language ID: ${languageID}`);
-      //     const languageGroup = sortedData[languageID];
-
-      //     for (const typeID in languageGroup) {
-      //       console.log(`  Show Type ID: ${typeID}`);
-      //       // You can add more information here if needed
-      //     }
-      //   }
+      
     } catch (error) {
       console.error("Error fetching showtime data:", error);
     } finally {
@@ -178,11 +169,11 @@ const MovieDetails = () => {
             <p className="movie-certification">
               Age Certification: {data.M_Age_Certification}
             </p>
-            <p className="movie-description">
+            {/* <p className="movie-description">
               Synopsis: <br />
               {data.M_Synopsis}
-            </p>
-            <button
+            </p> */}
+            <button className="book-button"
               onClick={navigateToAnotherRoute}
               disabled={isLoadingShowtime}
             >
@@ -214,6 +205,10 @@ const MovieDetails = () => {
               ))}
             </BookingPopUp>
           </div>
+          <p className="movie-description">
+              Synopsis: <br />
+              {data.M_Synopsis}
+            </p>
         </div>
       </div>
 

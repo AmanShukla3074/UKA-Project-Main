@@ -8,12 +8,15 @@
   justify-content: space-between;
   align-items: center; */
   background-color: transparent;
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   transition: background-color 0.5s ease;
   z-index: 1; 
-  background-color: #e2d5d5;
+  background-color: #ebd4f6;
 }
 
+.mbnav{
+  height: 60px;
+}
 
 .wapperNav{
   display: flex;

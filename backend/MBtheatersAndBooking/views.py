@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 class ShowtimeList(APIView):
-    # permission_classes = [IsAuthenticated]
+    ## permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         movie = self.request.query_params.get('movie')
         theater = self.request.query_params.get('theater')
@@ -64,25 +64,25 @@ class ShowtimeList(APIView):
 
 
 class SeatTypeList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     queryset = SeatType.objects.all()
     serializer_class = SeatTypeSerializer
 
 
 class SeatPriceList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     queryset = SeatPrice.objects.all()
     serializer_class = SeatPriceSerializer
     
 
 
 class Payment_ModeList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     queryset = Payment_Mode.objects.all()
     serializer_class = Payment_ModeSerializer
     
 class SeatList(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         screen = self.request.query_params.get('screen')
         queryset = Seat_M.objects.all()
@@ -124,7 +124,7 @@ class SeatList(APIView):
        
     
 class ScreenList(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         screen = self.request.query_params.get('screen')
         queryset = Screen_M.objects.all()
@@ -168,7 +168,7 @@ class ScreenList(APIView):
 
 # class SeatInShowtimeList(generics.ListAPIView):
 class SeatInShowtimeList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     serializer_class = SeatInShowtimeSerializer
 
     def get_queryset(self):
@@ -178,7 +178,7 @@ class SeatInShowtimeList(viewsets.ModelViewSet):
 
     
 class TheaterList(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         theater_id = kwargs.get('pk')
         movie = self.request.query_params.get('movie')
@@ -221,7 +221,7 @@ class TheaterList(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ComplaintView(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def post(self,request):
         user_id = request.user.id
         request_data = {**request.data, 'User_ID': user_id}
@@ -277,7 +277,7 @@ class ComplaintView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class BookingSeatView(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def post(self,request):
         # serializer = ComplaintGetSerializer(data=request.data)
 
@@ -319,7 +319,7 @@ class BookingSeatView(APIView):
 
 
 class BookingView(APIView):
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     def post(self,request):
         # serializer = ComplaintGetSerializer(data=request.data)
 

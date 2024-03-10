@@ -9,6 +9,8 @@ import {
   Footer,
   MovieDetails,
   Showtimes,
+  SeatShowtime,
+  TheaterDetails,
 } from "./Components";
 import {
   Home,
@@ -64,14 +66,20 @@ function App() {
             <Route path="movie" element={<MovieDetails />}>
               <Route path=":movieId" element={<MovieDetails />} />
             </Route>
-            {/* <Route path="showtimes" element={<showtimes />} >
-            <Route path=":movieId/:movieType/:movieLang" element={<Showtimes />} />
-          </Route> */}
+           
             <Route
               path="showtimes/:movieId/:movieType/:movieLang?"
               element={<Showtimes />}
             />
-            {/* <Route path="showtimes" element={<MBhome />} /> */}
+            <Route
+              path="showtime-seat/:showtimeId/"
+              element={<SeatShowtime />}
+            />
+            <Route
+              path="theater/:theaterId/"
+              element={<TheaterDetails />}
+            />
+            
           </Route>
           <Route path="/musicstreaming/" element={<MusicStreaming />} />
         </Routes>

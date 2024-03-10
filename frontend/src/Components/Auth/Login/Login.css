@@ -10,35 +10,40 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   margin-top: 50px;
-  /* width: 50%; */
-}
-
-/* Heading styling */
-h2 {
+ }
+ 
+ /* Heading styling */
+ h2 {
   text-align: center;
   color: #333;
-}
-.error{
+ }
+ 
+ /* Error message styling */
+ .error {
   color: red;
-}
-/* Form styling */
-form {
+ }
+ 
+ /* Form styling */
+ form {
   display: flex;
   flex-direction: column;
-}
-
-/* Input field styling */
-label {
+ }
+ 
+ /* Input field styling */
+ label {
   margin-bottom: 10px;
   color: #333;
-}
-span{
+ }
+ 
+ /* Unique class for span elements */
+ .login-span {
   color: #007bff;
   cursor: pointer;
   text-align: center;
-}
-
-input {
+ }
+ 
+ /* Input field styling */
+ input {
   width: 100%;
   padding: 8px;
   margin-bottom: 15px;
@@ -46,10 +51,10 @@ input {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 20px;
-}
-
-/* Button styling */
-button {
+ }
+ 
+ /* Unique class for button elements */
+ .login-button {
   background-color: #007bff;
   color: #fff;
   padding: 10px;
@@ -57,30 +62,38 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-/* button:hover {
+ }
+ 
+ /* Button hover effect */
+ .login-button:hover {
   background-color: #0056b3;
-} */
-.custom-link {
+ }
+ 
+ /* Forgot password link styling */
+ .forgotPass {
+  text-align: center;
+ }
+ 
+ .forgotPassLink {
+  text-decoration: none;
+ }
+ 
+ /* Custom label styling */
+ .custom-label {
+  text-decoration: none;
+  margin-top: 15px;
+  margin-right: auto; /* Adjust the margin-top value as needed */
+ }
+ 
+ /* Custom link styling */
+ .custom-link {
   text-decoration: none;
   color: inherit;
   margin-right: 20px;
   margin: 50px;
-}
-.custom-label {
-  text-decoration: none;
-  margin-top: 15px;
-  margin-right: auto; /* Adjust the margin-top value as needed */
-}
-.custom-link:hover {
+ }
+ 
+ .custom-link:hover {
   color: #007bff; /* Change the color when hovered */
-}
-
-.forgotPass{
-  text-align: center;
-}
-
-.forgotPassLink{
-  text-decoration: none;
-}
+ }
+ 

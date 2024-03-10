@@ -32,9 +32,12 @@ const BookingPopUp = ({ show, onClose, movieId, sortedData }) => {
   return (
     <div className="modal-overlay">
       <div className="modal">
+        <div className="btnHeader">
+        <h3 className="headerH3">Select Language And Format</h3>
         <button className="modal-close-button" onClick={onClose}>
           &times;
         </button>
+        </div>
         <div className="modal-content">
           {Object.entries(sortedData).map(([languageID, languageGroup]) => (
             <div key={languageID} className="modal-language">
@@ -42,7 +45,7 @@ const BookingPopUp = ({ show, onClose, movieId, sortedData }) => {
                 {languageGroup[0]?.[0]?.M_Language?.Language_Name ||
                   languageGroup[1]?.[0]?.M_Language?.Language_Name}
               </h3>
-              <ul>
+              <ul className="showtypes">
                 {Object.entries(languageGroup).map(([typeID, showTypeGroup]) => (
                   <div key={typeID} className="modal-showtype">
                     <button className="showTypeBtn" onClick={() => handleShowtimeClick(languageID, typeID)}>

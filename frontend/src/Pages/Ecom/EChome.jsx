@@ -8,7 +8,7 @@ function EChome() {
   return (
     <div>
       <Hero/>
-      <ProductContainer header="POPULAR PRODUCTS!"/>
+      <ProductContainer header="POPULAR PRODUCTS!" />
       <ProductContainer category="hoodie" header="SHOP HOODIES!"/> 
     </div>
   )

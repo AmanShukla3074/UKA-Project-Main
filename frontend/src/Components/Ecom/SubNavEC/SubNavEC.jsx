@@ -73,14 +73,14 @@ function SubNavEC() {
           </ul>
         </div>
       </nav>
-      <div className={`search-box ${isSearchBoxVisible ? 'visible' : ''}`}>
-        {isSearchBoxVisible && (
-          <>
-            <input type="text" placeholder="Search..." />
-            <button className=''>Submit</button>
-          </>
-        )}
-      </div>
+       <div className={`search-box-ec ${isSearchBoxVisible ? 'visible' : ''}`}>
+      {isSearchBoxVisible && (
+        <>
+          <input type="text" placeholder="Search..." className="search-field" />
+          <button className='search-btn-ec'>Submit</button>
+        </>
+      )}
+    </div>
     </div>
   );
 }
