@@ -1,7 +1,7 @@
-// Registration.js
 import React, { useState } from "react";
 import "./Registration.css";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Make sure to install axios if you haven't already
 
 const Registration = ({ onNext }) => {
   const navigate = useNavigate();
@@ -16,38 +16,163 @@ const Registration = ({ onNext }) => {
   const [profilePicture, setProfilePicture] = useState("");
   const [isFirstNameValid, setIsFirstNameValid] = useState(true);
   const [isLastNameValid, setIsLastNameValid] = useState(true);
+
+  const [isFirstNameEmpty, setIsFirstNameEmpty] = useState(false);
+  const [isLastNameEmpty, setIsLastNameEmpty] = useState(false);
+
   const [isMobileNumberValid, setIsMobileNumberValid] = useState(true);
+
+  const [isMobileNumberEmpty, setIsMobileNumberEmpty] = useState(false);
+
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isDobValid, setIsDobValid] = useState(true);
   const [isGenderValid, setIsGenderValid] = useState(true);
 
+  const [otp, setOtp] = useState(["", "", "", ""]); // OTP input state
+  const [showOtpInput, setShowOtpInput] = useState(false); // State to control OTP input visibility
+  const [serverOtp, setServerOtp] = useState(""); // OTP received from the server
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "firstName") setFirstName(value);
+    else if (name === "lastName") setLastName(value);
+    else if (name === "mobileNumber") setMobileNumber(value);
+    else if (name === "email") setEmail(value);
+    else if (name === "password") setPassword(value);
+    else if (name === "dob") setDob(value);
+    else if (name === "gender") setGender(value);
+  };
+
+  const handleOtpChange = (index, value) => {
+    otp[index] = value;
+    setOtp([...otp]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Construct the request body
+    const requestBody = {
+      first_name: firstName,
+      last_name: lastName,
+      mobile_no: mobileNumber,
+      password: password,
+      email: email,
+      dob: dob,
+      Gender: gender,
+      Role: {
+        Role_Name: "Customer",
+      },
+      Status: {
+        Status_Name: "Online",
+      },
+    };
+
+    // Send OTP to the user's mobile number
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Auth/send-otp/",
+        { mobile_no: mobileNumber }
+      );
+      if (response.status === 200) {
+        setServerOtp(response.data.otp.toString()); // Store the received OTP
+        console.log("Received OTP:", response.data.otp); // Log the received OTP
+        setShowOtpInput(true);
+      } else {
+        alert("An error occurred while sending the OTP.");
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error.message);
+      alert("An error occurred while sending the OTP.");
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    const otpValue = otp.join("");
+    if (otpValue === serverOtp) {
+      // OTP verified, proceed with registration
+      await registerUser();
+    } else {
+      alert("Invalid OTP. Please try again.");
+    }
+  };
+
+  const registerUser = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Auth/register/",
+        {
+          first_name: firstName,
+          last_name: lastName,
+          mobile_no: mobileNumber,
+          password: password,
+          email: email,
+          dob: dob,
+          Gender: gender,
+          Role: {
+            Role_Name: "Customer",
+          },
+          Status: {
+            Status_Name: "Online",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Registration successful!");
+        const userId = response.data.user_id; // Retrieve the user ID from the response
+        console.log("User ID:", userId);
+        // You can now use the user ID to navigate to the next page or perform other actions
+        navigate("/address", { state: { userId } }); // Pass the user ID to the next page
+      } else {
+        console.error("Error registering user:", response.data);
+        alert("An error occurred while registering.");
+      }
+    } catch (error) {
+      console.error("Error registering user:", error.message);
+      // Handle error as before
+    }
+  };
+
   const validateFirstName = () => {
-    const isValid = /^[a-zA-Z]+$/.test(firstName);
-    setIsFirstNameValid(isValid);
-    return isValid;
+    const isEmpty = firstName === "";
+    setIsFirstNameEmpty(isEmpty);
+
+    const isValidFormat = /^[a-zA-Z]+$/.test(firstName);
+    setIsFirstNameValid(isValidFormat);
+
+    return !isEmpty && isValidFormat;
   };
 
   const validateLastName = () => {
-    const isValid = /^[a-zA-Z]+$/.test(lastName);
-    setIsLastNameValid(isValid);
-    return isValid;
+    const isEmpty = lastName === "";
+    setIsLastNameEmpty(isEmpty);
+
+    const isValidFormat = /^[a-zA-Z]+$/.test(lastName);
+    setIsLastNameValid(isValidFormat);
+
+    return !isEmpty && isValidFormat;
   };
 
   const validateMobileNumber = () => {
-    const isValid = /^\d{10}$/.test(mobileNumber);
-    setIsMobileNumberValid(isValid);
-    return isValid;
+    const isEmpty = mobileNumber === "";
+    setIsMobileNumberEmpty(isEmpty);
+
+    const isValidFormat = /^\d{10}$/.test(mobileNumber);
+    setIsMobileNumberValid(isValidFormat);
+
+    return !isEmpty && isValidFormat;
   };
 
   const validateEmail = () => {
-    const isValid = /\S+@\S+\.\S+/.test(email);
+    const isValid = email === "" || /\S+@\S+\.\S+/.test(email);
     setIsEmailValid(isValid);
     return isValid;
   };
 
   const validatePassword = () => {
-    const isValid = password.length >= 6; // Example: Minimum password length
+    const isValid = password !== "" && password.length >= 6;
     setIsPasswordValid(isValid);
     return isValid;
   };
@@ -70,7 +195,6 @@ const Registration = ({ onNext }) => {
     const isMobileValid = validateMobileNumber();
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
-    // const isDobValid = dobDay !== "" && dobMonth !== "" && dobYear !== "";
     const isDobValid = validateDob();
     const isGenderValid = validateGender();
 
@@ -107,138 +231,574 @@ const Registration = ({ onNext }) => {
   return (
     <div className="registration-container">
       <h2>Registration</h2>
-      <form>
-        <label>
-          First Name:
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            onBlur={validateFirstName}
-            className={!isFirstNameValid ? "invalid" : ""}
-          />
-          {!isFirstNameValid && (
-            <span className="error">Invalid first name</span>
-          )}
-        </label>
-        <label>
-          Last Name:
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            onBlur={validateLastName}
-            className={!isLastNameValid ? "invalid" : ""}
-          />
-          {!isLastNameValid && <span className="error">Invalid last name</span>}
-        </label>
-        <label>
-          Mobile Number:
-          <input
-            type="text"
-            value={mobileNumber}
-            onChange={(e) => setMobileNumber(e.target.value)}
-            onBlur={validateMobileNumber}
-            className={!isMobileNumberValid ? "invalid" : ""}
-          />
-          {!isMobileNumberValid && (
-            <span className="error">Invalid mobile number</span>
-          )}
-        </label>
-        <label>
-          Email:
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={validateEmail}
-            className={!isEmailValid ? "invalid" : ""}
-          />
-          {!isEmailValid && <span className="error">Invalid email</span>}
-        </label>
-        <label>
-          Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onBlur={validatePassword}
-            className={!isPasswordValid ? "invalid" : ""}
-          />
-          {!isPasswordValid && (
-            <span className="error">
-              Password must be at least 6 characters
+      {!showOtpInput ? (
+        <form onSubmit={handleSubmit}>
+          <label>
+            First Name:
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              onBlur={validateFirstName}
+              className={!isFirstNameValid ? "invalid" : ""}
+            />
+            {!isFirstNameValid && !isFirstNameEmpty && (
+              <span className="error">Invalid first name</span>
+            )}
+            {!isFirstNameValid && isFirstNameEmpty && (
+              <span className="error">First name cannot be empty</span>
+            )}
+          </label>
+          <label>
+            Last Name:
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              onBlur={validateLastName}
+              className={!isLastNameValid ? "invalid" : ""}
+            />
+            {!isLastNameValid && !isLastNameEmpty && (
+              <span className="error">Invalid last name</span>
+            )}
+            {!isLastNameValid && isLastNameEmpty && (
+              <span className="error">Last name cannot be empty</span>
+            )}
+          </label>
+          {/* Mobile Number */}
+          <label>
+            Mobile Number:
+            <input
+              type="text"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              onBlur={validateMobileNumber}
+              className={!isMobileNumberValid ? "invalid" : ""}
+            />
+            {!isMobileNumberValid && !isMobileNumberEmpty && (
+              <span className="error">Invalid mobile number</span>
+            )}
+            {!isMobileNumberValid && isMobileNumberEmpty && (
+              <span className="error">Mobile number cannot be empty</span>
+            )}
+          </label>
+          {/* Email */}
+          <label>
+            Email:
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={validateEmail}
+              className={!isEmailValid ? "invalid" : ""}
+            />
+            {!isEmailValid && <span className="error">Invalid email</span>}
+          </label>
+          {/* Password */}
+          <label>
+            Password:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={validatePassword}
+              className={!isPasswordValid ? "invalid" : ""}
+            />
+            {!isPasswordValid && (
+              <span className="error">
+                Password must be at least 6 characters
+              </span>
+            )}
+          </label>
+          {/* Date of Birth */}
+          <label>
+            Date of Birth:
+            <input
+              type="date"
+              min="1900-01-01"
+              max={new Date().toISOString().split("T")[0]}
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className={!isDobValid ? "invalid" : ""}
+            />
+            {!isDobValid && (
+              <span className="error">Date of Birth is required</span>
+            )}
+          </label>
+          {/* Gender */}
+          <label>
+            Gender:
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className={!isGenderValid ? "invalid" : ""}
+            >
+              <option value="" disabled>
+                Select Gender
+              </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            {!isGenderValid && (
+              <span className="error">Gender is required</span>
+            )}
+          </label>
+          {/* Profile Picture */}
+          <label>
+            Profile Picture:
+            <input
+              type="file"
+              onChange={(e) => setProfilePicture(e.target.files[0])}
+            />
+          </label>
+
+          <button type="submit">Next</button>
+          <label className="account">
+            <span>
+              <Link to="/login" className="custom-link">
+                Have an account? Login
+              </Link>
             </span>
-          )}
-        </label>
-        {/* <label>
-          Date of Birth:
-          <input
-            type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            // onBlur={validateDob}
-            className={!isDobValid ? "invalid" : ""}
-          />
-          {!isDobValid && (
-            <span className="error">Date of Birth is required</span>
-          )}
-        </label> */}
+          </label>
+        </form>
+      ) : (
+        <div className="OTPcontainer">
+        <div className="OTPitems">
+        <input
+          className="OTPItem"
+          type="text"
+          maxLength="1"
+          value={otp[0]}
+          onChange={(e) => handleOtpChange(0, e.target.value)}
+        />
+        <input
+          className="OTPItem"
+          type="text"
+          maxLength="1"
+          value={otp[1]}
+          onChange={(e) => handleOtpChange(1, e.target.value)}
+        />
+        <input
+          className="OTPItem"
+          type="text"
+          maxLength="1"
+          value={otp[2]}
+          onChange={(e) => handleOtpChange(2, e.target.value)}
+        />
+        <input
+          className="OTPItem"
+          type="text"
+          maxLength="1"
+          value={otp[3]}
+          onChange={(e) => handleOtpChange(3, e.target.value)}
+        />
+</div>
+      <button className="OTPbtn" onClick={handleOtpSubmit}>
+      Submit OTP
+    </button>
 
-        <label>
-          Date of Birth:
-          <input
-            type="date"
-            min="1900-01-01"
-            max={new Date().toISOString().split("T")[0]}
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            className={!isDobValid ? "invalid" : ""}
-          />
-          {!isDobValid && (
-            <span className="error">Date of Birth is required</span>
-          )}
-        </label>
-
-        <label>
-          Gender:
-          <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            // onBlur={validateGender}
-            className={!isGenderValid ? "invalid" : ""}
-          >
-            <option value="" disabled>
-              Select Gender
-            </option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          {!isGenderValid && <span className="error">Gender is required</span>}
-        </label>
-        <label>
-          Profile Picture:
-          <input
-            type="file"
-            onChange={(e) => setProfilePicture(e.target.files[0])}
-          />
-        </label>
-
-        <button type="button" onClick={handleNext}>
-          Next
-        </button>
-
-        <label className="account">
-         
-          <span>
-            <Link to="/login" className="custom-link">
-               Have an account? Login
-            </Link>
-          </span>
-        </label>
-      </form>
+      </div>
+      )}
+      
     </div>
   );
 };
 
 export default Registration;
+// import React, { useState } from "react";
+// import "./Registration.css";
+// import { Link, useNavigate } from "react-router-dom";
+// import axios from "axios"; // Make sure to install axios if you haven't already
+
+// const Registration = ({ onNext }) => {
+//   const navigate = useNavigate();
+
+//   const [firstName, setFirstName] = useState("");
+//   const [lastName, setLastName] = useState("");
+//   const [mobileNumber, setMobileNumber] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [dob, setDob] = useState("");
+//   const [gender, setGender] = useState("");
+//   const [profilePicture, setProfilePicture] = useState("");
+//   const [isFirstNameValid, setIsFirstNameValid] = useState(true);
+//   const [isLastNameValid, setIsLastNameValid] = useState(true);
+
+//   const [isFirstNameEmpty, setIsFirstNameEmpty] = useState(false);
+//   const [isLastNameEmpty, setIsLastNameEmpty] = useState(false);
+
+//   const [isMobileNumberValid, setIsMobileNumberValid] = useState(true);
+
+//   const [isMobileNumberEmpty, setIsMobileNumberEmpty] = useState(false);
+
+//   const [isEmailValid, setIsEmailValid] = useState(true);
+//   const [isPasswordValid, setIsPasswordValid] = useState(true);
+//   const [isDobValid, setIsDobValid] = useState(true);
+//   const [isGenderValid, setIsGenderValid] = useState(true);
+
+//   const [otp, setOtp] = useState(["", "", "", ""]); // OTP input state
+//   const [showOtpInput, setShowOtpInput] = useState(false); // State to control OTP input visibility
+//   const [serverOtp, setServerOtp] = useState(""); // OTP received from the server
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     if (name === "firstName") setFirstName(value);
+//     else if (name === "lastName") setLastName(value);
+//     else if (name === "mobileNumber") setMobileNumber(value);
+//     else if (name === "email") setEmail(value);
+//     else if (name === "password") setPassword(value);
+//     else if (name === "dob") setDob(value);
+//     else if (name === "gender") setGender(value);
+//   };
+
+//   const handleOtpChange = (index, value) => {
+//     otp[index] = value;
+//     setOtp([...otp]);
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     // Construct the request body
+//     const requestBody = {
+//       first_name: firstName,
+//       last_name: lastName,
+//       mobile_no: mobileNumber,
+//       password: password,
+//       email: email,
+//       dob: dob,
+//       Gender: gender,
+//       Role: {
+//         Role_Name: "Customer",
+//       },
+//       Status: {
+//         Status_Name: "Online",
+//       },
+//     };
+
+//     // Send OTP to the user's mobile number
+//     try {
+//       const response = await axios.post(
+//         "http://127.0.0.1:8000/api/Auth/send-otp/",
+//         { mobile_no: mobileNumber }
+//       );
+//       if (response.status === 200) {
+//         setServerOtp(response.data.otp.toString()); // Store the received OTP
+//         console.log("Received OTP:", response.data.otp); // Log the received OTP
+//         setShowOtpInput(true);
+//       } else {
+//         alert("An error occurred while sending the OTP.");
+//       }
+//     } catch (error) {
+//       console.error("Error sending OTP:", error.message);
+//       alert("An error occurred while sending the OTP.");
+//     }
+//   };
+
+//   const handleOtpSubmit = async () => {
+//     const otpValue = otp.join("");
+//     if (otpValue === serverOtp) {
+//       // OTP verified, proceed with registration
+//       await registerUser();
+//     } else {
+//       alert("Invalid OTP. Please try again.");
+//     }
+//   };
+
+//   const registerUser = async () => {
+//     try {
+//       const response = await axios.post(
+//         "http://127.0.0.1:8000/api/Auth/register/",
+//         {
+//           first_name: firstName,
+//           last_name: lastName,
+//           mobile_no: mobileNumber,
+//           password: password,
+//           email: email,
+//           dob: dob,
+//           Gender: gender,
+//           Role: {
+//             Role_Name: "Customer",
+//           },
+//           Status: {
+//             Status_Name: "Online",
+//           },
+//         }
+//       );
+
+//       if (response.status === 200) {
+//         alert("Registration successful!");
+//         const userId = response.data.user_id; // Retrieve the user ID from the response
+//         console.log("User ID:", userId);
+//         // You can now use the user ID to navigate to the next page or perform other actions
+//         navigate("/address", { state: { userId } }); // Pass the user ID to the next page
+//       } else {
+//         console.error("Error registering user:", response.data);
+//         alert("An error occurred while registering.");
+//       }
+//     } catch (error) {
+//       console.error("Error registering user:", error.message);
+//       // Handle error as before
+//     }
+//   };
+
+//   const validateFirstName = () => {
+//     const isEmpty = firstName === "";
+//     setIsFirstNameEmpty(isEmpty);
+
+//     const isValidFormat = /^[a-zA-Z]+$/.test(firstName);
+//     setIsFirstNameValid(isValidFormat);
+
+//     return !isEmpty && isValidFormat;
+//   };
+
+//   const validateLastName = () => {
+//     const isEmpty = lastName === "";
+//     setIsLastNameEmpty(isEmpty);
+
+//     const isValidFormat = /^[a-zA-Z]+$/.test(lastName);
+//     setIsLastNameValid(isValidFormat);
+
+//     return !isEmpty && isValidFormat;
+//   };
+
+//   const validateMobileNumber = () => {
+//     const isEmpty = mobileNumber === "";
+//     setIsMobileNumberEmpty(isEmpty);
+
+//     const isValidFormat = /^\d{10}$/.test(mobileNumber);
+//     setIsMobileNumberValid(isValidFormat);
+
+//     return !isEmpty && isValidFormat;
+//   };
+
+//   const validateEmail = () => {
+//     const isValid = email === "" || /\S+@\S+\.\S+/.test(email);
+//     setIsEmailValid(isValid);
+//     return isValid;
+//   };
+
+//   const validatePassword = () => {
+//     const isValid = password !== "" && password.length >= 6;
+//     setIsPasswordValid(isValid);
+//     return isValid;
+//   };
+
+//   const validateDob = () => {
+//     const isValid = dob !== "";
+//     setIsDobValid(isValid);
+//     return isValid;
+//   };
+
+//   const validateGender = () => {
+//     const isValid = gender !== "";
+//     setIsGenderValid(isValid);
+//     return isValid;
+//   };
+
+//   const handleNext = () => {
+//     const isFirstNameValid = validateFirstName();
+//     const isLastNameValid = validateLastName();
+//     const isMobileValid = validateMobileNumber();
+//     const isEmailValid = validateEmail();
+//     const isPasswordValid = validatePassword();
+//     const isDobValid = validateDob();
+//     const isGenderValid = validateGender();
+
+//     if (
+//       isFirstNameValid &&
+//       isLastNameValid &&
+//       isMobileValid &&
+//       isEmailValid &&
+//       isPasswordValid &&
+//       isDobValid &&
+//       isGenderValid
+//     ) {
+//       console.log({
+//         firstName,
+//         lastName,
+//         mobileNumber,
+//         email,
+//         password,
+//         dob,
+//         gender,
+//         profilePicture,
+//       });
+
+//       // Call the parent component's onNext function to navigate to the next page
+//       onNext && onNext();
+
+//       // Use navigate to go to the "/otp" route
+//       navigate("/otp");
+//     } else {
+//       console.log("Form has errors. Please check your inputs.");
+//     }
+//   };
+
+//   return (
+//     <div className="registration-container">
+//       <h2>Registration</h2>
+//       {!showOtpInput ? (
+//         <form onSubmit={handleSubmit}>
+//           <label>
+//             First Name:
+//             <input
+//               type="text"
+//               value={firstName}
+//               onChange={(e) => setFirstName(e.target.value)}
+//               onBlur={validateFirstName}
+//               className={!isFirstNameValid ? "invalid" : ""}
+//             />
+//             {!isFirstNameValid && !isFirstNameEmpty && (
+//               <span className="error">Invalid first name</span>
+//             )}
+//             {!isFirstNameValid && isFirstNameEmpty && (
+//               <span className="error">First name cannot be empty</span>
+//             )}
+//           </label>
+//           <label>
+//             Last Name:
+//             <input
+//               type="text"
+//               value={lastName}
+//               onChange={(e) => setLastName(e.target.value)}
+//               onBlur={validateLastName}
+//               className={!isLastNameValid ? "invalid" : ""}
+//             />
+//             {!isLastNameValid && !isLastNameEmpty && (
+//               <span className="error">Invalid last name</span>
+//             )}
+//             {!isLastNameValid && isLastNameEmpty && (
+//               <span className="error">Last name cannot be empty</span>
+//             )}
+//           </label>
+//           {/* Mobile Number */}
+//           <label>
+//             Mobile Number:
+//             <input
+//               type="text"
+//               value={mobileNumber}
+//               onChange={(e) => setMobileNumber(e.target.value)}
+//               onBlur={validateMobileNumber}
+//               className={!isMobileNumberValid ? "invalid" : ""}
+//             />
+//             {!isMobileNumberValid && !isMobileNumberEmpty && (
+//               <span className="error">Invalid mobile number</span>
+//             )}
+//             {!isMobileNumberValid && isMobileNumberEmpty && (
+//               <span className="error">Mobile number cannot be empty</span>
+//             )}
+//           </label>
+//           {/* Email */}
+//           <label>
+//             Email:
+//             <input
+//               type="text"
+//               value={email}
+//               onChange={(e) => setEmail(e.target.value)}
+//               onBlur={validateEmail}
+//               className={!isEmailValid ? "invalid" : ""}
+//             />
+//             {!isEmailValid && <span className="error">Invalid email</span>}
+//           </label>
+//           {/* Password */}
+//           <label>
+//             Password:
+//             <input
+//               type="password"
+//               value={password}
+//               onChange={(e) => setPassword(e.target.value)}
+//               onBlur={validatePassword}
+//               className={!isPasswordValid ? "invalid" : ""}
+//             />
+//             {!isPasswordValid && (
+//               <span className="error">
+//                 Password must be at least 6 characters
+//               </span>
+//             )}
+//           </label>
+//           {/* Date of Birth */}
+//           <label>
+//             Date of Birth:
+//             <input
+//               type="date"
+//               min="1900-01-01"
+//               max={new Date().toISOString().split("T")[0]}
+//               value={dob}
+//               onChange={(e) => setDob(e.target.value)}
+//               className={!isDobValid ? "invalid" : ""}
+//             />
+//             {!isDobValid && (
+//               <span className="error">Date of Birth is required</span>
+//             )}
+//           </label>
+//           {/* Gender */}
+//           <label>
+//             Gender:
+//             <select
+//               value={gender}
+//               onChange={(e) => setGender(e.target.value)}
+//               className={!isGenderValid ? "invalid" : ""}
+//             >
+//               <option value="" disabled>
+//                 Select Gender
+//               </option>
+//               <option value="Male">Male</option>
+//               <option value="Female">Female</option>
+//             </select>
+//             {!isGenderValid && (
+//               <span className="error">Gender is required</span>
+//             )}
+//           </label>
+//           {/* Profile Picture */}
+//           <label>
+//             Profile Picture:
+//             <input
+//               type="file"
+//               onChange={(e) => setProfilePicture(e.target.files[0])}
+//             />
+//           </label>
+
+//           <button type="submit">Next</button>
+//           <label className="account">
+//             <span>
+//               <Link to="/login" className="custom-link">
+//                 Have an account? Login
+//               </Link>
+//             </span>
+//           </label>
+//         </form>
+//       ) : (
+//         <div>
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[0]}
+//             onChange={(e) => handleOtpChange(0, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[1]}
+//             onChange={(e) => handleOtpChange(1, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[2]}
+//             onChange={(e) => handleOtpChange(2, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[3]}
+//             onChange={(e) => handleOtpChange(3, e.target.value)}
+//           />
+//           <button onClick={handleOtpSubmit}>Submit OTP</button>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Registration;

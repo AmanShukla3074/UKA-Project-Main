@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 
 
 class Product_List(APIView):
-    # permission_classes = [IsAuthenticated]
+    # # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         product_id = kwargs.get('pk')
         category = self.request.query_params.get('category')
@@ -52,17 +52,17 @@ class Product_List(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)   
     
 class CategoriesList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     
 class Product_Color_MList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Product_Color_M.objects.all()
     serializer_class = Product_Color_MSerializer
     
 class Product_Size_MList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Product_Size_M.objects.all()
     serializer_class = Product_Size_MSerializer
     
@@ -107,22 +107,22 @@ class Product_SizeList(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)   
     
 class Product_ImgList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Product_Img.objects.all()
     serializer_class = Product_ImgSerializer
     
 class Status_MList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Status_M.objects.all()
     serializer_class = Status_MSerializer
     
 class Offer_MList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Offer_M.objects.all()
     serializer_class = Offer_MSerializer
     
 class Payment_ModeList(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Payment_Mode.objects.all()
     serializer_class = Payment_ModeSerializer
 

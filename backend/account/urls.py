@@ -34,6 +34,17 @@ urlpatterns = [
     path('send-otp/', send_otp_to_mobile_view, name='send-otp'),
     path('verify-otp/', verify_otp_view_register, name='verify_otp'),
 
+    path('state/', StateList.as_view({'get': 'list', 'post': 'create'}), name='StateList'),
+    path('state/<int:pk>/', StateList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='StateList'),
+   
+    path('city/', CityList.as_view(), name='CityList'),
+    path('city/<int:pk>/', CityList.as_view(), name='CityList'),
+   
+    # path('city/', CityList.as_view({'get': 'list', 'post': 'create'}), name='CityList'),
+    # path('city/<int:pk>/', CityList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='CityList'),
+   
+
+
 ]
 from django.conf.urls.static import static
 if settings.DEBUG:

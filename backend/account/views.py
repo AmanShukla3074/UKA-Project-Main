@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
+from rest_framework import generics,status,viewsets
 from backend.settings import EMAIL_HOST_USER
 from .serializers import *
 from .models import *
@@ -12,7 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
 # Create your views here.
 
-from rest_framework import status
+from rest_framework import status,viewsets
 
 
 
@@ -37,7 +38,8 @@ class RegisterView(APIView):
         # return Response(serializer.data)
         return Response({
             'status': 200,
-            'message': 'Registration succesfully '
+            'message': 'Registration succesfully ',
+             'user_id': user.id
         })
     
     def send_welcome_email(self, email , first_name, last_name ):
@@ -248,18 +250,76 @@ def resend_otp(request):
         'message': 'OTP Resent'
     })
 
+import logging
+from django.contrib.auth import get_user_model
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import ChangePasswordSerializer
+import jwt
 
+logger = logging.getLogger(__name__)
 
 class ChangePasswordView(APIView):
-    # permission_classes = (IsAuthenticated,)
-
     def post(self, request):
+        auth_header = self.request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        # Manually decode the token
+        decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m',
+                                   algorithms=['HS256'])
+
+        # Extract user information
+        user_id = decoded_token.get("user_id", None)
+
+        try:
+            # Get the user instance from the database
+            user = get_user_model().objects.get(pk=user_id)
+        except get_user_model().DoesNotExist:
+            raise Http404("User not found")
+
         serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid():
-            user = request.user
+            # Set the password for the user
             user.set_password(serializer.validated_data['new_password'])
             user.save()
             return Response({"message": "Password changed successfully"})
+        else:
+            # Return the errors from the serializer
+            return Response(serializer.errors, status=400)
+
+
+# import logging
+
+# logger = logging.getLogger(__name__)
+# import jwt
+# class ChangePasswordView(APIView):
+
+#     def post(self, request):
+#             # permission_classes = (IsAuthenticated,)
+#         auth_header = self.request.headers.get("Authorization", "")
+#         token = auth_header.replace("Bearer ", "")
+
+#     # Manually decode the token
+#         decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
+
+#     # Print the decoded token
+#         print("pass Decoded Token:", decoded_token)
+
+#     # Extract user information
+#         user_id = decoded_token.get("user_id", None)
+#         user=user_id
+#         print(user)
+#         serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+#         if serializer.is_valid():
+#             # user = request.user
+#             user.set_password(serializer.validated_data['new_password'])
+#             user.save()
+#             return Response({"message": "Password changed successfully"})
+#         else:
+#             # Return the errors from the serializer
+#             return Response(serializer.errors, status=400)
         
 class ForgetPasswordView(APIView):
     def post(self,request):
@@ -309,3 +369,29 @@ def verify_otp_view_register(request):
             return Response("verifired")
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)                                                                              
+    
+
+
+class StateList(viewsets.ModelViewSet):
+    queryset = State.objects.all()
+    serializer_class = StateSerializer
+
+# class CityList(viewsets.ModelViewSet):
+#     queryset = City.objects.all()
+#     serializer_class = CitySerializer
+
+class CityList(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = CitySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'status': status.HTTP_200_OK,
+            'message': 'City added successfully'
+        })
+
+    def get(self, request, *args, **kwargs):
+        # Assuming you want to retrieve all cities
+        cities = City.objects.all()
+        serializer = CityGetSerializer(cities, many=True)
+        return Response(serializer.data)

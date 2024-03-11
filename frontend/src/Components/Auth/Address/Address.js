@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Address.css";
-import { Navigate, useNavigate } from "react-router-dom";
-
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 const Address = ({ onNext, onSkip }) => {
   const [houseAdd, setHouseAdd] = useState("");
   const [streetAdd, setStreetAdd] = useState("");
@@ -9,7 +9,14 @@ const Address = ({ onNext, onSkip }) => {
   const [pincode, setPincode] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const navigate=useNavigate()
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+  const navigate = useNavigate();
+
+  const location = useLocation(); // Access the location state
+  const userId = location.state.userId; // Extract the userId from the location state
+
   const [validationErrors, setValidationErrors] = useState({
     houseAdd: "",
     streetAdd: "",
@@ -19,8 +26,37 @@ const Address = ({ onNext, onSkip }) => {
     state: "",
   });
 
+  useEffect(() => {
+    // Fetch states and cities on component mount
+    axios
+      .all([
+        axios.get("http://127.0.0.1:8000/api/Auth/state/"),
+        axios.get("http://127.0.0.1:8000/api/Auth/city/"),
+      ])
+      .then(
+        axios.spread((statesResponse, citiesResponse) => {
+          setStates(statesResponse.data);
+          setCities(citiesResponse.data);
+          setFilteredCities(citiesResponse.data); // Initialize filteredCities with all cities
+        })
+      )
+      .catch((error) => {
+        console.error("Error fetching states or cities:", error);
+      });
+  }, []);
+  useEffect(() => {
+    if (state) {
+      const filtered = cities.filter(
+        (city) => city.State.StateID === parseInt(state, 10)
+      );
+      setFilteredCities(filtered);
+    } else {
+      setFilteredCities(cities); // Reset to all cities if no state is selected
+    }
+  }, [state, cities]);
+
+
   const handleNext = () => {
-    // Validate inputs
     const errors = {};
     if (!houseAdd.trim()) {
       errors.houseAdd = "House Address is required";
@@ -31,29 +67,46 @@ const Address = ({ onNext, onSkip }) => {
     if (!pincode.trim()) {
       errors.pincode = "Pincode is required";
     }
-    if (!city.trim()) {
+    if (!city) {
       errors.city = "City is required";
     }
     if (!state) {
       errors.state = "State is required";
     }
+    if (!landmark.trim()) {
+      errors.landmark = "Landmark is required";
+    }
 
-    // If there are validation errors, set them and return
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
     }
 
-    // Clear validation errors
     setValidationErrors({});
 
-    // If validation passes, call the parent component's onNext function to navigate to the next page
-    onNext && onNext();
-  };
+    // API call to register address
+    axios.post("http://127.0.0.1:8000/api/Auth/register/address/", {
+      House_Add: houseAdd,
+      Street_Add: streetAdd,
+      Landmark: landmark,
+      Pincode: pincode,
+      City: city,
+      User: userId, // Assuming the backend expects the user ID here
+    })
+    .then(response => {
+      // Handle successful response
+      console.log("Address registered successfully:", response.data);
+      navigate("/");
+      onNext && onNext(); // Proceed to the next step if onNext is provided
+    })
+    .catch(error => {
+      // Handle error
+      console.error("Error registering address:", error);
+      // Optionally, set an error message in the state to display to the user
+    });
+ };
 
   const handleSkip = () => {
-    // Call the parent component's onSkip function to handle the skip action
-    // onSkip && onSkip();
     navigate("/");
   };
 
@@ -98,30 +151,35 @@ const Address = ({ onNext, onSkip }) => {
           <span className="error">{validationErrors.pincode}</span>
         </label>
         <div className="stateCity">
-          <label>
-            State: <br/>
-            <select value={state} onChange={(e) => setState(e.target.value)}>
-              <option value="">Select State</option>
-              <option value="state1">State 1</option>
-              <option value="state2">State 2</option>
-              {/* Add more options for states as needed */}
-            </select>
-            <span className="error">{validationErrors.state}</span>
-          </label>
-          <label>
-            City: <br/>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="city-dropdown"
-            >
-              <option value="">Select City</option>
-              <option value="city1">City 1</option>
-              <option value="city2">City 2</option>
-              {/* Add more options for cities as needed */}
-            </select>
-            <span className="error">{validationErrors.city}</span>
-          </label>
+            <label>
+              State: <br />
+              <select value={state} onChange={(e) => setState(e.target.value)}>
+                <option value="">Select State</option>
+                {states.map((state) => (
+                  <option key={state.StateID} value={state.StateID}>
+                    {state.State}
+                  </option>
+                ))}
+              </select>
+              <span className="error">{validationErrors.state}</span>
+            </label>
+            <label>
+              City: <br />
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="city-dropdown"
+              >
+                <option value="">Select City</option>
+                {filteredCities.map((city) => (
+                  <option key={city.CityID} value={city.CityID}>
+                    {city.City}
+                  </option>
+                ))}
+              </select>
+              <span className="error">{validationErrors.city}</span>
+            </label>
+
         </div>
         <label className="submit">
           <button type="button" onClick={handleSkip}>

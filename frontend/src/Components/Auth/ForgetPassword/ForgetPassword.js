@@ -1,187 +1,347 @@
-import React, { useState } from 'react';
-import './ForgetPassword.css'
+import React, { useState, useContext } from "react";
+import axios from "axios";
+import "./ForgetPassword.css";
+import AuthContext from "../../../Context/AuthContext"; // Adjust the import path as necessary
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ForgotPassword = () => {
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [OTP, setOTP] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const { authTokens } = useContext(AuthContext);
+  const navigate = useNavigate(); // Initialize useNavigate
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]); // OTP input state
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false); // State to control OTP input visibility
+  const [mobileNo, setMobileNo] = useState(""); // Mobile number for OTP
+  const [serverOtp, setServerOtp] = useState(""); // OTP received from the server
 
-  // Error states for each step
-  const [mobileNumberError, setMobileNumberError] = useState('');
-  const [otpError, setOtpError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "newPassword") setNewPassword(value);
+    else if (name === "confirmPassword") setConfirmPassword(value);
+    else if (name === "mobileNo") setMobileNo(value);
+  };
 
-  const handleGetMobile = () => {
-    // Validate mobile number
-    if (!/^\d{10}$/.test(mobileNumber)) {
-      setMobileNumberError('Please check your mobile number.');
+  const handleOtpChange = (index, value) => {
+    otp[index] = value;
+    setOtp([...otp]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!newPassword || !confirmPassword || !mobileNo) {
+      setError("All fields are required");
       return;
     }
 
-    // Implement logic to send OTP to the provided mobile number
-    // Make an API request here...
-
-    console.log('OTP sent to:', mobileNumber);
-
-    // Move to the next step
-    setCurrentStep(currentStep + 1);
-  };
-
-  const validateOTP = () => {
-    // You can customize the validation logic based on your requirements
-    const isValid = OTP.length >= 4; // Minimum OTP length example
-
-    if (!isValid) {
-      setOtpError('OTP must be at least 4 characters');
-    } else {
-      setOtpError('');
-    }
-
-    return isValid;
-  };
-
-  const validatePassword = () => {
-    // You can customize the password validation logic based on your requirements
-    const isValidPassword = newPassword.length >= 6; // Minimum password length example
-
-    if (!isValidPassword) {
-      setPasswordError('Password must be at least 6 characters');
-    } else {
-      setPasswordError('');
-    }
-
-    return isValidPassword;
-  };
-
-  const handleNext = () => {
-    // Reset previous errors
-    setMobileNumberError('');
-    setOtpError('');
-    setPasswordError('');
-
-    // Validate inputs based on the current step
-    if (currentStep === 1) {
-      if (!/^\d{10}$/.test(mobileNumber)) {
-        setMobileNumberError('Please check your mobile number.');
-        return;
-      }
-    } else if (currentStep === 2) {
-      const isOTPValid = validateOTP();
-      if (!isOTPValid) {
-        return;
-      }
-    }
-
-    // Move to the next step
-    setCurrentStep(currentStep + 1);
-  };
-
-  const handleResetPassword = () => {
-    // Reset previous errors
-    setOtpError('');
-    setPasswordError('');
-  
-    // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
-      setPasswordError('New password and confirm password do not match. Please try again.');
+      setError("New password and confirm password must match");
       return;
     }
-  
-    // Validate the password
-    const isPasswordValid = validatePassword();
-    if (!isPasswordValid) {
-      return;
+
+    // Send OTP to the user's mobile number
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Auth/send-otp/",
+        { mobile_no: mobileNo }
+      );
+      if (response.status === 200) {
+        setServerOtp(response.data.otp.toString()); // Store the received OTP
+        console.log("Received OTP:", response.data.otp); // Log the received OTP
+        setShowOtpInput(true);
+      } else {
+        alert("An error occurred while sending the OTP.");
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error.message);
+      alert("An error occurred while sending the OTP.");
     }
-  
-    // Implement logic to reset password on the backend
-    // ...
-  
-    // Show success message
-    setPasswordResetSuccess(true);
-  
-    // Reset the form or navigate to the login page after password reset
   };
-  
+
+  const handleOtpSubmit = async () => {
+    const otpValue = otp.join("");
+    if (otpValue === serverOtp) {
+      // OTP verified, proceed with password change
+      await changePassword();
+    } else {
+      alert("Invalid OTP. Please try again.");
+    }
+  };
+
+  const changePassword = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Auth/forget_password/",
+        {
+          mobileno: mobileNo, // Adjusted property name
+          new_password: newPassword, // Adjusted property name
+          confirm_password: confirmPassword, // Adjusted property name
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authTokens?.access}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setSuccessMessage("Your password has been changed successfully!");
+        console.log("Password changed successfully");
+        navigate("/"); // Navigate to home page on success
+      } else {
+        console.error("Error changing password:", response.data);
+        alert("An error occurred while changing the password.");
+        navigate("/forgotpassword"); // Navigate to forgot password page on failure
+      }
+    } catch (error) {
+      console.error("Error changing password:", error.message);
+      alert("An error occurred while changing the password.");
+      navigate("/forgotpassword"); // Navigate to forgot password page on failure
+    }
+  };
 
   return (
-    <div className="ForgotPassForm">
+    <div className="change-password-container">
       <h2>Forgot Password</h2>
-      {currentStep === 1 && (
-        <div>
-          <p className="forgotPass-p">Please enter your mobile number to receive an OTP.</p>
-          <form>
-            <label>
-              Mobile Number:
-              <input
-                type="text"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-              />
-              {mobileNumberError && <span className="error">{mobileNumberError}</span>}
-            </label>
-            <button type="button" onClick={handleGetMobile}>
-              Get OTP
-            </button>
-          </form>
-        </div>
-      )}
-      {currentStep === 2 && (
-        <div>
-          <p className="forgotPass-p">Enter the OTP sent to your mobile number.</p>
-          <form>
-            <label>
-              OTP:
-              <input
-                type="text"
-                value={OTP}
-                onChange={(e) => setOTP(e.target.value)}
-                onBlur={validateOTP}
-                className={!OTP ? 'invalid' : ''}
-              />
-              {otpError && <span className="error">{otpError}</span>}
-            </label>
-            <button type="button" onClick={handleNext}>
-              Next
-            </button>
-          </form>
-        </div>
-      )}
-      {currentStep === 3 && (
-        <div>
-          <p className="forgotPass-p">OTP verified. Please set a new password.</p>
-          <form>
-            <label>
-              New Password:
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              {passwordError && <span className="error">{passwordError}</span>}
-            </label>
-            <label>
-              Confirm Password:
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              {passwordError && <span className="error">{passwordError}</span>}
-            </label>
-            <button type="button" onClick={handleResetPassword}>
-              Reset Password
-            </button>
-          </form>
-          {passwordResetSuccess && (
-            <p className="forgotPass-p">Your password has been successfully changed.</p>
+      {!showOtpInput ? (
+        <form onSubmit={handleSubmit}>
+          <label>Mobile Number:</label>
+          <input
+            type="text"
+            name="mobileNo"
+            value={mobileNo}
+            onChange={handleChange}
+          />
+
+          <label>New Password:</label>
+          <input
+            type="password"
+            name="newPassword"
+            value={newPassword}
+            onChange={handleChange}
+          />
+
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={handleChange}
+          />
+
+          {error && <p className="error-message">{error}</p>}
+          {successMessage && (
+            <p className="success-message">{successMessage}</p>
           )}
+
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <div className="OTPcontainer">
+          <input
+            className="OTPItem"
+            type="text"
+            maxLength="1"
+            value={otp[0]}
+            onChange={(e) => handleOtpChange(0, e.target.value)}
+          />
+          <input
+            className="OTPItem"
+            type="text"
+            maxLength="1"
+            value={otp[1]}
+            onChange={(e) => handleOtpChange(1, e.target.value)}
+          />
+          <input
+            className="OTPItem"
+            type="text"
+            maxLength="1"
+            value={otp[2]}
+            onChange={(e) => handleOtpChange(2, e.target.value)}
+          />
+          <input
+            className="OTPItem"
+            type="text"
+            maxLength="1"
+            value={otp[3]}
+            onChange={(e) => handleOtpChange(3, e.target.value)}
+          />
         </div>
       )}
+      <button className="OTPbtn" onClick={handleOtpSubmit}>
+        Submit OTP
+      </button>
     </div>
   );
 };
 
 export default ForgotPassword;
+// import React, { useState, useContext } from 'react';
+// import axios from 'axios';
+// import './ForgetPassword.css';
+// import AuthContext from '../../../Context/AuthContext'; // Adjust the import path as necessary
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+// const ForgotPassword = () => {
+//  const { authTokens } = useContext(AuthContext);
+//  const navigate = useNavigate(); // Initialize useNavigate
+//  const [newPassword, setNewPassword] = useState('');
+//  const [confirmPassword, setConfirmPassword] = useState('');
+//  const [otp, setOtp] = useState(['', '', '', '']); // OTP input state
+//  const [error, setError] = useState('');
+//  const [successMessage, setSuccessMessage] = useState('');
+//  const [showOtpInput, setShowOtpInput] = useState(false); // State to control OTP input visibility
+//  const [mobileNo, setMobileNo] = useState(''); // Mobile number for OTP
+//  const [serverOtp, setServerOtp] = useState(''); // OTP received from the server
+
+//  const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     if (name === 'newPassword') setNewPassword(value);
+//     else if (name === 'confirmPassword') setConfirmPassword(value);
+//     else if (name === 'mobileNo') setMobileNo(value);
+//  };
+
+//  const handleOtpChange = (index, value) => {
+//     otp[index] = value;
+//     setOtp([...otp]);
+//  };
+
+//  const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     // Validation
+//     if (!newPassword || !confirmPassword || !mobileNo) {
+//       setError('All fields are required');
+//       return;
+//     }
+
+//     if (newPassword !== confirmPassword) {
+//       setError('New password and confirm password must match');
+//       return;
+//     }
+
+//     // Send OTP to the user's mobile number
+//     try {
+//       const response = await axios.post('http://127.0.0.1:8000/api/Auth/send-otp/', { mobile_no: mobileNo });
+//       if (response.status === 200) {
+//         setServerOtp(response.data.otp.toString()); // Store the received OTP
+//         console.log("Received OTP:", response.data.otp); // Log the received OTP
+//         setShowOtpInput(true);
+//       } else {
+//         alert('An error occurred while sending the OTP.');
+//       }
+//     } catch (error) {
+//       console.error('Error sending OTP:', error.message);
+//       alert('An error occurred while sending the OTP.');
+//     }
+//  };
+
+//  const handleOtpSubmit = async () => {
+//     const otpValue = otp.join('');
+//     if (otpValue === serverOtp) {
+//       // OTP verified, proceed with password change
+//       await changePassword();
+//     } else {
+//       alert('Invalid OTP. Please try again.');
+//     }
+//  };
+
+//  const changePassword = async () => {
+//     try {
+//       const response = await axios.post('http://127.0.0.1:8000/api/Auth/forget_password/', {
+//         mobileno: mobileNo, // Adjusted property name
+//         new_password: newPassword, // Adjusted property name
+//         confirm_password: confirmPassword // Adjusted property name
+//       }, {
+//         headers: {
+//           Authorization: `Bearer ${authTokens?.access}`
+//         }
+//       });
+
+//       if (response.status === 200) {
+//         setSuccessMessage('Your password has been changed successfully!');
+//         console.log('Password changed successfully');
+//         navigate('/'); // Navigate to home page on success
+//       } else {
+//         console.error('Error changing password:', response.data);
+//         alert('An error occurred while changing the password.');
+//         navigate('/forgotpassword'); // Navigate to forgot password page on failure
+//       }
+//     } catch (error) {
+//       console.error('Error changing password:', error.message);
+//       alert('An error occurred while changing the password.');
+//       navigate('/forgotpassword'); // Navigate to forgot password page on failure
+//     }
+// };
+
+//  return (
+//     <div className="change-password-container">
+//       <h2>Forgot Password</h2>
+//       {!showOtpInput ? (
+//         <form onSubmit={handleSubmit}>
+//           <label>Mobile Number:</label>
+//           <input
+//             type="text"
+//             name="mobileNo"
+//             value={mobileNo}
+//             onChange={handleChange}
+//           />
+
+//           <label>New Password:</label>
+//           <input
+//             type="password"
+//             name="newPassword"
+//             value={newPassword}
+//             onChange={handleChange}
+//           />
+
+//           <label>Confirm Password:</label>
+//           <input
+//             type="password"
+//             name="confirmPassword"
+//             value={confirmPassword}
+//             onChange={handleChange}
+//           />
+
+//           {error && <p className="error-message">{error}</p>}
+//           {successMessage && <p className="success-message">{successMessage}</p>}
+
+//           <button type="submit">Submit</button>
+//         </form>
+//       ) : (
+//         <div>
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[0]}
+//             onChange={(e) => handleOtpChange(0, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[1]}
+//             onChange={(e) => handleOtpChange(1, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[2]}
+//             onChange={(e) => handleOtpChange(2, e.target.value)}
+//           />
+//           <input
+//             type="text"
+//             maxLength="1"
+//             value={otp[3]}
+//             onChange={(e) => handleOtpChange(3, e.target.value)}
+//           />
+//           <button onClick={handleOtpSubmit}>Submit OTP</button>
+//         </div>
+//       )}
+//     </div>
+//  );
+// };
+
+// export default ForgotPassword;

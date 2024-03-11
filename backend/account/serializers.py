@@ -15,16 +15,6 @@ class StatusSerializer(serializers.ModelSerializer):
         model = Status
         fields = '__all__'
 
-class StateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=State
-        fields = '__all__'
-    
-class CitySerializer(serializers.ModelSerializer):
-    State = StateSerializer()
-    class Meta:
-        model = City
-        fields = '__all__'
 
 
 
@@ -98,21 +88,58 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+
+class StateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=State
+        fields = '__all__'
+    
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = '__all__'
+    
+class CityGetSerializer(serializers.ModelSerializer):
+    State = StateSerializer()
+    class Meta:
+        model = City
+        fields = '__all__'
+
+
 class AddressSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Address
         fields = '__all__'
-    
+
 class AddressGetSerializer(serializers.ModelSerializer):
-    City_ID = serializers.PrimaryKeyRelatedField(source='City.CityID', read_only=True)
-    City_Name = serializers.CharField(source='City.City', read_only=True)
+    # City_ID = serializers.PrimaryKeyRelatedField(source='City.CityID', read_only=True)
+    # City_Name = serializers.CharField(source='City.City', read_only=True)
+    City=CitySerializer()
     U_FName = serializers.CharField(source='User.first_name', read_only=True)
     U_LName = serializers.CharField(source='User.last_name', read_only=True)
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ['AddressID','User','U_FName','U_LName','House_Add','Street_Add','Landmark','Pincode','City']
 
+
+# class ChangePasswordSerializer(serializers.Serializer):
+#     old_password = serializers.CharField(required=True)
+#     new_password = serializers.CharField(required=True)
+#     confirm_password = serializers.CharField(required=True)
+
+#     def validate(self, attrs):
+#         if attrs['new_password'] != attrs['confirm_password']:
+#             raise serializers.ValidationError("New passwords must match")
+#         return attrs
+
+#     def validate_old_password(self, value):
+#         user = self.context['request'].user
+#         if not user.check_password(value):
+#             raise serializers.ValidationError("Old password is not correct")
+#         return value
+
+from django.contrib.auth import get_user_model
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -127,10 +154,16 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate_old_password(self, value):
         user = self.context['request'].user
+
+        # Check if the user is authenticated before validating the old password
+        if not isinstance(user, get_user_model()):
+            return value
+
         if not user.check_password(value):
             raise serializers.ValidationError("Old password is not correct")
         return value
-    
+
+
 class ForgetPasswordSerializer(serializers.Serializer):
     mobileno=serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

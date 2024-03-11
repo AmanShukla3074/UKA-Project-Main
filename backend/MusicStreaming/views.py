@@ -308,7 +308,7 @@ class PlaylistViews(viewsets.ModelViewSet):
         decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
 
     # Print the decoded token
-        print("Decoded Token:", decoded_token)
+        print("Decoded Token :", decoded_token)
 
     # Extract user information
         user_id = decoded_token.get("user_id", None)

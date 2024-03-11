@@ -75,6 +75,7 @@ REST_FRAMEWORK = {
 #     'django.contrib.messages.middleware.MessageMiddleware',
 #     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 # ]
+
 MIDDLEWARE = [
     
     'corsheaders.middleware.CorsMiddleware',
@@ -283,4 +284,5 @@ MUSICAUDIO_MEDIA_ROOT = BASE_DIR / "media/MusicAudio"
 MUSICCOVERIMGS_MEDIA_URL = '/media/MusicCoverIMGs/'
 MUSICCOVERIMGS_MEDIA_ROOT = BASE_DIR / "media/MusicCoverIMGs"
 
-API_KEY="a48416cb-dc6a-11ee-8cbb-0200cd936042"
+API_KEY="31d68bcd-dc76-11ee-8cbb-0200cd936042"
+# API_KEY="a48416cb-dc6a-11ee-8cbb-0200cd936042"
