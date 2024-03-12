@@ -2,6 +2,11 @@ from rest_framework import serializers
 from .models import *
 from account.serializers import *
 
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MS_Genre_M
+        fields = '__all__'
+
 class ArtistSerializer(serializers.ModelSerializer):
     # User_ID=UserSerializer(read_only=True)
     User_ID = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -83,6 +88,7 @@ class PostPlaylistMusicSerializer(serializers.ModelSerializer):
         model = Playlist_Music_M
         fields = ['PlaylistMusic_ID', 'Playlist_ID', 'Music_ID']
 
+import collections
 
 class PlaylistSerializer(serializers.ModelSerializer):
     # playlist_music = PlaylistMusicSerializer(many=True, read_only=True)
@@ -99,7 +105,30 @@ class PlaylistSerializer(serializers.ModelSerializer):
         fields = ['Playlist_ID', 'User_ID', 'Playlist_Title', 'P_Created_Date', 'PlaylistMusic']
         read_only_fields = ['User_ID']
 
+class PlaylistPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Playlist_M
+        fields = '__all__'
+        read_only_fields = ['User_ID']
 
+# class PlaylistSerializer(serializers.ModelSerializer):
+#     PlaylistMusic = serializers.SerializerMethodField()
+
+#     def get_PlaylistMusic(self, obj):
+#         # Check if obj is an OrderedDict (received from a POST request)
+#         if isinstance(obj, collections.OrderedDict):
+#             playlist_id = obj.get('Playlist_ID')
+#         else:
+#             playlist_id = obj.Playlist_ID
+
+#         product_img = Playlist_Music_M.objects.filter(Playlist_ID=playlist_id)
+#         serializer = GetPlaylistMusicSerializer(product_img, many=True)
+#         return serializer.data
+
+#     class Meta:
+#         model = Playlist_M
+#         fields = ['Playlist_ID', 'User_ID', 'Playlist_Title', 'P_Created_Date', 'PlaylistMusic']
+#         read_only_fields = ['User_ID']
 
 # class GetLikedMusicSerializer(serializers.ModelSerializer):
 #     Music_ID = MusicSerializer()

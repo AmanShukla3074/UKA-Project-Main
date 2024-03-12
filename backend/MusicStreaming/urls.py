@@ -8,6 +8,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     
    #Music
+    
+   path('get-music/', MusicList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   path('get-music/<int:pk>/', MusicList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+
+
+   path('genre/', GenreList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   path('genre/<int:pk>/', GenreList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
 
    path('music/', MusicAPIView.as_view(), name='music-list'),
    path('music/<int:music_id>/', MusicAPIView.as_view(), name='music-detail'),
@@ -38,8 +45,12 @@ urlpatterns = [
 
 #Playlist
 
-   path('playlist/', PlaylistViews.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
-   path('playlist/<int:pk>/', PlaylistViews.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+   path('playlist/', PlaylistViews.as_view(), name='playlist-list'),
+   path('playlist/<int:pk>/', PlaylistViews.as_view(), name='playlist-detail'),
+  
+
+   # path('playlist/', PlaylistViews.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
+   # path('playlist/<int:pk>/', PlaylistViews.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
   
 
    path('playlist-Music/', PlaylistMusicViews.as_view(), name='playlist-Music-list'),

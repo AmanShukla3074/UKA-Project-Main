@@ -9,10 +9,15 @@ from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 
 
+    
+class GenreList(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
+    queryset = MS_Genre_M.objects.all()
+    serializer_class = GenreSerializer
 
 class ArtistViewSet(viewsets.ModelViewSet):
     serializer_class = ArtistSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Get the currently logged-in user
@@ -33,49 +38,122 @@ class ArtistViewSet(viewsets.ModelViewSet):
         serializer.save(User_ID=user)
 
 
-class MusicAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    
+class MusicList(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
+    queryset = Music_M.objects.all()
+    serializer_class = MusicSerializer
 
+class MusicAPIView(APIView):
     def get(self, request, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
         music_id = kwargs.get('music_id')
 
-        if music_id is not None:
-            music = Music_M.objects.get(pk=music_id)
-            serializer = MusicSerializer(music)
-            return Response(serializer.data)
-        
-        # Add logic for retrieving music instances if needed
-        # artist_id = request.user.artist_profile.Artist_ID  # Assuming the Artist model has a profile linked to the user
-        artist_id = Artist_M.objects.get(User_ID=request.user)
-        music_instances = Music_M.objects.filter(music_artist__Artist_ID__pk=artist_id.Artist_ID)
-        # music_instances = Music_M.objects.filter(music_artist__artist_id=artist_id)
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
 
-        serializer = MusicSerializer(music_instances, many=True)
-        return Response(serializer.data)
+            if music_id is not None:
+                music = Music_M.objects.get(pk=music_id)
+                serializer = MusicSerializer(music)
+                return Response(serializer.data)
+
+            if user_id is not None:
+                # Retrieve artist_id based on user_id
+                try:
+                    artist_profile = Artist_M.objects.get(User_ID=user_id)
+                    artist_id = artist_profile.Artist_ID
+                except Artist_M.DoesNotExist:
+                    return Response({"error": "Artist profile not found for the user"}, status=status.HTTP_404_NOT_FOUND)
+
+                # Filter Music_M instances using artist_id
+                music_instances = Music_M.objects.filter(music_artist__Artist_ID=artist_id)
+                serializer = MusicSerializer(music_instances, many=True)
+                return Response(serializer.data)
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.exceptions.DecodeError:
+            return Response({"error": "Malformed token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # def post(self, request, *args, **kwargs):
+    #     try:
+    #         # Retrieve the specific artist instance
+    #         artist_profile = Artist_M.objects.get(User_ID=request.user)
+    #     except Artist_M.DoesNotExist:
+    #         return Response({"detail": "User must have an associated artist profile."},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+
+    #     serializer = MusicSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         music_instance = serializer.save()
+
+    #         # Associate the music with the artist using only IDs
+    #         Music_Artist.objects.create(Music_ID_id=music_instance.Music_ID, Artist_ID_id=artist_profile.Artist_ID)
+
+    #         # Update the serializer data to include the associated artist
+    #         serializer_data = serializer.data
+    #         serializer_data['music_artist'] = [{'Music_ID': music_instance.Music_ID, 'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+
+    #         return Response(serializer_data, status=status.HTTP_201_CREATED)
+
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
     def post(self, request, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
         try:
-            # Retrieve the specific artist instance
-            artist_profile = Artist_M.objects.get(User_ID=request.user)
-        except Artist_M.DoesNotExist:
-            return Response({"detail": "User must have an associated artist profile."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
 
-        serializer = MusicSerializer(data=request.data)
-        if serializer.is_valid():
-            music_instance = serializer.save()
+            if user_id is not None:
+                # Retrieve the specific artist instance
+                try:
+                    artist_profile = Artist_M.objects.get(User_ID=user_id)
+                except Artist_M.DoesNotExist:
+                    return Response({"detail": "User must have an associated artist profile."},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-            # Associate the music with the artist using only IDs
-            Music_Artist.objects.create(Music_ID_id=music_instance.Music_ID, Artist_ID_id=artist_profile.Artist_ID)
+                # Update the data with the User instance
+                request.data['music_artist'] = [{'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+                serializer = MusicSerializer(data=request.data)
 
-            # Update the serializer data to include the associated artist
-            serializer_data = serializer.data
-            serializer_data['music_artist'] = [{'Music_ID': music_instance.Music_ID, 'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+                if serializer.is_valid():
+                    music_instance = serializer.save()
 
-            return Response(serializer_data, status=status.HTTP_201_CREATED)
+                    # Associate the music with the artist using only IDs
+                    Music_Artist.objects.create(Music_ID_id=music_instance.Music_ID, Artist_ID_id=artist_profile.Artist_ID)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+                    # Update the serializer data to include the associated artist
+                    serializer_data = serializer.data
+                    serializer_data['music_artist'] = [{'Music_ID': music_instance.Music_ID,
+                                                         'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+
+                    return Response(serializer_data, status=status.HTTP_201_CREATED)
+
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.exceptions.DecodeError:
+            return Response({"error": "Malformed token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
     def patch(self, request, *args, **kwargs):
         # Add logic for updating a music instance if needed
         music_id = kwargs.get('music_id')
@@ -94,7 +172,7 @@ class MusicAPIView(APIView):
 
 
 class AddArtistsToMusic(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def post(self, request, music_id):
         try:
             # Retrieve the specific music instance
@@ -144,8 +222,7 @@ class AddArtistsToMusic(APIView):
 
 
 class AlbumApiView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         album_id = kwargs.get('album_id')
 
@@ -154,30 +231,109 @@ class AlbumApiView(APIView):
             serializer = AlbumSerializer(album)
             return Response(serializer.data)
         
-        # Add logic for retrieving music instances if needed
-        artist_id = Artist_M.objects.get(User_ID=request.user)
-        album = Album_M.objects.filter(album_artist__Artist_ID__pk=artist_id.Artist_ID)
-        serializer = AlbumSerializer(album, many=True)
-        return Response(serializer.data)
+        # Add logic for retrieving album instances if needed
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
 
-    def post(self,request,*args,**kwargs):
         try:
-            artist_profile=Artist_M.objects.get(User_ID=request.user)
+            decoded_token = jwt.decode(token,  'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            if user_id is not None:
+                artist_id = Artist_M.objects.get(User_ID=user_id)
+                albums = Album_M.objects.filter(album_artist__Artist_ID__pk=artist_id.Artist_ID)
+                serializer = AlbumSerializer(albums, many=True)
+                return Response(serializer.data)
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.exceptions.DecodeError:
+            return Response({"error": "Malformed token"}, status=status.HTTP_401_UNAUTHORIZED)
         except Artist_M.DoesNotExist:
-            return Response({"detail": "User must have an associated artist profile."},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Artist not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializers=AlbumSerializer(data=request.data)
-        if serializers.is_valid():
-            album_intance = serializers.save()
+    def post(self, request, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
 
-            Album_Artist.objects.create(Album_ID_id=album_intance.Album_ID,Artist_ID_id=artist_profile.Artist_ID)
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
 
-            serializer_data=serializers.data
-            serializer_data['Album_artist'] = [{'Album_ID': album_intance.Album_ID, 'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+            if user_id is not None:
+                # Retrieve the specific artist instance
+                try:
+                    artist_profile = Artist_M.objects.get(User_ID=user_id)
+                except Artist_M.DoesNotExist:
+                    return Response({"detail": "User must have an associated artist profile."},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(serializer_data, status=status.HTTP_201_CREATED)
+                # Update the data with the User instance
+                request.data['Album_artist'] = [{'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+                serializer = AlbumSerializer(data=request.data)
 
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+                if serializer.is_valid():
+                    album_instance = serializer.save()
+
+                    # Associate the album with the artist using only IDs
+                    Album_Artist.objects.create(Album_ID_id=album_instance.Album_ID, Artist_ID_id=artist_profile.Artist_ID)
+
+                    # Update the serializer data to include the associated artist
+                    serializer_data = serializer.data
+                    serializer_data['Album_artist'] = [{'Album_ID': album_instance.Album_ID,
+                                                         'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+
+                    return Response(serializer_data, status=status.HTTP_201_CREATED)
+
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.exceptions.DecodeError:
+            return Response({"error": "Malformed token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+    # def get(self, request, *args, **kwargs):
+    #     album_id = kwargs.get('album_id')
+
+    #     if album_id is not None:
+    #         album = Album_M.objects.get(pk=album_id)
+    #         serializer = AlbumSerializer(album)
+    #         return Response(serializer.data)
+        
+    #     # Add logic for retrieving music instances if needed
+    #     artist_id = Artist_M.objects.get(User_ID=request.user)
+    #     album = Album_M.objects.filter(album_artist__Artist_ID__pk=artist_id.Artist_ID)
+    #     serializer = AlbumSerializer(album, many=True)
+    #     return Response(serializer.data)
+
+    # def post(self,request,*args,**kwargs):
+    #     try:
+    #         artist_profile=Artist_M.objects.get(User_ID=request.user)
+    #     except Artist_M.DoesNotExist:
+    #         return Response({"detail": "User must have an associated artist profile."},status=status.HTTP_400_BAD_REQUEST)
+
+    #     serializers=AlbumSerializer(data=request.data)
+    #     if serializers.is_valid():
+    #         album_intance = serializers.save()
+
+    #         Album_Artist.objects.create(Album_ID_id=album_intance.Album_ID,Artist_ID_id=artist_profile.Artist_ID)
+
+    #         serializer_data=serializers.data
+    #         serializer_data['Album_artist'] = [{'Album_ID': album_intance.Album_ID, 'artist': {'Artist_ID': artist_profile.Artist_ID}}]
+
+    #         return Response(serializer_data, status=status.HTTP_201_CREATED)
+
+    #     return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, *args, **kwargs):
         album_id=kwargs.get('album_id')
@@ -196,7 +352,7 @@ class AlbumApiView(APIView):
 
 
 class AddArtistsToAlbum(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def post(self, request, album_id):
         try:
             # Retrieve the specific music instance
@@ -244,7 +400,7 @@ class AddArtistsToAlbum(APIView):
 #Search Artist
     
 class ArtistSearchView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, artist_id):
         try:
@@ -280,57 +436,184 @@ import logging
 logger = logging.getLogger(__name__)
 import jwt
 
-class PlaylistViews(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    queryset = Playlist_M.objects.all()
-    serializer_class = PlaylistSerializer
+# class PlaylistViews(viewsets.ModelViewSet):
+#     queryset = Playlist_M.objects.all()
+#     serializer_class = PlaylistSerializer
 
-    def get_queryset(self):
-        # Get the currently logged-in user
-        # print("Raw Headers:", self.request.headers)
-       
-        # user = self.request.user
-       
-        # logger.info(f"User: {user}")
-        # print(user,"aa")
-        # # user = 4
-        # print("Decoded Token:", user.id)
-        # queryset = Playlist_M.objects.filter(User_ID=user.id)
+#     def get_queryset(self):
 
-        # return queryset
+#         auth_header = self.request.headers.get("Authorization", "")
+#         token = auth_header.replace("Bearer ", "")
 
+#         decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
 
+#         print("Decoded Token :", decoded_token)
 
-        auth_header = self.request.headers.get("Authorization", "")
+#         user_id = decoded_token.get("user_id", None)
+#         queryset = Playlist_M.objects.filter(User_ID=user_id)
+
+#         return queryset
+#     def perform_create(self, serializer):
+#         auth_header = self.request.headers.get("Authorization", "")
+#         token = auth_header.replace("Bearer ", "")
+#         decoded_token = jwt.decode(token, 'your_secret_key', algorithms=['HS256'])
+#         user_id = decoded_token.get("user_id", None)
+#         serializer.save(User_ID=user_id)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Playlist_M
+from .serializers import PlaylistSerializer
+import jwt
+
+class PlaylistViews(APIView):
+    def get(self, request):
+        auth_header = request.headers.get("Authorization", "")
         token = auth_header.replace("Bearer ", "")
 
-    # Manually decode the token
-        decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m' , algorithms=['HS256'])
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+            queryset = Playlist_M.objects.filter(User_ID=user_id)
+            serializer = PlaylistSerializer(queryset, many=True)
+            return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Print the decoded token
-        print("Decoded Token :", decoded_token)
+    # def post(self, request):
+    #     auth_header = request.headers.get("Authorization", "")
+    #     token = auth_header.replace("Bearer ", "")
 
-    # Extract user information
-        user_id = decoded_token.get("user_id", None)
-        queryset = Playlist_M.objects.filter(User_ID=user_id)
+    #     try:
+    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+    #         user_id = decoded_token.get("user_id", None)
+    #         serializer = PlaylistSerializer(data=request.data)
+    #         if serializer.is_valid():
+    #             serializer.save(User_ID=user_id)
+    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     except jwt.ExpiredSignatureError:
+    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+    #     except jwt.InvalidTokenError:
+    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        return queryset
-        # Filter the queryset to get the artist profile associated with the user
-       
+    def post(self, request):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
 
-    # def perform_create(self, serializer):
-    #     # Automatically set the user to the one making the request
-    #     serializer.save(User_ID=self.request.user)
-    def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            serializer.save(User_ID=self.request.user)
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
 
-# class PlaylistMusicViews(viewsets.ModelViewSet):
-#     queryset = Playlist_Music_M.objects.all()
-#     serializer_class = PlaylistMusicSerializer
-        
+            # Retrieve the User instance using the user_id
+            user = User.objects.get(pk=user_id)
+            
+            serializer = PlaylistSerializer(data=request.data)
+            if serializer.is_valid():
+                # Save the serializer with the User instance
+                serializer.save(User_ID=user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk):
+        # Implement update logic here
+        pass
+
+    def patch(self, request, pk):
+        try:
+            auth_header = request.headers.get("Authorization", "")
+            token = auth_header.replace("Bearer ", "")
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            playlist = Playlist_M.objects.get(pk=pk, User_ID=user_id)
+            serializer = PlaylistSerializer(playlist, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Playlist_M.DoesNotExist:
+            return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk):
+        try:
+            auth_header = request.headers.get("Authorization", "")
+            token = auth_header.replace("Bearer ", "")
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            playlist = Playlist_M.objects.get(pk=pk, User_ID=user_id)
+            playlist.delete()
+            return Response({"message": "Playlist deleted successfully"})
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Playlist_M.DoesNotExist:
+            return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+from django.http import JsonResponse
+# class PlaylistViews(viewsets.ModelViewSet):
+#     queryset = Playlist_M.objects.all()
+#     serializer_class = PlaylistSerializer
+
+#     def get_queryset(self):
+#         auth_header = self.request.headers.get("Authorization", "")
+#         token = auth_header.replace("Bearer ", "")
+
+#         try:
+#             decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+#             print("Decoded Token:", decoded_token)
+
+#             user_id = decoded_token.get("user_id", None)
+#             queryset = Playlist_M.objects.filter(User_ID=user_id)
+#             return queryset
+#         except jwt.ExpiredSignatureError:
+#             return JsonResponse({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+#         except jwt.InvalidTokenError:
+#             return JsonResponse({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+#     def perform_create(self, serializer):
+#         auth_header = self.request.headers.get("Authorization", "")
+#         token = auth_header.replace("Bearer ", "")
+
+#         try:
+#             decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+#             print("Decoded Token:", decoded_token)
+
+#             user_id = decoded_token.get("user_id", None)
+#             print("User ID from Token:", user_id)
+
+#             # Debugging: Print the data being passed to the serializer
+#             print("Serializer Data:", self.request.data)
+
+#             serializer.save(User_ID=user_id)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         except jwt.ExpiredSignatureError:
+#             return JsonResponse({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+#         except jwt.InvalidTokenError:
+#             return JsonResponse({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+#         except Exception as e:
+#             return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class PlaylistMusicViews(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         playlist_music_instances = Playlist_Music_M.objects.all()
@@ -345,21 +628,43 @@ class PlaylistMusicViews(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = GetPlaylistMusicSerializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        playlist_music_id = kwargs.get('pk')
+        try:
+            instance = Playlist_Music_M.objects.get(pk=playlist_music_id)
+            serializer = GetPlaylistMusicSerializer(instance, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Playlist_Music_M.DoesNotExist:
+            return Response({"error": "Playlist Music not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        playlist_music_id = kwargs.get('pk')
+        try:
+            instance = Playlist_Music_M.objects.get(pk=playlist_music_id)
+            instance.delete()
+            return Response({"message": "Playlist Music deleted successfully"})
+        except Playlist_Music_M.DoesNotExist:
+            return Response({"error": "Playlist Music not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # def patch(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = GetPlaylistMusicSerializer(instance, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     instance.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class LikedMusicAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         # liked_music, created = LikedMusic_Plalist.objects.get_or_create(User_ID=request.user)
@@ -431,7 +736,7 @@ class LikedMusicAPIView(APIView):
 
 
 class SearchView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('query', '')
@@ -471,7 +776,7 @@ class StreamMusicIncrement(APIView):
 
 
 class AnalyticsView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         # Retrieve the specific Analytics_M instance using the provided pk

@@ -1,4 +1,4 @@
-import React  from "react";
+import React, { useState }  from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   Navbar,
@@ -11,6 +11,7 @@ import {
   Showtimes,
   SeatShowtime,
   TheaterDetails,
+  AddMusicForm,
 } from "./Components";
 import {
   Home,
@@ -24,14 +25,32 @@ import {
   AddressPage,
   ChangePassPage,
   ForgotPassPage,
+  PlaylistPage,
+  MusicHome,
+  MusicAddPage,
+  AlbumAddPage,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
 import {AuthProvider} from './Context/AuthContext';
+import songContext from './Context/songContext.js'
 
 function App() {
+  const [currentSong, setCurrentSong] = useState(null);
+    const [soundPlayed, setSoundPlayed] = useState(null);
+    const [isPaused, setIsPaused] = useState(true);
   return (
     <Router>
       <AuthProvider>
+        <songContext.Provider 
+          value={{
+            currentSong,
+            setCurrentSong,
+            soundPlayed,
+            setSoundPlayed,
+            isPaused,
+            setIsPaused,
+        }}
+        >
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -81,9 +100,17 @@ function App() {
             />
             
           </Route>
-          <Route path="/musicstreaming/" element={<MusicStreaming />} />
+          <Route path="/musicstreaming" element={<MusicStreaming />} >
+          <Route index element={<MusicHome />} />
+            <Route path="home" element={<MusicHome />} />
+            <Route path="playlist" element={<PlaylistPage />} />
+            <Route path="add-music" element={<MusicAddPage />} />
+            <Route path="add-album" element={<AlbumAddPage />} /> 
+            <Route path="mymusic" element={<AlbumAddPage />} /> 
+          </Route>
         </Routes>
         <Footer />
+        </songContext.Provider>
       </AuthProvider>
       
     </Router>

@@ -34,3 +34,15 @@ export { default as OTP  } from './Auth/OTP/OTP';
 export { default as Address  } from './Auth/Address/Address';
 export { default as ChangePassword  } from './Auth/ChangePassword/ChangePassword';
 export { default as ForgetPassword  } from './Auth/ForgetPassword/ForgetPassword';
+
+
+
+export { default as SIdebar  } from './Music_Streaming/Sidebar/SIdebar';
+export { default as HomeMusic  } from './Music_Streaming/HomeMusic/HomeMusic';
+export { default as PlaylistHome  } from './Music_Streaming/HomeMusic/PlaylistHome/PlaylistHome';
+export { default as Playlist  } from './Music_Streaming/Playlist/Playlist';
+export { default as AddMusicForm  } from './Music_Streaming/AddMusicForm/AddMusicForm';
+export { default as AddAlbumForm  } from './Music_Streaming/AddAlbumForm/AddAlbumForm';
+export { default as BottomBar } from './Music_Streaming/BottomBar/BottomBar';
+
+

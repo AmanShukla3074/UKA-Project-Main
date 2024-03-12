@@ -16,3 +16,9 @@ export { default as AddressPage } from './Auth/AddressPage';
 export { default as ChangePassPage } from './Auth/ChangePassPage';
 export { default as ForgotPassPage } from './Auth/ForgotPassPage';
 
+
+export { default as PlaylistPage } from './Music_Streaming/PlaylistPage';
+export { default as MusicHome } from './Music_Streaming/MusicHome';
+export { default as AlbumAddPage } from './Music_Streaming/AlbumAddPage';
+export { default as MusicAddPage } from './Music_Streaming/MusicAddPage';
+

@@ -1,0 +1,7 @@
+.musicContainer{
+    width: 75%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+
+}

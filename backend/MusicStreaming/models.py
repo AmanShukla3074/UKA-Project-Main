@@ -65,7 +65,7 @@ class Music_M(models.Model):
     Copyrightowner=models.CharField(max_length=50)
     file = models.FileField(upload_to='music/',default='default.mp3')
     cover = models.ImageField(upload_to='music_cover/',default='default_image.jpg')
-    M_Streams=models.IntegerField(default=0)
+    M_Streams=models.IntegerField(default=0,null=True)
 
     def get_img_url(self):
         return self.cover.url

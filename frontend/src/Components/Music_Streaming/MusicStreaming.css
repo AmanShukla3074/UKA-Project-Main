@@ -1,0 +1,19 @@
+.musicContain{
+    display: flex;
+}
+
+.sidebar{
+    height: 90vh;
+    margin-bottom: -100px;
+    width: 20%;
+    background-color: #444;
+}
+
+.Main{
+    width: 80%;
+    background-color: blue;
+    margin-bottom: -100px;
+    height: 90vh;
+    overflow: auto;
+    /* margin-left: 20%; */
+}
