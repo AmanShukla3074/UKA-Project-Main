@@ -4,11 +4,14 @@ import axios from "axios";
 import AuthContext from "../../../Context/AuthContext"; // Adjust the import path as necessary
 import MusicItem from "../MusicItem/MusicItem";
 import './Playlist.css'
+import songContext from "../../../Context/songContext";
 const Playlist = () => {
  const { playlistId } = useParams();
  const { authTokens } = useContext(AuthContext); // Access the authTokens from the AuthContext
 
  const [playlistData, setPlaylistData] = useState(null);
+
+ const {setPlaylist} = useContext(songContext)
 
  useEffect(() => {
     const fetchPlaylist = async () => {
@@ -41,6 +44,9 @@ const Playlist = () => {
             Playlist_Title: response.data.Playlist_Title,
             PlaylistMusic: transformedData,
           });
+
+          setPlaylist(transformedData);
+
         } else {
           throw new Error("Failed to fetch playlist data");
         }

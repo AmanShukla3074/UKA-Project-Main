@@ -10,16 +10,10 @@ import { CgPlayListAdd } from "react-icons/cg";
 import songContext from "../../../Context/songContext";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal/AddToPlaylistModal";
 import axios from "axios";
-import AuthContext from '../../../Context/AuthContext'; 
+import AuthContext from "../../../Context/AuthContext";
 const BottomBar = ({ togglePlayPause }) => {
-  const {
-    currentSong,
-    // setCurrentSong,
-    // soundPlayed,
-    // setSoundPlayed,
-    isPaused,
-    // setIsPaused,
-  } = useContext(songContext);
+  const { currentSong, isPaused, playNextSong, playPreviousSong } =
+    useContext(songContext);
 
   const getCoverUrl = (cover) => {
     const baseUrl = "http://127.0.0.1:8000";
@@ -29,42 +23,45 @@ const BottomBar = ({ togglePlayPause }) => {
     return cover;
   };
 
-const { authTokens } = useContext(AuthContext);
-const addSongToPlaylist = async (playlistId) => {
-  const songId = currentSong.Music_ID;
+  const { authTokens } = useContext(AuthContext);
+  const addSongToPlaylist = async (playlistId) => {
+    const songId = currentSong.Music_ID;
 
-  const payload = {
+    const payload = {
       Playlist_ID: playlistId,
-      Music_ID: songId
-  };
+      Music_ID: songId,
+    };
 
-  try {
-      const response = await axios.post('http://127.0.0.1:8000/api/Music/playlist-Music/', payload, {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/Music/playlist-Music/",
+        payload,
+        {
           headers: {
-              Authorization: `Bearer ${authTokens?.access}`, // Including JWT token in the request headers
+            Authorization: `Bearer ${authTokens?.access}`, // Including JWT token in the request headers
           },
-      });
+        }
+      );
 
       if (response.data && response.data.Music_ID) {
-          setAddToPlaylistModalOpen(false);
+        setAddToPlaylistModalOpen(false);
       } else {
-          console.error('Failed to add song to playlist');
+        console.error("Failed to add song to playlist");
       }
-  } catch (error) {
-      console.error('Error adding song to playlist:', error.message);
-  }
-};
-
+    } catch (error) {
+      console.error("Error adding song to playlist:", error.message);
+    }
+  };
 
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
   return (
     <div className={`${currentSong ? "" : "hidden"} bottom-bar`}>
       {addToPlaylistModalOpen && (
         <AddToPlaylistModal
-            closeModal={() => {
-                setAddToPlaylistModalOpen(false);
-            }}
-            addSongToPlaylist={addSongToPlaylist}
+          closeModal={() => {
+            setAddToPlaylistModalOpen(false);
+          }}
+          addSongToPlaylist={addSongToPlaylist}
         />
       )}
       <div className="bottom-bar-left">
@@ -96,7 +93,12 @@ const addSongToPlaylist = async (playlistId) => {
             <IoShuffleOutline />
           </div>
           <div className="bottomBarscontrols-center">
-            <BiSolidSkipPreviousCircle className="bottomcenterMarginBottom" />
+            <div className="prevSong">
+              <BiSolidSkipPreviousCircle
+                className="bottomcenterMarginBottom"
+                onClick={playPreviousSong}
+              />
+            </div>
             <div className="PlayPause" onClick={togglePlayPause}>
               {isPaused ? (
                 <IoIosPlayCircle fontSize={"50px"} />
@@ -104,7 +106,13 @@ const addSongToPlaylist = async (playlistId) => {
                 <IoPauseCircleSharp fontSize={"50px"} />
               )}
             </div>
-            <BiSolidSkipNextCircle className="bottomcenterMarginBottom" />
+
+            <div className="nextSong">
+              <BiSolidSkipNextCircle
+                className="bottomcenterMarginBottom"
+                onClick={playNextSong}
+              />
+            </div>
           </div>
           <div className="bottomBarscontrols-right">
             <IoMdRepeat />
