@@ -116,3 +116,8 @@
 .volControlBot{
     width: 75%;
 }
+
+.bottomScrubber{
+    width: 80%;
+    margin: -30px auto 0;
+}

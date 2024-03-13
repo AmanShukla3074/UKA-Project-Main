@@ -42,21 +42,23 @@ const SIdebar = () => {
         </div>
       </Link>
       {/* <Link to="/musicstreaming/playlist" className="SideBarLink"> */}
-      <div
-        className="home sideBarFlex"
-        onClick={() => {
-          setCreatePlaylistModalOpen(true);
-        }}
-      >
-        <div className="sideBarLogo">
-          <PiPlaylistFill />
-        </div>
-        <span className="sideBarText">Create Playlist</span>
-      </div>
+
       {/* </Link> */}
 
       {user ? (
         <>
+          {/* {" "} */}
+          <div
+            className="home sideBarFlex"
+            onClick={() => {
+              setCreatePlaylistModalOpen(true);
+            }}
+          >
+            <div className="sideBarLogo">
+              <PiPlaylistFill />
+            </div>
+            <span className="sideBarText">Create Playlist</span>
+          </div>
           <br />
           <Link to="/musicstreaming/add-music" className="SideBarLink">
             <div className="home sideBarFlex">
@@ -66,14 +68,14 @@ const SIdebar = () => {
               <span className="sideBarText">Add Music</span>
             </div>
           </Link>
-          <Link to="/musicstreaming/add-album" className="SideBarLink">
+          {/* <Link to="/musicstreaming/add-album" className="SideBarLink">
             <div className="home sideBarFlex">
               <div className="sideBarLogo">
                 <RiAlbumFill />
               </div>
               <span className="sideBarText">Add Album</span>
             </div>
-          </Link>
+          </Link> */}
           <Link to="/musicstreaming/mymusic" className="SideBarLink">
             <div className="home sideBarFlex">
               <div className="sideBarLogo">

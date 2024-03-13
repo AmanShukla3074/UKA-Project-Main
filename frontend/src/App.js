@@ -12,6 +12,7 @@ import {
   SeatShowtime,
   TheaterDetails,
   AddMusicForm,
+  MyMusic,
 } from "./Components";
 import {
   Home,
@@ -41,8 +42,18 @@ function App() {
   const [isPaused, setIsPaused] = useState(true);
   const [playlist, setPlaylist] = useState([]);
 const [currentSongIndex, setCurrentSongIndex] = useState(0);
-
+const [songDuration, setSongDuration] = useState(0);
+const [currentTime, setCurrentTime] = useState(0);
 const [volume, setVolume] = useState(1.0); // Default volume is 1.0 (full volume)
+
+const seekTo = (time) => {
+  console.log("Seeking to:", time);
+  setCurrentTime(time);
+  if (soundPlayed) {
+    soundPlayed.seek(time);
+  }
+};
+
 
  const increaseVolume = () => {
     setVolume(Math.min(volume + 0.1, 1.0)); // Increase volume by 0.1, up to a maximum of 1.0
@@ -82,6 +93,11 @@ const playNextSong = () => {
             setVolume,
             increaseVolume,
             decreaseVolume,
+            songDuration,
+            setSongDuration,
+            currentTime,
+            setCurrentTime,
+            seekTo,
           }}
         >
           <Navbar />
@@ -134,7 +150,7 @@ const playNextSong = () => {
               <Route path="playlist/:playlistId" element={<PlaylistPage />} />
               <Route path="add-music" element={<MusicAddPage />} />
               <Route path="add-album" element={<AlbumAddPage />} />
-              <Route path="mymusic" element={<AlbumAddPage />} />
+              <Route path="mymusic" element={<MyMusic />} />
               <Route path="search" element={<MusicSearchPage />} />
             </Route>
           </Routes>

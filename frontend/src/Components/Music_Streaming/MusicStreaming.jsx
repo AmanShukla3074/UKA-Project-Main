@@ -8,11 +8,12 @@ import songContext from "../../Context/songContext";
 function MusicStreaming() {
   const {
     currentSong,
-    setCurrentSong,
+    setCurrentTime,
     soundPlayed,
     setSoundPlayed,
     isPaused,
     setIsPaused,
+    setSongDuration,
   } = useContext(songContext);
   console.log("aa", currentSong);
 
@@ -40,11 +41,10 @@ function MusicStreaming() {
 };
 
 const changeSong = (songSrc) => {
-  console.log("aaaa", songSrc);
   if (soundPlayed) {
      soundPlayed.stop();
   }
- 
+  setCurrentTime(0);
   // Check if songSrc starts with the base URL
   const baseUrl = "http://127.0.0.1:8000";
   if (!songSrc.startsWith(baseUrl)) {
@@ -52,11 +52,33 @@ const changeSong = (songSrc) => {
      songSrc = baseUrl + songSrc;
   }
  
-  let sound = new Howl({
-     src: [songSrc],
-     html5: true,
-  });
-  setSoundPlayed(sound);
+  // let sound = new Howl({
+  //    src: [songSrc],
+  //    html5: true,
+  // });
+  // setSoundPlayed(sound);
+  const sound = new Howl({
+    src: [songSrc],
+    onload: () => {
+      const duration = sound.duration();
+      console.log("Song Duration:", duration);
+      setSongDuration(duration);
+    },
+    onplay: () => {
+      const interval = setInterval(() => {
+        if (sound.playing()) {
+          const current = sound.seek();
+          console.log("Current Time:", current);
+          setCurrentTime(current);
+        } else {
+          clearInterval(interval);
+        }
+      }, 1000); // Update every second
+   },
+    // Other options...
+   });
+   setSoundPlayed(sound);
+   
   sound.play();
   setIsPaused(false);
  };

@@ -8,6 +8,11 @@ const songContext = createContext({
     increaseVolume: () => {},
     decreaseVolume: () => {},
    
+    songDuration: 0,
+    setSongDuration: () => {},
+    currentTime: 0,
+    setCurrentTime: () => {},
+    seekTo: () => {},
 
  playlist: [],
  setPlaylist: () => {},

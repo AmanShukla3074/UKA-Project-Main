@@ -1,13 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { AlbumContainer, HomeMusic } from '../../Components'
 import MusicContainer from '../../Components/Music_Streaming/MusicContainer/MusicContainer'
+import AuthContext from '../../Context/AuthContext';
 
 const MusicHome = () => {
+  const { user } = useContext(AuthContext);
   return (
     <div>
-      <HomeMusic/>
+
+{user ? (
+        <> 
+         <HomeMusic/>
+        </>
+      ) : (
+        <></>
+      )}
+
+     
       <MusicContainer/>
-      <AlbumContainer/>
+      {/* <AlbumContainer/> */}
     </div>
   )
 }

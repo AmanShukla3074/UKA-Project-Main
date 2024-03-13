@@ -12,6 +12,7 @@ import AddToPlaylistModal from "../Modals/AddToPlaylistModal/AddToPlaylistModal"
 import axios from "axios";
 import AuthContext from "../../../Context/AuthContext";
 import VolumeControl from "../VolumeControl/VolumeControl";
+import SongScrubber from "../SongScrubber/SongScrubber ";
 const BottomBar = ({ togglePlayPause }) => {
   const {
     volume,
@@ -20,7 +21,17 @@ const BottomBar = ({ togglePlayPause }) => {
     isPaused,
     playNextSong,
     playPreviousSong,
+    setCurrentTime,
+    currentTime,
   } = useContext(songContext);
+
+ 
+
+  useEffect(() => {
+    if (soundPlayed) {
+      soundPlayed.seek(currentTime);
+    }
+ }, [currentTime, soundPlayed]);
 
   useEffect(() => {
     if (soundPlayed) {
@@ -130,6 +141,9 @@ const BottomBar = ({ togglePlayPause }) => {
           <div className="bottomBarscontrols-right">
             <IoMdRepeat />
           </div>
+        </div>
+        <div className="bottomScrubber">
+        <SongScrubber />
         </div>
       </div>
       <div className="bottom-bar-right">
