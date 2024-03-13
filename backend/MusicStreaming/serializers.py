@@ -40,6 +40,8 @@ class MusicSerializer(serializers.ModelSerializer):
         model = Music_M
         fields = ["Music_ID","Music_Title","Release_Date","MS_Genre_ID","Album_ID","Copyrightowner","file","cover","music_artist",'M_Streams',"Artist"]
 
+
+
 class AlbumArtistSerializer(serializers.ModelSerializer):
     artist = ArtistSerializer()
 

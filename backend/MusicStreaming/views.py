@@ -468,37 +468,46 @@ from .serializers import PlaylistSerializer
 import jwt
 
 class PlaylistViews(APIView):
-    def get(self, request):
-        auth_header = request.headers.get("Authorization", "")
-        token = auth_header.replace("Bearer ", "")
-
-        try:
-            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
-            user_id = decoded_token.get("user_id", None)
-            queryset = Playlist_M.objects.filter(User_ID=user_id)
-            serializer = PlaylistSerializer(queryset, many=True)
-            return Response(serializer.data)
-        except jwt.ExpiredSignatureError:
-            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
-        except jwt.InvalidTokenError:
-            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    # def post(self, request):
+    # def get(self, request):
     #     auth_header = request.headers.get("Authorization", "")
     #     token = auth_header.replace("Bearer ", "")
 
     #     try:
     #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
     #         user_id = decoded_token.get("user_id", None)
-    #         serializer = PlaylistSerializer(data=request.data)
-    #         if serializer.is_valid():
-    #             serializer.save(User_ID=user_id)
-    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #         queryset = Playlist_M.objects.filter(User_ID=user_id)
+    #         serializer = PlaylistSerializer(queryset, many=True)
+    #         return Response(serializer.data)
     #     except jwt.ExpiredSignatureError:
     #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
     #     except jwt.InvalidTokenError:
     #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    def get(self, request, pk=None):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            if pk is not None:
+                # Retrieve a single playlist by pk
+                queryset = Playlist_M.objects.filter(User_ID=user_id, pk=pk).first()
+                if queryset:
+                    serializer = PlaylistSerializer(queryset)
+                    return Response(serializer.data)
+                else:
+                    return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                # List all playlists for the user
+                queryset = Playlist_M.objects.filter(User_ID=user_id)
+                serializer = PlaylistSerializer(queryset, many=True)
+                return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request):
         auth_header = request.headers.get("Authorization", "")

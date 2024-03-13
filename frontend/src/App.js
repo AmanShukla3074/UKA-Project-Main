@@ -104,7 +104,7 @@ function App() {
           <Route path="/musicstreaming" element={<MusicStreaming />} >
           <Route index element={<MusicHome />} />
             <Route path="home" element={<MusicHome />} />
-            <Route path="playlist" element={<PlaylistPage />} />
+            <Route path="playlist/:playlistId" element={<PlaylistPage />} />
             <Route path="add-music" element={<MusicAddPage />} />
             <Route path="add-album" element={<AlbumAddPage />} /> 
             <Route path="mymusic" element={<AlbumAddPage />} /> 

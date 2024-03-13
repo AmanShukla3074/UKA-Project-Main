@@ -98,3 +98,13 @@
 .bottomcenterMarginBottom{
     margin-bottom: 7px;
 }
+
+
+.addToPlaylist{
+    display: flex;
+    padding-right: 30px;
+    justify-content: end;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 35px;
+}

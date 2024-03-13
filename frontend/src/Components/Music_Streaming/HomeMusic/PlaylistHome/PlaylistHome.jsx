@@ -28,7 +28,8 @@ const PlaylistHome = () => {
 console.log(data)
  return (
     <div>
-      <h1>PlayList</h1>      
+      <h1>PlayList</h1> 
+        
       <div className="playlistcontainer">
         {data.map((item) => (
           <PlaylistItem 

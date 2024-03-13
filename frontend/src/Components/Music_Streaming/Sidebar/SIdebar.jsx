@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./SIdebar.css";
 import { IoMdMusicalNotes } from "react-icons/io";
 import { IoMdHome } from "react-icons/io";
@@ -8,12 +8,22 @@ import { RiAlbumFill } from "react-icons/ri";
 import { TbMusicCheck } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import AuthContext from "../../../Context/AuthContext";
+import CreatePlaylistModal from "../Modals/CreatePlaylistModal/CreatePlaylistModal";
 
 const SIdebar = () => {
   const { user } = useContext(AuthContext);
+  const [createPlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false);
 
   return (
     <div className="SidebarContainer">
+      {createPlaylistModalOpen && (
+        <CreatePlaylistModal
+          closeModal={() => {
+            setCreatePlaylistModalOpen(false);
+          }}
+        />
+      )}
+
       <Link className="SideBarLink" to="">
         <div className="home sideBarFlex">
           <div className="sideBarLogo">
@@ -22,29 +32,32 @@ const SIdebar = () => {
           <span className="sideBarText">Home</span>
         </div>
       </Link>
-      
+
       <Link to="/musicstreaming/search" className="SideBarLink">
-      <div className="home sideBarFlex">
-        <div className="sideBarLogo">
-          <FaSearch />
-        </div>
-        <span className="sideBarText">Search</span>
-      </div>
-      </Link>
-      <Link to="/musicstreaming/playlist" className="SideBarLink">
         <div className="home sideBarFlex">
           <div className="sideBarLogo">
-            <PiPlaylistFill />
+            <FaSearch />
           </div>
-          <span className="sideBarText">Playlist</span>
+          <span className="sideBarText">Search</span>
         </div>
       </Link>
+      {/* <Link to="/musicstreaming/playlist" className="SideBarLink"> */}
+      <div
+        className="home sideBarFlex"
+        onClick={() => {
+          setCreatePlaylistModalOpen(true);
+        }}
+      >
+        <div className="sideBarLogo">
+          <PiPlaylistFill />
+        </div>
+        <span className="sideBarText">Create Playlist</span>
+      </div>
+      {/* </Link> */}
 
       {user ? (
         <>
-
-
-        <br/>
+          <br />
           <Link to="/musicstreaming/add-music" className="SideBarLink">
             <div className="home sideBarFlex">
               <div className="sideBarLogo">
@@ -56,7 +69,7 @@ const SIdebar = () => {
           <Link to="/musicstreaming/add-album" className="SideBarLink">
             <div className="home sideBarFlex">
               <div className="sideBarLogo">
-                < RiAlbumFill/>
+                <RiAlbumFill />
               </div>
               <span className="sideBarText">Add Album</span>
             </div>
@@ -64,7 +77,7 @@ const SIdebar = () => {
           <Link to="/musicstreaming/mymusic" className="SideBarLink">
             <div className="home sideBarFlex">
               <div className="sideBarLogo">
-                < TbMusicCheck/>
+                <TbMusicCheck />
               </div>
               <span className="sideBarText">My Music</span>
             </div>

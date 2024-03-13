@@ -4,6 +4,12 @@ import songContext from '../../../Context/songContext'
 const MusicItem = ( {id, name, image,artist,item}) => {
   const { setCurrentSong} = useContext(songContext);
 
+  const baseUrl = "http://127.0.0.1:8000";
+  if (!image.startsWith(baseUrl)) {
+     // If not, prepend the base URL to image
+     image = baseUrl + image;
+  }
+
   return (
     <>
        <div className='music-item'

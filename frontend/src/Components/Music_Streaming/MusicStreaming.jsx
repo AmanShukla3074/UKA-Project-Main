@@ -40,17 +40,27 @@ function MusicStreaming() {
 };
 
 const changeSong = (songSrc) => {
-    if (soundPlayed) {
-        soundPlayed.stop();
-    }
-    let sound = new Howl({
-        src: [songSrc],
-        html5: true,
-    });
-    setSoundPlayed(sound);
-    sound.play();
-    setIsPaused(false);
-};
+  console.log("aaaa", songSrc);
+  if (soundPlayed) {
+     soundPlayed.stop();
+  }
+ 
+  // Check if songSrc starts with the base URL
+  const baseUrl = "http://127.0.0.1:8000";
+  if (!songSrc.startsWith(baseUrl)) {
+     // If not, prepend the base URL to songSrc
+     songSrc = baseUrl + songSrc;
+  }
+ 
+  let sound = new Howl({
+     src: [songSrc],
+     html5: true,
+  });
+  setSoundPlayed(sound);
+  sound.play();
+  setIsPaused(false);
+ };
+ 
 
 const pauseSound = () => {
     soundPlayed.pause();
