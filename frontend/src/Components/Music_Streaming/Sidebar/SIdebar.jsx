@@ -22,12 +22,15 @@ const SIdebar = () => {
           <span className="sideBarText">Home</span>
         </div>
       </Link>
+      
+      <Link to="/musicstreaming/search" className="SideBarLink">
       <div className="home sideBarFlex">
         <div className="sideBarLogo">
           <FaSearch />
         </div>
         <span className="sideBarText">Search</span>
       </div>
+      </Link>
       <Link to="/musicstreaming/playlist" className="SideBarLink">
         <div className="home sideBarFlex">
           <div className="sideBarLogo">

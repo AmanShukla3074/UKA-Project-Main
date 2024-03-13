@@ -21,4 +21,5 @@ export { default as PlaylistPage } from './Music_Streaming/PlaylistPage';
 export { default as MusicHome } from './Music_Streaming/MusicHome';
 export { default as AlbumAddPage } from './Music_Streaming/AlbumAddPage';
 export { default as MusicAddPage } from './Music_Streaming/MusicAddPage';
+export { default as MusicSearchPage } from './Music_Streaming/MusicSearchPage';
 

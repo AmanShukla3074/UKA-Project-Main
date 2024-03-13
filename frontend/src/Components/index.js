@@ -44,5 +44,6 @@ export { default as Playlist  } from './Music_Streaming/Playlist/Playlist';
 export { default as AddMusicForm  } from './Music_Streaming/AddMusicForm/AddMusicForm';
 export { default as AddAlbumForm  } from './Music_Streaming/AddAlbumForm/AddAlbumForm';
 export { default as BottomBar } from './Music_Streaming/BottomBar/BottomBar';
+export { default as MusicSearch } from './Music_Streaming/MusicSearch/MusicSearch';
 
 

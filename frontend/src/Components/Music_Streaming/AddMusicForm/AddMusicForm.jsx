@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./AddMusicForm.css";
 import AuthContext from "../../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AddMusicForm = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const AddMusicForm = () => {
   });
 
   const { authTokens } = useContext(AuthContext);
-
+  const navigate = useNavigate()
   const [genres, setGenres] = useState([]);
   const [albums, setAlbums] = useState([]);
 
@@ -67,7 +68,7 @@ const AddMusicForm = () => {
         !formData.Music_Title ||
         !formData.Copyrightowner ||
         !formData.MS_Genre_ID ||
-        !formData.Album_ID ||
+        // !formData.Album_ID ||
         !formData.file ||
         !formData.cover
       ) {
@@ -108,6 +109,7 @@ const AddMusicForm = () => {
       // Check for successful response and handle data
       if (response && response.data) {
         console.log("Music uploaded successfully:", response.data);
+        navigate('/musicstreaming')
         // Handle successful upload (e.g., clear form, show success message)
       } else {
         console.error("Unexpected response format:", response);
@@ -171,7 +173,7 @@ const AddMusicForm = () => {
         name="Album_ID"
         value={formData.Album_ID}
         onChange={handleChange}
-        required
+        // required
       >
         <option value="">Select an album</option>
         {albums.map((album) => (

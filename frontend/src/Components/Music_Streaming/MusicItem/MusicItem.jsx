@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './MusicItem.css'
+import songContext from '../../../Context/songContext'
 const MusicItem = ( {id, name, image,artist,item}) => {
-  console.log(item);
+  const { setCurrentSong} = useContext(songContext);
+
   return (
     <>
-       <div className='music-item'>
+       <div className='music-item'
+         onClick={() => {
+          setCurrentSong(item);
+      }}
+       >
         <div className="music-img-container">
           <img className="music-img" src={image}  />
         </div>
@@ -14,7 +20,6 @@ const MusicItem = ( {id, name, image,artist,item}) => {
           {artist.map((artistItem, index) => (
             <div key={artistItem.Artist_ID} className='artist-info'>
               {artistItem.Artist_Name}
-              {/* <h3 className='musicArtistName'>{artistItem.Artist_Name}</h3> */}
             </div>
           ))}
         </div>

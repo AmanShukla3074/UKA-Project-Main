@@ -29,6 +29,7 @@ import {
   MusicHome,
   MusicAddPage,
   AlbumAddPage,
+  MusicSearchPage,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
 import {AuthProvider} from './Context/AuthContext';
@@ -107,6 +108,7 @@ function App() {
             <Route path="add-music" element={<MusicAddPage />} />
             <Route path="add-album" element={<AlbumAddPage />} /> 
             <Route path="mymusic" element={<AlbumAddPage />} /> 
+            <Route path="search" element={<MusicSearchPage />} /> 
           </Route>
         </Routes>
         <Footer />
