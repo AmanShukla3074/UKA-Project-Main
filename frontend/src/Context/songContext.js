@@ -2,6 +2,13 @@
 import { createContext } from "react";
 
 const songContext = createContext({
+
+    volume: 1.0, // Default volume is 1.0 (full volume)
+    setVolume: () => {},
+    increaseVolume: () => {},
+    decreaseVolume: () => {},
+   
+
  playlist: [],
  setPlaylist: () => {},
  currentSongIndex: 0,

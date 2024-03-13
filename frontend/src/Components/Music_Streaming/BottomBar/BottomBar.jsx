@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./BottomBar.css";
 import { IoShuffleOutline } from "react-icons/io5";
 import { BiSolidSkipPreviousCircle } from "react-icons/bi";
@@ -11,9 +11,22 @@ import songContext from "../../../Context/songContext";
 import AddToPlaylistModal from "../Modals/AddToPlaylistModal/AddToPlaylistModal";
 import axios from "axios";
 import AuthContext from "../../../Context/AuthContext";
+import VolumeControl from "../VolumeControl/VolumeControl";
 const BottomBar = ({ togglePlayPause }) => {
-  const { currentSong, isPaused, playNextSong, playPreviousSong } =
-    useContext(songContext);
+  const {
+    volume,
+    soundPlayed,
+    currentSong,
+    isPaused,
+    playNextSong,
+    playPreviousSong,
+  } = useContext(songContext);
+
+  useEffect(() => {
+    if (soundPlayed) {
+      soundPlayed.volume(volume);
+    }
+  }, [volume, soundPlayed]);
 
   const getCoverUrl = (cover) => {
     const baseUrl = "http://127.0.0.1:8000";
@@ -120,6 +133,9 @@ const BottomBar = ({ togglePlayPause }) => {
         </div>
       </div>
       <div className="bottom-bar-right">
+        <div className="volControlBot">
+        <VolumeControl />
+        </div>
         <div
           className="addToPlaylist"
           onClick={() => {

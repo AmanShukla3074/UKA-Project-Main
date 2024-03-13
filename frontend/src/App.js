@@ -41,6 +41,17 @@ function App() {
   const [isPaused, setIsPaused] = useState(true);
   const [playlist, setPlaylist] = useState([]);
 const [currentSongIndex, setCurrentSongIndex] = useState(0);
+
+const [volume, setVolume] = useState(1.0); // Default volume is 1.0 (full volume)
+
+ const increaseVolume = () => {
+    setVolume(Math.min(volume + 0.1, 1.0)); // Increase volume by 0.1, up to a maximum of 1.0
+ };
+
+ const decreaseVolume = () => {
+    setVolume(Math.max(volume - 0.1, 0.0)); // Decrease volume by 0.1, down to a minimum of 0.0
+ };
+
 const playNextSong = () => {
   setCurrentSongIndex((currentSongIndex + 1) % playlist.length); // Loop back to the start if at the end
   setCurrentSong(playlist[currentSongIndex]);
@@ -67,6 +78,10 @@ const playNextSong = () => {
             setIsPaused,
             playNextSong,
             playPreviousSong,
+            volume,
+            setVolume,
+            increaseVolume,
+            decreaseVolume,
           }}
         >
           <Navbar />
