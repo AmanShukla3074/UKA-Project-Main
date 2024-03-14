@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     height: 60px;
-    border: 1px solid white;
+    border: 1px solid #111;
     cursor: pointer;
     margin: 5px 0;
     border-radius: 5px;

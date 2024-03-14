@@ -6,7 +6,7 @@
     /* height: 90vh; */
     margin-bottom: -100px;
     width: 20%;
-    background-color: #444;
+    background-color: #222;
 }
 
 .sidebar-half{
@@ -19,7 +19,7 @@
 
 .Main{
     width: 80%;
-    background-color: blue;
+    background-color: #fff;
     margin-bottom: -100px;
     /* height: 90vh; */
     overflow: auto;

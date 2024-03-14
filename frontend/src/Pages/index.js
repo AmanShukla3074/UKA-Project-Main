@@ -1,4 +1,6 @@
-export { default as Home } from './Home';
+export { default as UKAHome } from './UKA/UKAHome';
+
+
 export { default as EChome } from './Ecom/EChome';
 export { default as ECCategory } from './Ecom/ECCategory';
 export { default as ECProductDetail } from './Ecom/ECProductDetail';

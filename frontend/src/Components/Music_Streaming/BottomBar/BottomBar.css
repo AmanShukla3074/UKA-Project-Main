@@ -1,10 +1,11 @@
 .bottom-bar {
     width: 100%;
     height: 10vh;
-    background-color: #ccc;
+    background-color: #333;
     position: fixed; /* Fix the bottom bar to the bottom of the viewport */
     bottom: 0;
     display: flex;
+    color: white;
 }
 
 .hidden{
@@ -13,7 +14,7 @@
 
 .bottom-bar-left{
     width: 25%;
-    background: red;
+    /* background: red; */
     display: flex;
     align-items: center;
     padding-left: 5px;
@@ -21,12 +22,12 @@
 
 .bottom-bar-center{
     width: 60%;
-    background: green;
+    /* background: green; */
 }
 
 .bottom-bar-right{
     width: 25%;
-    background: red;
+    /* background: red; */
     display: flex;
     align-items: center;
 }

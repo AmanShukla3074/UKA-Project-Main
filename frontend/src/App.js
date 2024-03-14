@@ -16,7 +16,7 @@ import {
   BookingDetails,
 } from "./Components";
 import {
-  Home,
+  // Home,
   EChome,
   ECCategory,
   ECProductDetail,
@@ -33,6 +33,7 @@ import {
   AlbumAddPage,
   MusicSearchPage,
   BookingsPage,
+  // UKAHome,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
 import { AuthProvider } from "./Context/AuthContext";
@@ -104,7 +105,8 @@ const playNextSong = () => {
         >
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<EChome />} />
+            {/* <Route path="/" element={<UKAHome />} /> */}
             <Route path="/registration" element={<RegiPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/otp" element={<OTPPage />} />

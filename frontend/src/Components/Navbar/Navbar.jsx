@@ -50,10 +50,11 @@ const Navbar = () => {
   };
   useEffect(() => {
     setDropdownVisible(false);
- }, [location]);
+  }, [location]);
 
   const isEChomeRoute =
     location.pathname === "/ecommerce/home" ||
+    location.pathname === "/" ||
     location.pathname === "/ecommerce";
 
   return (
@@ -96,6 +97,16 @@ const Navbar = () => {
                   <li>{user.username}</li>
                   <br />
                   <li>Profile</li>
+                  {/* <li>
+                    <a
+                      href="http://127.0.0.1:8000/admin/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Admin Panel
+                    </a>
+                  </li> */}
+
                   <Link to="/moviebooking/bookings" className="LinkTextDeco">
                     <li>Your Ticket Bookings</li>
                   </Link>
