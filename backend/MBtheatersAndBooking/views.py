@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-
+ 
 class ShowtimeList(APIView):
     ## permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
@@ -318,42 +318,116 @@ class BookingSeatView(APIView):
 
 
 
-class BookingView(APIView):
-   # permission_classes = [IsAuthenticated]
-    def post(self,request):
-        # serializer = ComplaintGetSerializer(data=request.data)
+# class BookingView(APIView):
+#     def post(self,request):
 
-        user_id = request.user.id
-        request_data = {**request.data, 'User_ID': user_id}
+#         user_id = request.user.id
+#         request_data = {**request.data, 'User_ID': user_id}
 
        
-        serializer = BookingPostSerializer(data=request_data)
+#         serializer = BookingPostSerializer(data=request_data)
 
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response({'msg':'Booking Succesfull'},status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response({'msg':'Booking Succesfull'},status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+#     def get(self, request, *args, **kwargs):
+#         user =request.user
+#         complaint = Booking_M.objects.filter(User_ID=user)
+#         serializer = BookingGetSerializer(complaint, many=True)
+#         return Response(serializer.data)
 
-        # serializer = BookingPostSerializer(data=request.data)
-        
-        # if serializer.is_valid(raise_exception=True):
-        #     serializer.save()
-        #     # Complaint_MB=serializer.save()
-        #     return Response({'msg':'Seat Submitted'},status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+import jwt
+from rest_framework.exceptions import NotFound
+class BookingView(APIView):
+    # def post(self, request):
+    #     auth_header = request.headers.get("Authorization", "")
+    #     token = auth_header.replace("Bearer ", "")
 
-    def get(self, request, *args, **kwargs):
-        # complaint_id = kwargs.get('pk')
+    #     try:
+    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+    #         user_id = decoded_token.get("user_id", None)
 
-        user =request.user
+    #         request_data = {**request.data, 'User_ID': user_id}
 
-        # if complaint_id is not None:
-        #     theater = Complaint_MB.objects.get(pk=complaint_id)
-        #     serializer = ComplaintGetSerializer(theater)
-        #     return Response(serializer.data)
+    #         serializer = BookingPostSerializer(data=request_data)
 
-        complaint = Booking_M.objects.filter(User_ID=user)
-        serializer = BookingGetSerializer(complaint, many=True)
-        return Response(serializer.data)
+    #         if serializer.is_valid(raise_exception=True):
+    #             serializer.save()
+    #             return Response({'msg':'Booking Successful'}, status=status.HTTP_201_CREATED)
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     except jwt.ExpiredSignatureError:
+    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+    #     except jwt.InvalidTokenError:
+    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    def post(self, request):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            user = User.objects.get(pk=user_id)
+            
+            request_data = {**request.data, 'User_ID': user_id}
+            serializer = BookingPostSerializer(data=request_data)
+
+            if serializer.is_valid(raise_exception=True):
+                booking_instance = serializer.save()
+                # Fetch B_ID of the newly created booking instance
+                b_id = booking_instance.B_ID
+                return Response({'B_ID': b_id}, status=status.HTTP_201_CREATED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, pk=None):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            if pk is not None:
+                # Retrieve a single booking by pk
+                booking = Booking_M.objects.filter(User_ID=user_id, pk=pk).first()
+                if booking:
+                    serializer = BookingGetSerializer(booking)
+                    return Response(serializer.data)
+                else:
+                    return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                # Retrieve all bookings for the user
+                complaints = Booking_M.objects.filter(User_ID=user_id)
+                serializer = BookingGetSerializer(complaints, many=True)
+                return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # def get(self, request, *args, **kwargs):
+    #     auth_header = request.headers.get("Authorization", "")
+    #     token = auth_header.replace("Bearer ", "")
+
+    #     try:
+    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+    #         user_id = decoded_token.get("user_id", None)
+
+    #         complaint = Booking_M.objects.filter(User_ID=user_id)
+    #         serializer = BookingGetSerializer(complaint, many=True)
+    #         return Response(serializer.data)
+    #     except jwt.ExpiredSignatureError:
+    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+    #     except jwt.InvalidTokenError:
+    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)

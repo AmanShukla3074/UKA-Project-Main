@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import './Navbar.css';
-import uka_logo from '../Assets/uka_logo2.png';
-import { CgProfile } from 'react-icons/cg';
-import AuthContext from '../../Context/AuthContext';
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import "./Navbar.css";
+import uka_logo from "../Assets/uka_logo2.png";
+import { CgProfile } from "react-icons/cg";
+import AuthContext from "../../Context/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
@@ -22,20 +22,46 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownVisible(false);
+      }
+    };
+
+    const handlePathChange = () => {
+      setDropdownVisible(false); // Close dropdown when path changes
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
+  useEffect(() => {
+    setDropdownVisible(false);
+ }, [location]);
 
-  const isEChomeRoute = location.pathname === '/ecommerce/home' || location.pathname === '/ecommerce';
+  const isEChomeRoute =
+    location.pathname === "/ecommerce/home" ||
+    location.pathname === "/ecommerce";
 
   return (
-    <nav className={`navbar ${navbarTransparent && isEChomeRoute ? 'transparent' : 'solid'}`}>
+    <nav
+      className={`navbar ${
+        navbarTransparent && isEChomeRoute ? "transparent" : "solid"
+      }`}
+    >
       <div className="logo">
         <NavLink to="/">
           <img src={uka_logo} alt="Logo" />
@@ -68,9 +94,11 @@ const Navbar = () => {
               <div className="dropdown-menu" ref={dropdownRef}>
                 <ul>
                   <li>{user.username}</li>
-                  <br/>
+                  <br />
                   <li>Profile</li>
-                  <li>Settings</li>
+                  <Link to="/moviebooking/bookings" className="LinkTextDeco">
+                    <li>Your Ticket Bookings</li>
+                  </Link>
                   <li onClick={logoutUser}>Logout</li>
                 </ul>
               </div>
@@ -88,12 +116,12 @@ const Navbar = () => {
 
 export default Navbar;
 
-// import React, { useState, useEffect, useContext, useRef } from 'react';
-// import { Link, NavLink, useLocation } from 'react-router-dom';
-// import './Navbar.css';
-// import uka_logo from '../Assets/uka_logo2.png';
-// import { CgProfile } from 'react-icons/cg';
-// import AuthContext from '../../Context/AuthContext';
+// import React, { useState, useEffect, useContext, useRef } from "react";
+// import { Link, NavLink, useLocation } from "react-router-dom";
+// import "./Navbar.css";
+// import uka_logo from "../Assets/uka_logo2.png";
+// import { CgProfile } from "react-icons/cg";
+// import AuthContext from "../../Context/AuthContext";
 
 // const Navbar = () => {
 //   const location = useLocation();
@@ -103,15 +131,31 @@ export default Navbar;
 //   const dropdownRef = useRef(null);
 
 //   useEffect(() => {
-//     const handleClickOutside = (event) => {
+//     const handleScroll = () => {
+//       const scrollPosition = window.scrollY;
+//       if (scrollPosition > 50) {
+//         setNavbarTransparent(false);
+//       } else {
+//         setNavbarTransparent(true);
+//       }
+//     };
+
+//     window.addEventListener("scroll", handleScroll);
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     const handleOutsideClick = (event) => {
 //       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
 //         setDropdownVisible(false);
 //       }
 //     };
 
-//     document.addEventListener('mousedown', handleClickOutside);
+//     document.addEventListener("mousedown", handleOutsideClick);
 //     return () => {
-//       document.removeEventListener('mousedown', handleClickOutside);
+//       document.removeEventListener("mousedown", handleOutsideClick);
 //     };
 //   }, []);
 
@@ -119,10 +163,16 @@ export default Navbar;
 //     setDropdownVisible(!dropdownVisible);
 //   };
 
-//   const isEChomeRoute = location.pathname === '/ecommerce/home' || location.pathname === '/ecommerce';
+//   const isEChomeRoute =
+//     location.pathname === "/ecommerce/home" ||
+//     location.pathname === "/ecommerce";
 
 //   return (
-//     <nav className={`navbar ${navbarTransparent && isEChomeRoute ? 'transparent' : 'solid'}`}>
+//     <nav
+//       className={`navbar ${
+//         navbarTransparent && isEChomeRoute ? "transparent" : "solid"
+//       }`}
+//     >
 //       <div className="logo">
 //         <NavLink to="/">
 //           <img src={uka_logo} alt="Logo" />
@@ -132,9 +182,6 @@ export default Navbar;
 //         <li>
 //           <NavLink to="/ecommerce">Ecommerce</NavLink>
 //         </li>
-//         {/* <li>
-//           <NavLink to="/ecommerce">{user && <p onClick={logoutUser}>{user.username}</p>}</NavLink>
-//         </li> */}
 //         <li>
 //           <NavLink to="/moviebooking">Movie Booking</NavLink>
 //         </li>
@@ -158,9 +205,11 @@ export default Navbar;
 //               <div className="dropdown-menu" ref={dropdownRef}>
 //                 <ul>
 //                   <li>{user.username}</li>
-//                   <br/>
+//                   <br />
 //                   <li>Profile</li>
-//                   <li>Settings</li>
+//                   <Link to="/moviebooking/bookings" className="LinkTextDeco">
+//                     <li>Your Ticket Bookings</li>
+//                   </Link>
 //                   <li onClick={logoutUser}>Logout</li>
 //                 </ul>
 //               </div>

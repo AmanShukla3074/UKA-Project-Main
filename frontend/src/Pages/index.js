@@ -7,6 +7,7 @@ export { default as ECProductDetail } from './Ecom/ECProductDetail';
 
 
 export { default as MBhome } from './Movie_Booking/MBhome';
+export { default as BookingsPage } from './Movie_Booking/BookingsPage';
 
 
 export { default as RegiPage } from './Auth/RegiPage';

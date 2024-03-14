@@ -38,7 +38,7 @@ const BookingPopUp = ({ show, onClose, movieId, sortedData }) => {
           &times;
         </button>
         </div>
-        <div className="modal-content">
+        <div className="modal-content-movie">
           {Object.entries(sortedData).map(([languageID, languageGroup]) => (
             <div key={languageID} className="modal-language">
               <h3>

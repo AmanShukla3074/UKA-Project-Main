@@ -126,8 +126,53 @@ class Payment_ModeList(viewsets.ModelViewSet):
     queryset = Payment_Mode.objects.all()
     serializer_class = Payment_ModeSerializer
 
+import jwt
+   
+class Product_RateReview_MList(APIView):
+    def get(self, request, *args, **kwargs):
+        p_id = request.query_params.get('p_id')  # Get the p_id from query parameters
+        queryset = Product_RateReview_M.objects.all()
 
+        if p_id:
+            queryset = queryset.filter(P_ID=p_id)  # Filter the queryset based on p_id
 
+        serializer = Product_RateReview_MSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    # def get(self, request, *args, **kwargs):
+    #     queryset = Product_RateReview_M.objects.all()
+    #     serializer = Product_RateReview_MSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+     
+    def post(self, request, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            if user_id is not None:
+                request.data['User_ID'] = user_id  # Assign user_id from JWT to User_ID field
+                serializer = Product_RateReview_MPostSerializer(data=request.data)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.exceptions.DecodeError:
+            return Response({"error": "Malformed token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)    
+   
 
 
 # class CartDetailView(APIView):

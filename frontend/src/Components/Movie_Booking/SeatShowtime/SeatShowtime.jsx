@@ -8,6 +8,7 @@ const SeatShowtime = () => {
   const { showtimeId } = useParams();
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +25,15 @@ const SeatShowtime = () => {
 
     fetchSeats();
   }, [showtimeId]);
+
+  useEffect(() => {
+    // Calculate total price of selected seats
+    const total = selectedSeats.reduce((acc, seatId) => {
+      const seat = seats.find((s) => s.id === seatId);
+      return acc + (seat ? seat.Price : 0);
+    }, 0);
+    setTotalPrice(total);
+  }, [selectedSeats, seats]);
 
   // Group seats by seat type and row
   const seatsByTypeAndRow = seats.reduce((acc, seat) => {
@@ -95,41 +105,50 @@ const SeatShowtime = () => {
   //     ))}
   //   </div>
   // );
-// Inside your SeatShowtime component
-return (
-  <div className="seat-showtime-container">
-     <h2>Seat Selection</h2>
-     {Object.entries(seatsByTypeAndRow).map(([seatType, rows]) => (
-       <div key={seatType} className="seat-type">
-         <p className="seat-type-label">{seatType} - {rows[Object.keys(rows)[0]][0].Price}</p>
-         {Object.entries(rows).map(([row, seatsInRow]) => (
-           <div key={row} className="seat-row">
-             <p className="row-label">{row}</p>
-             <div className="showtime-details">
-               {seatsInRow.map((seat) => (
-                 <div
-                  key={seat.id}
-                  className={`showtime-item ${isSeatSelected(seat) ? "selected" : ""}`}
-                  onClick={() => handleSeatClick(seat)}
-                 >
-                  <p
-                     className={`seat-number ${
-                       isSeatSelected(seat) ? "selected" : ""
-                     } ${seat.is_booked ? "booked" : ""}`}
-                  >
-                     {seat.seat.Seat_Col_Num}
-                  </p>
-                 </div>
-               ))}
-             </div>
-           </div>
-         ))}
-       </div>
-     ))}
-  </div>
- );
- 
-
+  // Inside your SeatShowtime component
+  return (
+    <>
+      <div className="seat-showtime-container">
+        <h2>Seat Selection</h2>
+        {Object.entries(seatsByTypeAndRow).map(([seatType, rows]) => (
+          <div key={seatType} className="seat-type">
+            <p className="seat-type-label">
+              {seatType} - {rows[Object.keys(rows)[0]][0].Price}
+            </p>
+            {Object.entries(rows).map(([row, seatsInRow]) => (
+              <div key={row} className="seat-row">
+                <p className="row-label">{row}</p>
+                <div className="showtime-details">
+                  {seatsInRow.map((seat) => (
+                    <div
+                      key={seat.id}
+                      className={`showtime-item ${
+                        isSeatSelected(seat) ? "selected" : ""
+                      }`}
+                      onClick={() => handleSeatClick(seat)}
+                    >
+                      <p
+                        className={`seat-number ${
+                          isSeatSelected(seat) ? "selected" : ""
+                        } ${seat.is_booked ? "booked" : ""}`}
+                      >
+                        {seat.seat.Seat_Col_Num}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      {totalPrice > 0 && (
+      <div className="total-price-box">
+        <p>Pay : ${totalPrice.toFixed(2)}</p>
+      </div>
+    )}
+    </>
+  );
 };
 
 export default SeatShowtime;

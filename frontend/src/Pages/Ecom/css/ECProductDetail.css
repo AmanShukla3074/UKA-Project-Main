@@ -82,3 +82,79 @@
     font-weight: 600;
     background-color: white;
   }
+
+
+  .ProductReview{
+    width: 75%;
+    margin: 100px auto;
+  }
+
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+   }
+   
+   .review-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   }
+   
+   .review-item strong {
+    color: #333;
+   }
+   
+   .reviewRateDate{
+    display: flex;
+    align-items: center;
+   }
+
+   .PRating{
+    margin-right: 40px;
+   }
+
+
+   .review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+   }
+   
+   .review-form label {
+    font-weight: bold;
+   }
+   
+   .review-form input,
+   .review-form textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+   }
+   
+   .review-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+   }
+   
+   .review-form button:hover {
+    background-color: #0056b3;
+   }
+   
+
+   .RateForm{
+    width: 50%;
+    margin: 200px auto;
+   }

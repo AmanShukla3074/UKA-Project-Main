@@ -16,7 +16,10 @@
     transition: background-color 0.5s ease; 
   }
 
- 
+ .LinkTextDeco{
+  text-decoration: none;
+  color: white;
+ }
 
   .navbar.transparent {
     background-color: transparent;

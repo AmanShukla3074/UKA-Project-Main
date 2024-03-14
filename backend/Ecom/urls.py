@@ -33,6 +33,9 @@ urlpatterns = [
    
    path('payment_mode/', Payment_ModeList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
    path('payment_mode/<int:pk>/', Payment_ModeList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
+   
+   path('RateReview/', Product_RateReview_MList.as_view(), name='Product_RateReview-list'),
+   # path('payment_mode/<int:pk>/', Payment_ModeList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
 
 
    # path('cart/', CartDetailView.as_view(), name='cart-detail'),

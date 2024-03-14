@@ -7,6 +7,7 @@ export { default as Hero } from './Ecom/Hero/Hero';
 export { default as Cart } from './Ecom/Cart/Cart';
 export { default as Item } from './Ecom/Item/Item';
 export { default as ProductContainer } from './Ecom/ProductContainer/ProductContainer';
+export { default as StarRating  } from './Ecom/StarRating/StarRating';
 
 
 export { default as Footer } from './footer/Footer';
@@ -21,6 +22,8 @@ export { default as BookingPopUp  } from './Movie_Booking/BookingPopUp/BookingPo
 export { default as Showtimes  } from './Movie_Booking/Showtimes/Showtimes';
 export { default as SeatShowtime  } from './Movie_Booking/SeatShowtime/SeatShowtime';
 export { default as TheaterDetails  } from './Movie_Booking/TheaterDetails/TheaterDetails';
+export { default as Bookings  } from './Movie_Booking/Bookings/Bookings';
+export { default as BookingDetails  } from './Movie_Booking/Bookings/BookingDetails/BookingDetails';
 
 
 

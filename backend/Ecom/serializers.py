@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from account.serializers import UserSerializer
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -73,6 +74,24 @@ class Payment_ModeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment_Mode
         fields = '__all__'
+
+
+class Product_RateReview_MSerializer(serializers.ModelSerializer):
+    User_ID = UserSerializer()
+    class Meta:
+        model = Product_RateReview_M
+        fields = '__all__'
+
+class Product_RateReview_MPostSerializer(serializers.ModelSerializer):
+    # User_ID = UserSerializer()
+    class Meta:
+        model = Product_RateReview_M
+        fields = '__all__'
+
+
+
+
+
 
 # class CartItemSerializer(serializers.ModelSerializer):
 #     Size = Product_Size_MSerializer()

@@ -11,8 +11,9 @@ import {
   Showtimes,
   SeatShowtime,
   TheaterDetails,
-  AddMusicForm,
+  // AddMusicForm,
   MyMusic,
+  BookingDetails,
 } from "./Components";
 import {
   Home,
@@ -31,6 +32,7 @@ import {
   MusicAddPage,
   AlbumAddPage,
   MusicSearchPage,
+  BookingsPage,
 } from "./Pages/index.js";
 // import { Cart } from './Components/Ecom/index';
 import { AuthProvider } from "./Context/AuthContext";
@@ -141,6 +143,14 @@ const playNextSong = () => {
               <Route
                 path="showtime-seat/:showtimeId/"
                 element={<SeatShowtime />}
+              />
+              <Route
+                path="booking-detail/:bookingId/"
+                element={<BookingDetails />}
+              />
+              <Route
+                path="bookings"
+                element={<BookingsPage />}
               />
               <Route path="theater/:theaterId/" element={<TheaterDetails />} />
             </Route>

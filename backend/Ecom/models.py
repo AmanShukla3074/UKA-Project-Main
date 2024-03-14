@@ -58,6 +58,7 @@ class Product_Img(models.Model):
     # def get_image_url(self) -> str:
     #   if self.img and hasattr(self.image_file, 'url'):
     #      return f"http://localhost:8000{self.img.url}"
+
     def __str__(self):
         return f'{self.Product_ID.P_Name} - {self.img.name}'
 
@@ -80,17 +81,18 @@ class Product_Img(models.Model):
 #         return f" {self.Product_ID.P_Name} - {self.ItemQuantity} - ({self.Size.Size_Name if self.Size else 'No Size'}) in Cart"
     
 
-# class Product_RateReview_M(models.Model):
-#     Rate_ID = models.AutoField(primary_key=True)
-#     P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE, null=False)
-#     User_ID = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-#     Rate = models.CharField(max_length=5, null=False)
-#     Review=models.TextField(null=False)
-#     RateReview_Date = models.DateTimeField(auto_now_add=True)
+class Product_RateReview_M(models.Model):
+    Rate_ID = models.AutoField(primary_key=True)
+    P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE, null=False)
+    User_ID = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    Rate = models.CharField(max_length=5, null=False)
+    Review=models.TextField(null=False)
+    RateReview_Date = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f" {self.Rate_ID} - {self.P_ID.P_Name} - {self.Rate} - {self.Review}"
+    def __str__(self):
+        return f" {self.Rate_ID} - {self.P_ID.P_Name} - {self.Rate} - {self.Review}"
     
+
 class Status_M(models.Model):
     Status_ID = models.AutoField(primary_key=True)
     Status_Name = models.CharField(max_length=20, null=False)
@@ -134,11 +136,7 @@ class Offer_M(models.Model):
 #     def __str__(self):
 #         return self.Order_Detail_ID
 
-'''
 
-
-
-'''
 
 class Payment_Mode(models.Model):
     Payment_Mode_ID = models.AutoField(primary_key=True)

@@ -141,7 +141,7 @@ class BookingSeatGetSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BookingGetSerializer(serializers.ModelSerializer):
-    # ShowTime_ID=ShowtimeSerializer()
+    ShowTime_ID=ShowtimeGetSerializer()
     Seats = serializers.SerializerMethodField()
 
     def get_Seats(self,obj):
@@ -149,18 +149,19 @@ class BookingGetSerializer(serializers.ModelSerializer):
         serializer = BookingSeatGetSerializer(seats, many=True)
         return serializer.data 
 
-    M_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.M_ID.M_ID', read_only=True)
-    M_Name = serializers.CharField(source='ShowTime_ID.M_ID.M_Name', read_only=True)
-    T_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.Screen_M.T_ID.T_ID', read_only=True)
-    T_Name = serializers.CharField(source='ShowTime_ID.Screen_M.T_ID.T_Name', read_only=True)
-    Screen = serializers.CharField(source='ShowTime_ID.Screen_M.Screen_Name', read_only=True)
-    U_FName = serializers.CharField(source='User_ID.first_name', read_only=True)
-    U_LName = serializers.CharField(source='User_ID.last_name', read_only=True)
+    # M_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.M_ID.M_ID', read_only=True)
+    # M_Name = serializers.CharField(source='ShowTime_ID.M_ID.M_Name', read_only=True)
+    # T_ID = serializers.PrimaryKeyRelatedField(source='ShowTime_ID.Screen_M.T_ID.T_ID', read_only=True)
+    # T_Name = serializers.CharField(source='ShowTime_ID.Screen_M.T_ID.T_Name', read_only=True)
+    # Screen = serializers.CharField(source='ShowTime_ID.Screen_M.Screen_Name', read_only=True)
+    # U_FName = serializers.CharField(source='User_ID.first_name', read_only=True)
+    # U_LName = serializers.CharField(source='User_ID.last_name', read_only=True)
 
 
     class Meta:
         model = Booking_M
-        fields = ["B_ID","M_ID","M_Name","T_ID","T_Name","Screen","U_FName","U_LName","B_Time","B_Date","SubTotal","gst_amount","TotalAmt","User_ID","ShowTime_ID","Payment_Mode_ID","Seats"]
+        fields = '__all__'
+        # fields = ["B_ID","M_ID","M_Name","T_ID","T_Name","Screen","U_FName","U_LName","B_Time","B_Date","SubTotal","gst_amount","TotalAmt","User_ID","ShowTime_ID","Payment_Mode_ID","Seats"]
 
 
 
