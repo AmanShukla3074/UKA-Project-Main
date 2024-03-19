@@ -12,6 +12,8 @@ urlpatterns = [
    path('movies/', MovieList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
    path('movies/<int:pk>/', MovieList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
 
+   path('movies/search/', MovieSearchView.as_view(), name='movie_search'),
+
    path('movies-imgs/', MovieImgList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
    path('movies-imgs/<int:pk>/', MovieImgList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
 

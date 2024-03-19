@@ -38,6 +38,7 @@ import {
 // import { Cart } from './Components/Ecom/index';
 import { AuthProvider } from "./Context/AuthContext";
 import songContext from "./Context/songContext.js";
+import { MenuContext, MenuContextProvider } from './Context/MenuContext.js';
 
 function App() {
   const [currentSong, setCurrentSong] = useState(null);
@@ -78,6 +79,7 @@ const playNextSong = () => {
   return (
     <Router>
       <AuthProvider>
+        <MenuContextProvider>
         <songContext.Provider
           value={{
             playlist,
@@ -168,6 +170,7 @@ const playNextSong = () => {
           </Routes>
           <Footer />
         </songContext.Provider>
+        </MenuContextProvider>
       </AuthProvider>
     </Router>
   );

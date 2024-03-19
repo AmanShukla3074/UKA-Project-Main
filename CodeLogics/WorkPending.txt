@@ -1,0 +1,40 @@
+Login Page Wrong Pass Alert
+Data Entery
+Djnago Admin Panel UI
+Djnago Groups for Theater M etc (extra)
+UI
+
+EC:
+    Search
+    Order
+    Cart Fix (Add Size also)
+
+
+MB:
+    Search
+    Booking
+
+MS:
+    Three Dot Menu - For Music Delete
+
+19:
+    EC:
+        Search
+        Order
+        Cart Fix (Add Size also)
+    MB:
+        Search
+        Booking
+    MS:
+        Three Dot Menu - For Music Delete
+
+20:
+    Login Page Wrong Pass Alert
+    Data Entery
+    Djnago Admin Panel UI
+    Djnago Groups for Theater M etc (extra)
+    UI
+
+21
+    Data Entery
+

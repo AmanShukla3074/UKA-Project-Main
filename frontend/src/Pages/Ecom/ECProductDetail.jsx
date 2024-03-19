@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import "./css/ECProductDetail.css";
 import AuthContext from "../../Context/AuthContext";
 import StarRating from "../../Components/Ecom/StarRating/StarRating";
+import { MenuContext } from "../../Context/MenuContext";
 
 const ECProductDetail = () => {
   const { productId } = useParams();
@@ -16,7 +17,37 @@ const ECProductDetail = () => {
   const [rating, setRating] = useState("");
   const [review, setReview] = useState("");
 
+  const {addToCart} = useContext(MenuContext);
+
   const { authTokens } = useContext(AuthContext);
+
+
+  const handleAddToCart = async (productId) => {
+    try {
+      // const accessToken = localStorage.getItem('access_token');
+      const accessToken = localStorage.getItem('authTokens');
+      const { access } = JSON.parse(accessToken);
+      console.log('Access Token:', access)
+
+      // console.log('Access Token:', accessToken);
+      // Make a POST request to your server's add-to-cart endpoint
+      await axios.post('http://127.0.0.1:8000/api/EC/cart/', {
+        P_ID: productId,
+        ItemQuantity: 1,
+      },{
+        headers: {
+          Authorization: `Bearer ${access}`,
+          'Content-Type': 'application/json', 
+        },
+    });
+    alert("aa")
+      addToCart(productId);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+    }
+  };  
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -140,7 +171,7 @@ const ECProductDetail = () => {
             </div>
           )}
           <div className="addtocart">
-            <button>ADD TO CART</button>
+            <button onClick={() => handleAddToCart(productId)}>ADD TO CART</button>
           </div>
           <div className="desc">{data.P_Desc}</div>
           {/* Add more details as needed */}

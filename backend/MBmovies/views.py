@@ -78,4 +78,22 @@ class Movie_TypeList(viewsets.ModelViewSet):
     serializer_class = Movie_TypeSerializer
 
 
+from django.db.models import Q
+
+class MovieSearchView(APIView):
+    def get(self, request, *args, **kwargs):
+        query = request.query_params.get('query', '')
+        print(f"Query: {query}")  # Debugging line
+
+        movie_results = Movie_M.objects.filter(
+            Q(M_Name__icontains=query) |
+            Q(M_Synopsis__icontains=query)
+        )
+        print(f"Movie Results: {movie_results}")  # Debugging line
+
+        movie_serializer = MovieDetailsSerializer(movie_results, many=True).data
+        return Response({
+            'movies': movie_serializer,
+        })
+
     

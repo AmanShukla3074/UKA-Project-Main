@@ -27,7 +27,7 @@ const OTP = () => {
       if (response.data.status === 200) {
         const token = response.data.token; // Adjust this based on the actual response structure
         // localStorage.setItem("authTokens", JSON.stringify(token));
-        navigate("/address"); // Navigate to the next page after successful OTP verification
+        navigate("/"); // Navigate to the next page after successful OTP verification
         alert("Token Stored");
       } else {
         alert("OTP verification failed. Please try again.");
@@ -70,9 +70,10 @@ const OTP = () => {
           Verify
         </button>
 
-        <button type="button" onClick={() => navigate("/address")}>
-          Next
-        </button>
+        {/* <button type="button">
+        {/* <button type="button" onClick={() => navigate("/address")}> 
+        Next
+        </button> */}
       </form>
     </div>
   );

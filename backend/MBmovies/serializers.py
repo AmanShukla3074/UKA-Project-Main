@@ -153,3 +153,6 @@ class MovieDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Movie_M
         fields=['M_ID','M_Name','M_Duration','M_Synopsis','M_Age_Certification','M_ReleaseDate','images','director','producer','cast','genre','language','type']
+
+
+        

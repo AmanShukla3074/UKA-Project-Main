@@ -9,6 +9,7 @@ urlpatterns = [
    path('products/', Product_List.as_view(), name='product-list'),
    path('products/<int:pk>/', Product_List.as_view(), name='product-detail'),
 
+   path('search/', ProductSearchView.as_view(), name='product_search'),
    
    path('categories/', CategoriesList.as_view({'get': 'list', 'post': 'create'}), name='playlist-list'),
    path('categories/<int:pk>/', CategoriesList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
@@ -36,7 +37,9 @@ urlpatterns = [
    
    path('RateReview/', Product_RateReview_MList.as_view(), name='Product_RateReview-list'),
    # path('payment_mode/<int:pk>/', Payment_ModeList.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='playlist-detail'),
-
+   
+   path('cart/',CartDetailView.as_view(),name='cart-list'),
+   path('cart1/<int:cart_item_id>/',CartDetailsDeleteView.as_view(),name='cart-details-delete'),
 
    # path('cart/', CartDetailView.as_view(), name='cart-detail'),
 ]

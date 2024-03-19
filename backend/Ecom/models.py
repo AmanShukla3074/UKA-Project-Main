@@ -62,6 +62,33 @@ class Product_Img(models.Model):
     def __str__(self):
         return f'{self.Product_ID.P_Name} - {self.img.name}'
 
+class Cart_M(models.Model):
+    CartID = models.AutoField(primary_key=True)
+    User_ID = models.ForeignKey(User,on_delete=models.CASCADE)
+    # Offer_ID=models.ForeignKey(Offer,on_delete=models.SET_NULL,null=True,blank=True)
+    Total = models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
+
+
+
+    def __str__(self):
+        return f"{self.CartID} - {self.User_ID}"    
+
+class Cart_Details(models.Model):
+    CartDetailsID = models.AutoField(primary_key=True)
+    ItemQuantity = models.IntegerField()
+    Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
+    P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE)
+    # Offer_ID=models.ForeignKey(Offer,on_delete=models.CASCADE,null=True,blank=True)
+    Cart_ID = models.ForeignKey(Cart_M,on_delete=models.CASCADE)
+
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(fields=['Cart_ID', 'Item_ID'], name='unique_cart_item')
+    #     ]
+    
+    def __str__(self):
+        return f"{self.Cart_ID} - {self.P_ID} - {self.CartDetailsID}"
 
 # class Cart_M(models.Model):
 #     Cart_ID = models.AutoField(primary_key=True)
