@@ -6,11 +6,14 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { MdDelete } from "react-icons/md";
+import Notification from "../../Notification/Notification";
 // import useRazorpay from 'react-razorpay';
 
 const Cart = () => {
   const { addToCart, removeFromCart, cartItems } = useContext(MenuContext);
-
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationColor, setNotificationColor] = useState("");
   const [data, setData] = useState({
     cart: {},
     cart_items: [], // Initialize as an empty array
@@ -133,51 +136,6 @@ const Cart = () => {
     }
   };
 
-  // const handleDecrement = async (cart_items, itemId) => {
-  //   setCartCounts1((prevCounts) => {
-  //     const updatedCounts = {
-  //       ...prevCounts,
-  //       [cart_items.CartDetailsID]: Math.max(
-  //         0,
-  //         (prevCounts[cart_items.CartDetailsID] || 0) - 1
-  //       ),
-  //     };
-  //     return updatedCounts;
-  //   });
-
-  //   try {
-  //     const accessToken = localStorage.getItem("authTokens");
-  //     const { access } = JSON.parse(accessToken);
-  //     const updatedQuantity = (cart_items.ItemQuantity || 0) - 1;
-
-  //     // Ensure the request body reflects the updated quantity
-
-  //     console.log("access:", access);
-  //     // console.log("updatedQuantity", updatedQuantity)
-  //     await axios.patch(
-  //       `http://127.0.0.1:8000/api/EC/cart/`,
-  //       {
-  //         Cart_Item_ID: cart_items.CartDetailsID,
-  //         ItemQuantity: updatedQuantity,
-  //         Cart_ID: data.cart.CartID,
-  //         P_ID: cart_items.P_ID,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${access}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     removeFromCart(cart_items.Item_ID);
-  //   } catch (error) {
-  //     console.error("Error updating item quantity:", error);
-  //   }
-
-  //   console.log("data.cart.CartID", data.cart.CartID);
-  //   console.log("cart_items", cart_items);
-  // };
-
   const handleDelete = async (itemId) => {
     const accessToken = localStorage.getItem("authTokens");
     const { access } = JSON.parse(accessToken);
@@ -203,8 +161,76 @@ const Cart = () => {
     }
   };
 
+  const handleCheckout = async () => {
+    try {
+      const accessToken = localStorage.getItem("authTokens");
+      const { access } = JSON.parse(accessToken);
+
+      // Include the specified request body
+      const requestBody = {
+        Status_ID: 2,
+      };
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/EC/order/",
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setNotificationMessage("Checkout successfully done.");
+      setNotificationColor("green");
+      setShowNotification(true);
+
+      // Optionally, hide the notification after a delay
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000); // Hide after 3 seconds
+
+      const cartResponse = await axios.get(
+        "http://127.0.0.1:8000/api/EC/cart/",
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setData(cartResponse.data);
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      // If the checkout fails, show a failure notification
+      setNotificationMessage("Checkout failed. Please try again.");
+      setNotificationColor("red");
+      setShowNotification(true);
+
+      // Optionally, hide the notification after a delay
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+
+      console.error("Error during checkout:", error);
+      if (error.response) {
+        console.log("Error Status:", error.response.status);
+        console.log("Error Headers:", error.response.headers);
+      } else if (error.request) {
+        console.log("Error Request:", error.request);
+      } else {
+        console.log("Error Message:", error.message);
+      }
+    }
+  };
+
   return (
     <>
+      {showNotification && (
+        <Notification message={notificationMessage} color={notificationColor} />
+      )}
       <div className="cart">
         {data.cart_items.map((cartItem) => {
           const product = data.menus.find(
@@ -226,27 +252,32 @@ const Cart = () => {
               <div className="cartDescription">
                 <p className="cartItemHeader">{product?.P_Name}</p>
                 <div className="cartBtns">
-
-                
-                <button onClick={(event) => handleIncrement(event, cartItem)} className="plusMinusBtn">
-                  +
-                </button>
-                <p className="qtyNumber">
-                  {/* Quantity:{" "} */}
-                  {cartCounts1[cartItem.CartDetailsID] || cartItem.ItemQuantity}
-                </p>
-                <button
-                  onClick={() =>
-                    handleDecrement(cartItem, cartItem.CartDetailsID)
-                  }
-                 className="plusMinusBtn">
-                  -
-                </button>
-              <button onClick={() => handleDelete(cartItem.CartDetailsID)} className="deleteBtn">
-                <MdDelete/>
-                
-              </button>
-              </div>
+                  <button
+                    onClick={(event) => handleIncrement(event, cartItem)}
+                    className="plusMinusBtn"
+                  >
+                    +
+                  </button>
+                  <p className="qtyNumber">
+                    {/* Quantity:{" "} */}
+                    {cartCounts1[cartItem.CartDetailsID] ||
+                      cartItem.ItemQuantity}
+                  </p>
+                  <button
+                    onClick={() =>
+                      handleDecrement(cartItem, cartItem.CartDetailsID)
+                    }
+                    className="plusMinusBtn"
+                  >
+                    -
+                  </button>
+                  <button
+                    onClick={() => handleDelete(cartItem.CartDetailsID)}
+                    className="deleteBtn"
+                  >
+                    <MdDelete />
+                  </button>
+                </div>
                 <p className="cartItemSubtot">Subtotal: {cartItem.Subtotal}</p>
               </div>
             </div>
@@ -254,11 +285,20 @@ const Cart = () => {
         })}{" "}
       </div>
       <div className="checkout">
-      <h2>Total Amount: {'\u20B9'} {data.cart.Total}</h2>
-      <div className="checkoutButtonWrap">
+        <h2>
+          Total Amount: {"\u20B9"} {data.cart.Total}
+        </h2>
+        <div className="checkoutButtonWrap">
+          <button
+            onClick={handleCheckout}
+            className="checkoutButton"
+            disabled={data.cart_items.length === 0}
+          >
+            Checkout
+          </button>
 
-        <button className="checkoutButton">Checkout</button>
-      </div>
+          {/* <button onClick={handleCheckout} className="checkoutButton">Checkout</button> */}
+        </div>
       </div>
     </>
   );

@@ -65,7 +65,6 @@ class Product_Img(models.Model):
 class Cart_M(models.Model):
     CartID = models.AutoField(primary_key=True)
     User_ID = models.ForeignKey(User,on_delete=models.CASCADE)
-    # Offer_ID=models.ForeignKey(Offer,on_delete=models.SET_NULL,null=True,blank=True)
     Total = models.DecimalField(max_digits=10,decimal_places=2,default=0)
     Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
 
@@ -79,34 +78,12 @@ class Cart_Details(models.Model):
     ItemQuantity = models.IntegerField()
     Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
     P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE)
-    # Offer_ID=models.ForeignKey(Offer,on_delete=models.CASCADE,null=True,blank=True)
     Cart_ID = models.ForeignKey(Cart_M,on_delete=models.CASCADE)
 
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint(fields=['Cart_ID', 'Item_ID'], name='unique_cart_item')
-    #     ]
     
     def __str__(self):
         return f"{self.Cart_ID} - {self.P_ID} - {self.CartDetailsID}"
 
-# class Cart_M(models.Model):
-#     Cart_ID = models.AutoField(primary_key=True)
-#     User_ID = models.OneToOneField(User, on_delete=models.CASCADE)
-#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
-
-# class Cart_Details(models.Model):
-#     Card_Detail_ID = models.AutoField(primary_key=True)
-#     Cart_ID = models.ForeignKey(Cart_M, on_delete=models.CASCADE, related_name='cart_items')
-#     Product_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE)
-#     ItemQuantity = models.PositiveIntegerField(default=1)
-#     SubTotal = models.DecimalField(max_digits=10, decimal_places=2)
-#     Size = models.ForeignKey(Product_Size_M, on_delete=models.SET_NULL, null=True, blank=True)
-
-#     def __str__(self):
-#         return f" {self.Product_ID.P_Name} - {self.ItemQuantity} - ({self.Size.Size_Name if self.Size else 'No Size'}) in Cart"
-    
 
 class Product_RateReview_M(models.Model):
     Rate_ID = models.AutoField(primary_key=True)
@@ -142,6 +119,26 @@ class Offer_M(models.Model):
 
     def __str__(self):
         return self.Offer_Title
+
+class Order_M(models.Model):
+    OrderID = models.AutoField(primary_key=True)
+    OrderDate = models.DateTimeField()
+    Total = models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True)
+    User_ID = models.ForeignKey(User,on_delete=models.CASCADE)
+    Status_ID = models.ForeignKey(Status_M,on_delete=models.SET_NULL,null=True,blank=True)
+
+    def __str__(self):
+        return str(self.OrderID) 
+    
+class Order_Details(models.Model):
+    OrderDetailsID = models.AutoField(primary_key=True)
+    ItemQuantity = models.IntegerField()
+    Subtotal = models.DecimalField(max_digits=10,decimal_places=2)
+    P_ID = models.ForeignKey(Product_M,on_delete=models.CASCADE)
+    Order_ID = models.ForeignKey(Order_M,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Order_ID} - {self.P_ID}"
 
 # class Order_M(models.Model):
 #     Order_ID = models.AutoField(primary_key=True) 

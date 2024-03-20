@@ -6,10 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 class Product_List(APIView):
-    # # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         product_id = kwargs.get('pk')
         category = self.request.query_params.get('category')
@@ -53,29 +53,6 @@ class Product_List(APIView):
     
 
 from django.db.models import Q
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from .models import Product_M, Categories, Product_Color_M, Product_Size, Product_Img
-# from .serializers import ProductSerializer, CategoriesSerializer, Product_Color_MSerializer, Product_SizeSerializer, Product_ImgSerializer
-
-# class ProductSearchView(APIView):
-#     # permission_classes = [IsAuthenticated] # Uncomment if you want to restrict access
-
-#     def get(self, request, *args, **kwargs):
-#         query = request.query_params.get('query', '')
-
-#         # Search products
-#         product_results = Product_M.objects.filter(
-#             Q(P_Name__icontains=query) | 
-#             Q(P_Desc__icontains=query) | 
-#             Q(Category__name__icontains=query) # Assuming Categories model has a 'name' field
-#         )
-#         product_serializer = ProductSerializer(product_results, many=True).data
-
-#         return Response({
-#             'products': product_serializer,
-#         })
-
 
 class ProductSearchView(APIView):
   def get(self, request, *args, **kwargs):
@@ -221,29 +198,7 @@ class CartDetailView(APIView):
         cart, created = Cart_M.objects.get_or_create(User_ID=user)
         return cart
     
-    # def get(self, request, *args, **kwargs):
-
-    #     current_user = self.request.user
-
-    #     cart = self.get_cart_for_user(current_user)
-    #     serialized_cart = Cart_MSerializer(cart).data
-    #     cart_items = Cart_Details.objects.filter(Cart_ID=cart)
-    #     cart_items_serializer = Cart_DetailsSerializer(cart_items, many=True).data
-
-        
-    #     item_ids = cart_items.values_list('P_ID', flat=True)
-    #     menu_items = Product_M.objects.filter(P_ID__in=item_ids)
-    #     menu_serializer = ProductSerializer(menu_items, many=True).data
-
-    #     response_data = {
-    #             'cart': serialized_cart,
-    #             'cart_items': cart_items_serializer,
-    #             'menus': menu_serializer,
-    #             'message': 'Cart retrieved successfully'
-    #         }
-
-    #     return Response(response_data)
-
+   
     def get(self, request, *args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
         token = auth_header.replace("Bearer ", "")
@@ -328,107 +283,6 @@ class CartDetailView(APIView):
         except jwt.InvalidTokenError:
             return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # def put(self, request, *args, **kwargs):
-    #     auth_header = request.headers.get("Authorization", "")
-    #     token = auth_header.replace("Bearer ", "")
-
-    #     try:
-    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
-    #         user_id = decoded_token.get("user_id", None)
-
-    #         current_user = User.objects.get(pk=user_id)  # Assuming your user model is named User
-
-    #         # Retrieve or create a cart based on the user making the request
-    #         cart_obj, created = Cart_M.objects.get_or_create(User_ID=current_user)
-    #         cart_id = cart_obj.CartID
-
-    #         # Validate serializer data
-    #         serializer = Cart_DetailsSerializer(data=request.data)
-    #         serializer.is_valid(raise_exception=True)
-
-    #         # If an offer is already applied, remove its discount from the total
-            
-    #         # Apply new offer to the entire cart or calculate total without discount
-
-    #         # Find or create the cart detail for the item
-    #         item = serializer.validated_data['P_ID']
-    #         # quantity = serializer.validated_data['ItemQuantity']
-    #         # subtotal = item.P_Price 
-    #         # subtotal = item.P_Price * quantity
-
-    #         # Try to find an existing cart detail for the item
-    #         cart_detail, created = Cart_Details.objects.get_or_create(Cart_ID=cart_obj, P_ID=item)
-
-    #         # If the cart detail already exists, update the quantity and subtotal
-    #         cart_detail.ItemQuantity += 1
-    #         # cart_detail.ItemQuantity += quantity
-    #         cart_detail.Subtotal = item.P_Price * cart_detail.ItemQuantity
-    #         cart_detail.save()
-
-    #         # Update the total in the Cart_M model
-    #         cart_obj.Total = cart_detail.Subtotal
-    #         cart_obj.Subtotal += item.P_Price 
-    #         # cart_obj.Subtotal = item.P_Price * cart_detail.ItemQuantity
-    #         cart_obj.save()
-
-    #         response_data = {
-    #             'message': 'Item updated in the cart successfully',
-    #             'cart': Cart_MSerializer(cart_obj).data,
-    #         }
-
-    #         return Response(response_data, status=status.HTTP_200_OK)
-
-    #     except jwt.ExpiredSignatureError:
-    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
-    #     except jwt.InvalidTokenError:
-    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    # def put(self, request, *args, **kwargs):
-    #     auth_header = request.headers.get("Authorization", "")
-    #     token = auth_header.replace("Bearer ", "")
-
-    #     try:
-    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
-    #         user_id = decoded_token.get("user_id", None)
-
-    #         current_user = User.objects.get(pk=user_id)  # Assuming your user model is named User
-
-    #         # Retrieve or create a cart based on the user making the request
-    #         cart_obj, created = Cart_M.objects.get_or_create(User_ID=current_user)
-    #         cart_id = cart_obj.CartID
-
-    #         # Validate serializer data
-    #         serializer = Cart_DetailsSerializer(data=request.data)
-    #         serializer.is_valid(raise_exception=True)
-
-    #         # Find or create the cart detail for the item
-    #         item = serializer.validated_data['P_ID']
-
-    #         # Try to find an existing cart detail for the item
-    #         cart_detail, created = Cart_Details.objects.get_or_create(Cart_ID=cart_obj, P_ID=item)
-
-    #         # If the cart detail already exists, update the quantity and subtotal
-    #         cart_detail.ItemQuantity += 1
-    #         cart_detail.Subtotal = item.P_Price * cart_detail.ItemQuantity
-    #         cart_detail.save()
-
-    #         # Recalculate the total for the entire cart
-    #         cart_details = Cart_Details.objects.filter(Cart_ID=cart_obj)
-    #         total = sum(cart_item.Subtotal for cart_item in cart_details)
-    #         cart_obj.Total = total
-    #         cart_obj.save()
-
-    #         response_data = {
-    #             'message': 'Item updated in the cart successfully',
-    #             'cart': Cart_MSerializer(cart_obj).data,
-    #         }
-
-    #         return Response(response_data, status=status.HTTP_200_OK)
-
-    #     except jwt.ExpiredSignatureError:
-    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
-    #     except jwt.InvalidTokenError:
-    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
     def put(self, request, *args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
         token = auth_header.replace("Bearer ", "")
@@ -566,3 +420,102 @@ class CartDetailsDeleteView(APIView):
         cart_item.delete()
 
         return Response({'message': 'Cart item deleted successfully'})
+    
+
+
+
+
+class OrderCreateView(APIView):
+    serializer_class = Order_MSerializer
+    def post(self, request, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            current_user = User.objects.get(pk=user_id)  # Assuming your user model is named User
+
+            # Extract Status_ID from request data if provided, otherwise use default
+            status_id = request.data.get('Status_ID')
+
+            # Convert status_id to integer
+            status_id = int(status_id) if status_id else 2
+
+            new_order_data = {
+                'OrderDate': timezone.now(),
+                'User_ID': current_user.id,
+                'Status_ID': status_id
+            }
+
+            serializer = Order_MSerializer(data=new_order_data)
+            serializer.is_valid(raise_exception=True)
+
+            new_order = serializer.save()
+
+            cart_items = Cart_Details.objects.filter(Cart_ID__User_ID=current_user)
+            cart = Cart_M.objects.filter(User_ID=current_user)
+
+            total = 0
+            for cart_item in cart_items:
+                subtotal = cart_item.Subtotal
+                Order_Details.objects.create(
+                    ItemQuantity=cart_item.ItemQuantity,
+                    Subtotal=subtotal,
+                    P_ID=cart_item.P_ID,
+                    Order_ID=new_order,
+                )
+                total += subtotal
+
+            new_order.Total = total
+            new_order.save()
+            cart_items.delete()
+            cart.delete()
+            return Response({'message': 'Order created successfully'}, status=status.HTTP_201_CREATED)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+
+    def get(self, request, order_id=None, *args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+
+        try:
+            decoded_token = jwt.decode(token,'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
+            user_id = decoded_token.get("user_id", None)
+
+            if user_id:
+                if order_id:
+                    # Retrieve a specific order for the current user
+                    order = get_object_or_404(Order_M, OrderID=order_id, User_ID=user_id)
+                    serializer = Order_MGetSerializer(order)
+                    return Response(serializer.data)
+                else:
+                    # Retrieve a list of all orders for the current user
+                    orders = Order_M.objects.filter(User_ID=user_id)
+                    serializer = Order_MGetSerializer(orders, many=True)
+                    return Response(serializer.data)
+            else:
+                return Response({"error": "User ID not found in token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except jwt.ExpiredSignatureError:
+            return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # def get(self, request, order_id=None, *args, **kwargs):
+    #     if order_id:
+    #         order = get_object_or_404(Order_M, OrderID=order_id)
+    #         serializer = Order_MGetSerializer(order)
+    #         return Response(serializer.data)
+    #     else:
+    #         # Retrieve a list of all orders
+    #         orders = Order_M.objects.all()
+    #         serializer = Order_MGetSerializer(orders, many=True)
+    #         return Response(serializer.data)
+        

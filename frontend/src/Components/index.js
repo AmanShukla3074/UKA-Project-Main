@@ -11,6 +11,7 @@ export { default as StarRating  } from './Ecom/StarRating/StarRating';
 
 
 export { default as Footer } from './footer/Footer';
+export { default as Notification } from './Notification/Notification';
 
 //movie
 export { default as SubNavMB } from './Movie_Booking/SubNavMB/SubNavMB';

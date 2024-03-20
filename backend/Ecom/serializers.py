@@ -108,15 +108,40 @@ class Cart_DetailsSerializer(serializers.ModelSerializer):
 
 class Cart_MSerializer(serializers.ModelSerializer):
     Cart_ID = Cart_DetailsSerializer(many=True,read_only=True)
-    
-    # def create(self, validated_data):
-    #     # Ensure Subtotal is set to the default value if not provided
-    #     subtotal = validated_data.get('Subtotal', 0)
-    #     print(f"Subtotal before setting: {subtotal}")
-    #     validated_data['Subtotal'] = subtotal
-    #     print(f"Subtotal after setting: {validated_data['Subtotal']}")
-    #     return super().create(validated_data)
 
     class Meta:
         model = Cart_M
         fields = '__all__'
+
+
+class Order_DetailsSerializer(serializers.ModelSerializer):
+    P_ID=ProductSerializer()
+    class Meta:
+        model = Order_Details
+        fields = '__all__'
+
+class Order_MSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Order_M
+        fields = '__all__'
+        extra_kwargs = {
+            'User_ID': {'required': False},
+        }
+
+
+class Order_MGetSerializer(serializers.ModelSerializer):
+    order_details = serializers.SerializerMethodField()
+    Status_ID = Status_MSerializer()
+    class Meta:
+        model = Order_M
+        fields = ['OrderID', 'OrderDate', 'Total', 'User_ID', 'Status_ID', 'order_details']
+        extra_kwargs = {
+            'User_ID': {'required': False},
+        }
+
+    def get_order_details(self,obj):
+        order_details = Order_Details.objects.filter(Order_ID=obj)
+        serializer = Order_DetailsSerializer(order_details, many=True)
+        return serializer.data    

@@ -6,6 +6,7 @@ import "./css/ECProductDetail.css";
 import AuthContext from "../../Context/AuthContext";
 import StarRating from "../../Components/Ecom/StarRating/StarRating";
 import { MenuContext } from "../../Context/MenuContext";
+import Notification from "../../Components/Notification/Notification";
 
 const ECProductDetail = () => {
   const { productId } = useParams();
@@ -17,36 +18,82 @@ const ECProductDetail = () => {
   const [rating, setRating] = useState("");
   const [review, setReview] = useState("");
 
-  const {addToCart} = useContext(MenuContext);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationColor, setNotificationColor] = useState("");
+
+  const { addToCart } = useContext(MenuContext);
 
   const { authTokens } = useContext(AuthContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
- }, []); 
+  }, []);
 
   const handleAddToCart = async (productId) => {
     try {
-      const accessToken = localStorage.getItem('authTokens');
+      const accessToken = localStorage.getItem("authTokens");
       const { access } = JSON.parse(accessToken);
-      console.log('Access Token:', access)
-      await axios.post('http://127.0.0.1:8000/api/EC/cart/', {
-        P_ID: productId,
-        ItemQuantity: 1,
-      },{
-        headers: {
-          Authorization: `Bearer ${access}`,
-          'Content-Type': 'application/json', 
+      console.log("Access Token:", access);
+      await axios.post(
+        "http://127.0.0.1:8000/api/EC/cart/",
+        {
+          P_ID: productId,
+          ItemQuantity: 1,
         },
-    });
-    alert("aa")
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Show a notification upon successful addition to cart
+      setNotificationMessage("Added to cart.");
+      setNotificationColor("green");
+      setShowNotification(true);
+
+      // Optionally, hide the notification after a delay
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000); // Hide after 3 seconds
+
       addToCart(productId);
     } catch (error) {
-      console.error('Error adding item to cart:', error);
+      console.error("Error adding item to cart:", error);
+      // Optionally, show a notification for failure
+      setNotificationMessage("Failed to add to cart. Please try again.");
+      setNotificationColor("red");
+      setShowNotification(true);
+
+      // Optionally, hide the notification after a delay
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000); // Hide after 3 seconds
     }
-  };  
+  };
 
-
+  // const handleAddToCart = async (productId) => {
+  //   try {
+  //     const accessToken = localStorage.getItem('authTokens');
+  //     const { access } = JSON.parse(accessToken);
+  //     console.log('Access Token:', access)
+  //     await axios.post('http://127.0.0.1:8000/api/EC/cart/', {
+  //       P_ID: productId,
+  //       ItemQuantity: 1,
+  //     },{
+  //       headers: {
+  //         Authorization: `Bearer ${access}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //   });
+  //   alert("aa")
+  //     addToCart(productId);
+  //   } catch (error) {
+  //     console.error('Error adding item to cart:', error);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -125,6 +172,9 @@ const ECProductDetail = () => {
 
   return (
     <>
+      {showNotification && (
+        <Notification message={notificationMessage} color={notificationColor} />
+      )}
       <div className="product-container">
         <div className="imgsmain">
           <div className="main-image-container">
@@ -170,7 +220,9 @@ const ECProductDetail = () => {
             </div>
           )}
           <div className="addtocart">
-            <button onClick={() => handleAddToCart(productId)}>ADD TO CART</button>
+            <button onClick={() => handleAddToCart(productId)}>
+              ADD TO CART
+            </button>
           </div>
           <div className="desc">{data.P_Desc}</div>
           {/* Add more details as needed */}
