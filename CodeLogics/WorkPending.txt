@@ -1,43 +1,24 @@
-Login Page Wrong Pass Alert
+Login Page Wrong Pass Alert  (Done)
 Data Entery
 Djnago Admin Panel UI
 Djnago Groups for Theater M etc (extra)
 UI
 Protected Route
 when user order then stock must be reduce 
+F
 
-EC:
+
+EC: (Done)
     Search (Done)
-    Order
-    Cart Fix (Add Size also)
+    Order (Done)
+    Cart Fix (Add Size also) (Done)
+    Review Issue
+
 
 
 MB:
     Search (Done)
-    Booking
+    Booking (Done)
 
 MS:
     Three Dot Menu - For Music Delete
-
-
-19:
-    EC:
-        Search (Done)
-        Cart Fix (Add Size also)
-    MB:
-        Search (Done)
-        Booking
-    MS:
-        Three Dot Menu - For Music Delete
-
-20:
-    Order
-    Login Page Wrong Pass Alert
-    Data Entery
-    Djnago Admin Panel UI
-    Djnago Groups for Theater M etc (extra)
-    UI
-
-21
-    Data Entery
-

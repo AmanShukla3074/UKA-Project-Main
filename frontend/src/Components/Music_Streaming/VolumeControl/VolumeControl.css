@@ -17,5 +17,6 @@
 .volControlScroll{
     margin: 0;
     padding: 0;
-    accent-color: black;
+    accent-color: #ebd4f6;
+    /* accent-color: black; */
 }

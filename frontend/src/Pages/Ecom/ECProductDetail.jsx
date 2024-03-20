@@ -35,22 +35,11 @@ const ECProductDetail = () => {
     try {
       const accessToken = localStorage.getItem("authTokens");
       const { access } = JSON.parse(accessToken);
-      console.log("Access Token:", access);
 
-      // Find the Size_ID corresponding to the selected size
-      // const selectedSizeObj = data.Size.find(size => size.size.Size_Name === selectedSize);
-      // const sizeId = selectedSizeObj ? selectedSizeObj.P_Size_ID : null;
 
       const selectedSizeObj = data.Size.find(size => size.size.Size_Name === selectedSize);
-      // Correctly access the Size_ID from the size object
       const sizeId = selectedSizeObj ? selectedSizeObj.size.Size_ID : null;
 
-      console.log("Selected Size ID:", sizeId);
-      console.log("Request Body:", {
-        P_ID: productId,
-        ItemQuantity: 1,
-        Size_ID: sizeId, // Ensure this is correctly set
-       });
        
       await axios.post(
         "http://127.0.0.1:8000/api/EC/cart/",
@@ -113,7 +102,7 @@ const ECProductDetail = () => {
           },
         }
       );
-      console.log(response.data);
+      // console.log(response.data);
       // Optionally, clear the form fields after successful submission
       setRating("");
       setReview("");
@@ -222,7 +211,7 @@ const ECProductDetail = () => {
         </div>
         <div className="product-details">
           <div className="pname">{data.P_Name}</div>
-          <div className="price">Price: ${data.P_Price}</div>
+          <div className="price">Price: {"\u20B9"} {data.P_Price}</div>
 
           {data.Size && data.Size.length > 0 && (
             <div className="size-dropdown-container">

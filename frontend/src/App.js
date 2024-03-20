@@ -14,6 +14,8 @@ import {
   // AddMusicForm,
   MyMusic,
   BookingDetails,
+  OrdersList,
+  ECOrderDetail,
 } from "./Components";
 import {
   // Home,
@@ -129,6 +131,10 @@ const playNextSong = () => {
               <Route path="Jeans" element={<ECCategory category="Jeans" />} />
               <Route path="Shoes" element={<ECCategory category="Shoes" />} />
               <Route path="cart" element={<Cart />} />
+              <Route path="orderlist" element={<OrdersList />} />
+              <Route path="orderdetails" element={<ECOrderDetail />}>
+                <Route path=":orderdetailsId" element={<ECOrderDetail />} />
+              </Route>
               <Route path="product" element={<ECProductDetail />}>
                 <Route path=":productId" element={<ECProductDetail />} />
               </Route>

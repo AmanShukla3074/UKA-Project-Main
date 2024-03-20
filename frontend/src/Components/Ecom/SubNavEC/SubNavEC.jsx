@@ -70,14 +70,14 @@ function SubNavEC() {
   }, 500);
 
   useEffect(() => {
-    console.log(searchResults); 
+    // console.log(searchResults); 
   }, [searchResults]);
 
   useEffect(() => {
     debouncedSearch();
   }, [searchQuery]);
 
-  console.log("Rendering search results:", searchResults); // Debugging
+  // console.log("Rendering search results:", searchResults); 
 
   return (
     <div

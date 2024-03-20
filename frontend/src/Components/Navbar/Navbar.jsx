@@ -96,7 +96,7 @@ const Navbar = () => {
                 <ul>
                   <li>{user.username}</li>
                   <br />
-                  <li>Profile</li>
+                  {/* <li>Profile</li> */}
                   {/* <li>
                     <a
                       href="http://127.0.0.1:8000/admin/"
@@ -107,8 +107,11 @@ const Navbar = () => {
                     </a>
                   </li> */}
 
+                  <Link to="/ecommerce/orderlist" className="LinkTextDeco">
+                    <li>My Orders</li>
+                  </Link>
                   <Link to="/moviebooking/bookings" className="LinkTextDeco">
-                    <li>Your Ticket Bookings</li>
+                    <li>My Ticket Bookings</li>
                   </Link>
                   <li onClick={logoutUser}>Logout</li>
                 </ul>

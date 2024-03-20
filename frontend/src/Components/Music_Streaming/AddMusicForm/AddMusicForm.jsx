@@ -79,7 +79,7 @@ const AddMusicForm = () => {
       uploadFormData.append("Music_Title", formData.Music_Title);
       uploadFormData.append("Copyrightowner", formData.Copyrightowner);
       uploadFormData.append("MS_Genre_ID", formData.MS_Genre_ID);
-      uploadFormData.append("Album_ID", formData.Album_ID);
+      // uploadFormData.append("Album_ID", formData.Album_ID);
       uploadFormData.append("file", formData.file);
       uploadFormData.append("cover", formData.cover);
 
@@ -167,7 +167,7 @@ const AddMusicForm = () => {
         ))}
       </select>
 
-      <label htmlFor="Album_ID">Album:</label>
+      {/* <label htmlFor="Album_ID">Album:</label>
       <select
         id="Album_ID"
         name="Album_ID"
@@ -181,7 +181,8 @@ const AddMusicForm = () => {
             {album.Album_Title}
           </option>
         ))}
-      </select>
+      </select> */}
+      
       <label htmlFor="file">Music File:</label>
       <input
         type="file"

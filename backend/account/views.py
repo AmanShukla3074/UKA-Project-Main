@@ -77,6 +77,7 @@ class AddressView(APIView):
   
 from .otpapi import *
 #===================== LOGIN ====================
+
 class LoginView(APIView): 
     def post(self,request):
         mobile_no = request.data['mobile_no']
@@ -111,7 +112,8 @@ class LoginView(APIView):
         return Response({
             'status': 200,
             'message': 'Login successful. OTP sent for verification.',
-            'otp_status': 'sent'
+            'otp_status': 'sent',
+            'otp': otp
         })
     
     def get(self,request,*args,**kwargs):

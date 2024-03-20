@@ -153,7 +153,7 @@ const ChangePassword = () => {
             <p className="success-message">{successMessage}</p>
           )}
 
-          <button type="submit">Change Password</button>
+          <button type="submit">Submit</button>
         </form>
       ) : (
         <div className="OTPcontainer">

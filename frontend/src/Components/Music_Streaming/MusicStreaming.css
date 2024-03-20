@@ -5,7 +5,7 @@
 .sidebar{
     /* height: 90vh; */
     margin-bottom: -100px;
-    width: 20%;
+    width: 16%;
     background-color: #222;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .Main{
-    width: 80%;
+    width: 84%;
     background-color: #fff;
     margin-bottom: -100px;
     /* height: 90vh; */

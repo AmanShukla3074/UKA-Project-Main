@@ -113,9 +113,9 @@ const BottomBar = ({ togglePlayPause }) => {
       </div>
       <div className="bottom-bar-center">
         <div className="bottomBarscontrols">
-          <div className="bottomBarscontrols-left">
+          {/* <div className="bottomBarscontrols-left">
             <IoShuffleOutline />
-          </div>
+          </div> */}
           <div className="bottomBarscontrols-center">
             <div className="prevSong">
               <BiSolidSkipPreviousCircle
@@ -138,9 +138,9 @@ const BottomBar = ({ togglePlayPause }) => {
               />
             </div>
           </div>
-          <div className="bottomBarscontrols-right">
+          {/* <div className="bottomBarscontrols-right">
             <IoMdRepeat />
-          </div>
+          </div> */}
         </div>
         <div className="bottomScrubber">
         <SongScrubber />

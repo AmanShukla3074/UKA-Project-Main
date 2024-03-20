@@ -37,7 +37,12 @@
  
  /* Unique class for span elements */
  .login-span {
-  color: #007bff;
+  color: black;
+  cursor: pointer;
+  text-align: center;
+ }
+ .login-err {
+  color: red;
   cursor: pointer;
   text-align: center;
  }

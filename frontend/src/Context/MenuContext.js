@@ -79,7 +79,6 @@ const addToCart = (itemId) => {
         handleAddToCart,
         // menuData,
       };
-      console.log("cartItems:",cartItems)
     return (<MenuContext.Provider value={contextValue} >{props.children}</MenuContext.Provider>)
   
 };

@@ -39,11 +39,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authTokens", JSON.stringify(data));
         // navigate("/"); // Uncomment this if you want to navigate after login
       } else {
-        alert("Something went wrong!");
+        console.log("Something went wrong!");
       }
     } catch (error) {
       console.error("Error during login:", error.message);
-      alert("An error occurred during login.");
     }
  };
 

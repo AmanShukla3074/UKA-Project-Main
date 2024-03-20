@@ -8,6 +8,8 @@ export { default as Cart } from './Ecom/Cart/Cart';
 export { default as Item } from './Ecom/Item/Item';
 export { default as ProductContainer } from './Ecom/ProductContainer/ProductContainer';
 export { default as StarRating  } from './Ecom/StarRating/StarRating';
+export { default as OrdersList  } from './Ecom/OrdersList/OrdersList';
+export { default as ECOrderDetail  } from './Ecom/ECOrderDetail/ECOrderDetail';
 
 
 export { default as Footer } from './footer/Footer';

@@ -341,26 +341,7 @@ class BookingSeatView(APIView):
 import jwt
 from rest_framework.exceptions import NotFound
 class BookingView(APIView):
-    # def post(self, request):
-    #     auth_header = request.headers.get("Authorization", "")
-    #     token = auth_header.replace("Bearer ", "")
-
-    #     try:
-    #         decoded_token = jwt.decode(token, 'django-insecure-q4js*g3v^gw+)k+$hti&4(j7rj$0pql+_1@=85amb0o0*6&@!m', algorithms=['HS256'])
-    #         user_id = decoded_token.get("user_id", None)
-
-    #         request_data = {**request.data, 'User_ID': user_id}
-
-    #         serializer = BookingPostSerializer(data=request_data)
-
-    #         if serializer.is_valid(raise_exception=True):
-    #             serializer.save()
-    #             return Response({'msg':'Booking Successful'}, status=status.HTTP_201_CREATED)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #     except jwt.ExpiredSignatureError:
-    #         return Response({"error": "Token has expired"}, status=status.HTTP_401_UNAUTHORIZED)
-    #     except jwt.InvalidTokenError:
-    #         return Response({"error": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
+    
 
     def post(self, request):
         auth_header = request.headers.get("Authorization", "")
