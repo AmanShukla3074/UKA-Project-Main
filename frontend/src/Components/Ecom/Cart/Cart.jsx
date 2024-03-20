@@ -25,47 +25,94 @@ const Cart = () => {
   // const [count,setCount] = useState();
   useEffect(() => {}, [cartCounts1]);
 
+  // const handleIncrement = async (event, cart_items) => {
+  //   event.preventDefault();
+  //   const updatedCounts = {
+  //     ...cartCounts1,
+  //     [cart_items.CartDetailsID]:
+  //       (cartCounts1[cart_items.CartDetailsID] || cart_items.ItemQuantity) + 1,
+  //   };
+  //   setCartCounts1(updatedCounts);
+
+  //   try {
+  //     const accessToken = localStorage.getItem("authTokens");
+  //     const { access } = JSON.parse(accessToken);
+  //     const updatedQuantity = (cart_items.ItemQuantity || 0) + 1;
+
+  //     await axios.put(
+  //       `http://127.0.0.1:8000/api/EC/cart/`,
+  //       {
+  //         Cart_Item_ID: cart_items.CartDetailsID,
+  //         ItemQuantity: updatedQuantity,
+  //         Cart_ID: data.cart.CartID,
+  //         P_ID: cart_items.P_ID,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${access}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     // Fetch updated cart data after increment operation
+  //     const response = await axios.get("http://127.0.0.1:8000/api/EC/cart/", {
+  //       headers: {
+  //         Authorization: `Bearer ${access}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     setData(response.data);
+  //   } catch (error) {
+  //     console.error("Error updating item quantity:", error);
+  //   }
+  // };
+
+
   const handleIncrement = async (event, cart_items) => {
     event.preventDefault();
     const updatedCounts = {
-      ...cartCounts1,
-      [cart_items.CartDetailsID]:
-        (cartCounts1[cart_items.CartDetailsID] || cart_items.ItemQuantity) + 1,
+       ...cartCounts1,
+       [cart_items.CartDetailsID]:
+         (cartCounts1[cart_items.CartDetailsID] || cart_items.ItemQuantity) + 1,
     };
     setCartCounts1(updatedCounts);
-
+   
     try {
-      const accessToken = localStorage.getItem("authTokens");
-      const { access } = JSON.parse(accessToken);
-      const updatedQuantity = (cart_items.ItemQuantity || 0) + 1;
-
-      await axios.put(
-        `http://127.0.0.1:8000/api/EC/cart/`,
-        {
-          Cart_Item_ID: cart_items.CartDetailsID,
-          ItemQuantity: updatedQuantity,
-          Cart_ID: data.cart.CartID,
-          P_ID: cart_items.P_ID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // Fetch updated cart data after increment operation
-      const response = await axios.get("http://127.0.0.1:8000/api/EC/cart/", {
-        headers: {
-          Authorization: `Bearer ${access}`,
-          "Content-Type": "application/json",
-        },
-      });
-      setData(response.data);
+       const accessToken = localStorage.getItem("authTokens");
+       const { access } = JSON.parse(accessToken);
+       const updatedQuantity = (cart_items.ItemQuantity || 0) + 1;
+   
+       // Include Size_ID in the request body
+       await axios.put(
+         `http://127.0.0.1:8000/api/EC/cart/`,
+         {
+           Cart_Item_ID: cart_items.CartDetailsID,
+           ItemQuantity: updatedQuantity,
+           Cart_ID: data.cart.CartID,
+           P_ID: cart_items.P_ID,
+           Size_ID: cart_items.Size_ID, // Include Size_ID
+         },
+         {
+           headers: {
+             Authorization: `Bearer ${access}`,
+             "Content-Type": "application/json",
+           },
+         }
+       );
+       // Fetch updated cart data after increment operation
+       const response = await axios.get("http://127.0.0.1:8000/api/EC/cart/", {
+         headers: {
+           Authorization: `Bearer ${access}`,
+           "Content-Type": "application/json",
+         },
+       });
+       setData(response.data);
     } catch (error) {
-      console.error("Error updating item quantity:", error);
+       console.error("Error updating item quantity:", error);
     }
-  };
+   };
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -170,7 +217,7 @@ const Cart = () => {
       const requestBody = {
         Status_ID: 2,
       };
-
+ 
       const response = await axios.post(
         "http://127.0.0.1:8000/api/EC/order/",
         requestBody,
@@ -239,50 +286,100 @@ const Cart = () => {
 
           // Check if the product and its images exist
           const productImages = product && product.Images ? product.Images : [];
+          // const sizeName = product.Size.find(size => size.P_Size_ID === cartItem.Size_ID)?.size.Size_Name || 'N/A';
 
-          return (
-            <div key={cartItem.CartDetailsID} className="cartItem">
-              {/* Use the first image as an example, adjust as needed */}
-              <div className="cartImg">
-                <img
-                  src={`http://127.0.0.1:8000${productImages[0]?.img}`}
-                  alt={product?.P_Name}
-                />
-              </div>
-              <div className="cartDescription">
-                <p className="cartItemHeader">{product?.P_Name}</p>
-                <div className="cartBtns">
-                  <button
-                    onClick={(event) => handleIncrement(event, cartItem)}
-                    className="plusMinusBtn"
-                  >
-                    +
-                  </button>
-                  <p className="qtyNumber">
-                    {/* Quantity:{" "} */}
-                    {cartCounts1[cartItem.CartDetailsID] ||
-                      cartItem.ItemQuantity}
-                  </p>
-                  <button
-                    onClick={() =>
-                      handleDecrement(cartItem, cartItem.CartDetailsID)
-                    }
-                    className="plusMinusBtn"
-                  >
-                    -
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cartItem.CartDetailsID)}
-                    className="deleteBtn"
-                  >
-                    <MdDelete />
-                  </button>
-                </div>
-                <p className="cartItemSubtot">Subtotal: {cartItem.Subtotal}</p>
-              </div>
+          
+const sizeName = product.Size.find(size => size.size.Size_ID === cartItem.Size_ID)?.size.Size_Name || 'N/A';
+
+console.log("Size Name:", sizeName); // This will log the Size Name corresponding to the Size_ID in the cart item
+          
+          
+        //   return (
+        //     <div key={cartItem.CartDetailsID} className="cartItem">
+        //       {/* Use the first image as an example, adjust as needed */}
+        //       <div className="cartImg">
+        //         <img
+        //           src={`http://127.0.0.1:8000${productImages[0]?.img}`}
+        //           alt={product?.P_Name}
+        //         />
+        //       </div>
+        //       <div className="cartDescription">
+        //         <p className="cartItemHeader">{product?.P_Name}</p>
+        //         <div className="cartBtns">
+        //           <button
+        //             onClick={(event) => handleIncrement(event, cartItem)}
+        //             className="plusMinusBtn"
+        //           >
+        //             +
+        //           </button>
+        //           <p className="qtyNumber">
+        //             {/* Quantity:{" "} */}
+        //             {cartCounts1[cartItem.CartDetailsID] ||
+        //               cartItem.ItemQuantity}
+        //           </p>
+        //           <button
+        //             onClick={() =>
+        //               handleDecrement(cartItem, cartItem.CartDetailsID)
+        //             }
+        //             className="plusMinusBtn"
+        //           >
+        //             -
+        //           </button>
+        //           <button
+        //             onClick={() => handleDelete(cartItem.CartDetailsID)}
+        //             className="deleteBtn"
+        //           >
+        //             <MdDelete />
+        //           </button>
+        //         </div>
+        //         <p className="cartItemSubtot">Subtotal: {cartItem.Subtotal}</p>
+        //       </div>
+        //     </div>
+        //   );
+        // })}
+        return (
+          <div key={cartItem.CartDetailsID} className="cartItem">
+            <div className="cartImg">
+              <img
+                src={`http://127.0.0.1:8000${productImages[0]?.img}`}
+                alt={product?.P_Name}
+              />
             </div>
-          );
-        })}{" "}
+            <div className="cartDescription">
+              <p className="cartItemHeader">{product?.P_Name}</p>
+              <p className="cartItemSize">Size: {sizeName}</p> {/* Display the selected size */}
+              <div className="cartBtns">
+                <button
+                  onClick={(event) => handleIncrement(event, cartItem)}
+                  className="plusMinusBtn"
+                >
+                  +
+                </button>
+                <p className="qtyNumber">
+                  {cartCounts1[cartItem.CartDetailsID] ||
+                    cartItem.ItemQuantity}
+                </p>
+                <button
+                  onClick={() =>
+                    handleDecrement(cartItem, cartItem.CartDetailsID)
+                  }
+                  className="plusMinusBtn"
+                >
+                  -
+                </button>
+                <button
+                  onClick={() => handleDelete(cartItem.CartDetailsID)}
+                  className="deleteBtn"
+                >
+                  <MdDelete />
+                </button>
+              </div>
+              <p className="cartItemSubtot">Subtotal: {cartItem.Subtotal}</p>
+            </div>
+          </div>
+       );
+      })}
+        {" "}
       </div>
       <div className="checkout">
         <h2>

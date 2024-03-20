@@ -4,6 +4,7 @@ Djnago Admin Panel UI
 Djnago Groups for Theater M etc (extra)
 UI
 Protected Route
+when user order then stock must be reduce 
 
 EC:
     Search (Done)

@@ -255,6 +255,7 @@ class CartDetailView(APIView):
             # Add the selected item to the cart details
             item = serializer.validated_data['P_ID']
             quantity = serializer.validated_data['ItemQuantity']
+            size_id = serializer.validated_data.get('Size_ID', None)
             subtotal = item.P_Price * quantity
             cmst = item.P_Price * quantity
             cart_details = Cart_Details.objects.filter(Cart_ID=cart_obj, P_ID=item)
@@ -266,7 +267,8 @@ class CartDetailView(APIView):
                 cart_detail.save()
             else:
                 # If the cart detail does not exist, create a new one
-                Cart_Details.objects.create(Cart_ID=cart_obj, P_ID=item, ItemQuantity=quantity, Subtotal=subtotal)
+                Cart_Details.objects.create(Cart_ID=cart_obj, P_ID=item, ItemQuantity=quantity, Subtotal=subtotal, Size_ID=size_id)
+                # Cart_Details.objects.create(Cart_ID=cart_obj, P_ID=item, ItemQuantity=quantity, Subtotal=subtotal)
 
             # Update the total in the Cart_M model
             cart_obj.Total += subtotal
@@ -465,6 +467,7 @@ class OrderCreateView(APIView):
                     Subtotal=subtotal,
                     P_ID=cart_item.P_ID,
                     Order_ID=new_order,
+                    size=cart_item.Size_ID,
                 )
                 total += subtotal
 

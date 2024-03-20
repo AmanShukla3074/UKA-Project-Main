@@ -30,16 +30,34 @@ const ECProductDetail = () => {
     window.scrollTo(0, 0);
   }, []);
 
+
   const handleAddToCart = async (productId) => {
     try {
       const accessToken = localStorage.getItem("authTokens");
       const { access } = JSON.parse(accessToken);
       console.log("Access Token:", access);
+
+      // Find the Size_ID corresponding to the selected size
+      // const selectedSizeObj = data.Size.find(size => size.size.Size_Name === selectedSize);
+      // const sizeId = selectedSizeObj ? selectedSizeObj.P_Size_ID : null;
+
+      const selectedSizeObj = data.Size.find(size => size.size.Size_Name === selectedSize);
+      // Correctly access the Size_ID from the size object
+      const sizeId = selectedSizeObj ? selectedSizeObj.size.Size_ID : null;
+
+      console.log("Selected Size ID:", sizeId);
+      console.log("Request Body:", {
+        P_ID: productId,
+        ItemQuantity: 1,
+        Size_ID: sizeId, // Ensure this is correctly set
+       });
+       
       await axios.post(
         "http://127.0.0.1:8000/api/EC/cart/",
         {
           P_ID: productId,
           ItemQuantity: 1,
+          Size_ID: sizeId, // Include the Size_ID in the request body
         },
         {
           headers: {
@@ -72,28 +90,8 @@ const ECProductDetail = () => {
         setShowNotification(false);
       }, 3000); // Hide after 3 seconds
     }
-  };
+ };
 
-  // const handleAddToCart = async (productId) => {
-  //   try {
-  //     const accessToken = localStorage.getItem('authTokens');
-  //     const { access } = JSON.parse(accessToken);
-  //     console.log('Access Token:', access)
-  //     await axios.post('http://127.0.0.1:8000/api/EC/cart/', {
-  //       P_ID: productId,
-  //       ItemQuantity: 1,
-  //     },{
-  //       headers: {
-  //         Authorization: `Bearer ${access}`,
-  //         'Content-Type': 'application/json',
-  //       },
-  //   });
-  //   alert("aa")
-  //     addToCart(productId);
-  //   } catch (error) {
-  //     console.error('Error adding item to cart:', error);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,26 +122,50 @@ const ECProductDetail = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://127.0.0.1:8000/api/EC/RateReview?p_id=${productId}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${authTokens?.access}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       setProductReview(response.data);
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [productId]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/EC/RateReview?p_id=${productId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authTokens?.access}`,
-              "Content-Type": "application/json",
-            },
-          }
+          `http://127.0.0.1:8000/api/EC/products/${productId}/`
         );
-        setProductReview(response.data);
-        console.log(response.data);
+        setData(response.data);
+
+        // Set initial selectedImage if there are images
+        if (response.data.Images && response.data.Images.length > 0) {
+          setSelectedImage(response.data.Images[0].img);
+        }
+
+        // Set initial selectedSize if there are sizes
+        if (response.data.Size && response.data.Size.length > 0) {
+          setSelectedSize(response.data.Size[0].size.Size_Name);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
-  }, [productId]);
+ }, [productId]);
 
   useEffect(() => {
     const fetchData = async () => {

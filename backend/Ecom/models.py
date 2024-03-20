@@ -73,14 +73,25 @@ class Cart_M(models.Model):
     def __str__(self):
         return f"{self.CartID} - {self.User_ID}"    
 
+# class Cart_Details(models.Model):
+#     CartDetailsID = models.AutoField(primary_key=True)
+#     ItemQuantity = models.IntegerField()
+#     Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
+#     P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE)
+#     Cart_ID = models.ForeignKey(Cart_M,on_delete=models.CASCADE)
+
+    
+#     def __str__(self):
+#         return f"{self.Cart_ID} - {self.P_ID} - {self.CartDetailsID}"
+
 class Cart_Details(models.Model):
     CartDetailsID = models.AutoField(primary_key=True)
     ItemQuantity = models.IntegerField()
-    Subtotal = models.DecimalField(max_digits=10,decimal_places=2,default=0,editable=True)
+    Subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0, editable=True)
     P_ID = models.ForeignKey(Product_M, on_delete=models.CASCADE)
-    Cart_ID = models.ForeignKey(Cart_M,on_delete=models.CASCADE)
+    Size_ID = models.ForeignKey(Product_Size_M, on_delete=models.CASCADE, null=True, blank=True) # New field
+    Cart_ID = models.ForeignKey(Cart_M, on_delete=models.CASCADE)
 
-    
     def __str__(self):
         return f"{self.Cart_ID} - {self.P_ID} - {self.CartDetailsID}"
 
@@ -136,6 +147,8 @@ class Order_Details(models.Model):
     Subtotal = models.DecimalField(max_digits=10,decimal_places=2)
     P_ID = models.ForeignKey(Product_M,on_delete=models.CASCADE)
     Order_ID = models.ForeignKey(Order_M,on_delete=models.CASCADE)
+    size = models.ForeignKey(Product_Size_M, on_delete=models.CASCADE,null=True,blank=True)
+
 
     def __str__(self):
         return f"{self.Order_ID} - {self.P_ID}"
