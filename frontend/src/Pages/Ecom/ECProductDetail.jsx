@@ -21,16 +21,15 @@ const ECProductDetail = () => {
 
   const { authTokens } = useContext(AuthContext);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+ }, []); 
 
   const handleAddToCart = async (productId) => {
     try {
-      // const accessToken = localStorage.getItem('access_token');
       const accessToken = localStorage.getItem('authTokens');
       const { access } = JSON.parse(accessToken);
       console.log('Access Token:', access)
-
-      // console.log('Access Token:', accessToken);
-      // Make a POST request to your server's add-to-cart endpoint
       await axios.post('http://127.0.0.1:8000/api/EC/cart/', {
         P_ID: productId,
         ItemQuantity: 1,

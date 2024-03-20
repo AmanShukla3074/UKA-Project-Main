@@ -5,30 +5,31 @@ Djnago Groups for Theater M etc (extra)
 UI
 
 EC:
-    Search
+    Search (Done)
     Order
     Cart Fix (Add Size also)
 
 
 MB:
-    Search
+    Search (Done)
     Booking
 
 MS:
     Three Dot Menu - For Music Delete
 
+
 19:
     EC:
-        Search
-        Order
+        Search (Done)
         Cart Fix (Add Size also)
     MB:
-        Search
+        Search (Done)
         Booking
     MS:
         Three Dot Menu - For Music Delete
 
 20:
+    Order
     Login Page Wrong Pass Alert
     Data Entery
     Djnago Admin Panel UI

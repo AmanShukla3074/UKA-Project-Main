@@ -136,6 +136,7 @@ const playNextSong = () => {
             <Route path="/moviebooking" element={<MovieBooking />}>
               <Route index element={<MBhome />} />
               <Route path="home" element={<MBhome />} />
+              <Route path="movies" element={<MBhome />} />
               <Route path="movie" element={<MovieDetails />}>
                 <Route path=":movieId" element={<MovieDetails />} />
               </Route>

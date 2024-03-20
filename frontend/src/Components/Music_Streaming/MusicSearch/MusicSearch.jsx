@@ -74,7 +74,7 @@ console.log(searchResults.music);
         </div>
       </div>
       <div className="search-results-container">
-        {searchResults.artists.length > 0 && (
+        {/* {searchResults.artists.length > 0 && (
           <>
             <h2 className="searchMusicHeader">Artists</h2>
             {searchResults.artists.map((artist, index) => (
@@ -94,15 +94,14 @@ console.log(searchResults.music);
                 <h3>{album.Album_Title}</h3>
                 <p>Release Date: {album.ReleaseDate}</p>
                 <p>No. of Songs: {album.No_Of_Songs}</p>
-                {/* Render album music here if needed */}
               </div>
             ))}
           </>
-        )}
+        )} */}
 
         {searchResults.music.length > 0 && (
           <>
-            <h2 className="searchMusicHeader">Music</h2>
+            {/* <h2 className="searchMusicHeader">Music</h2> */}
             <div className="musicContainer">
               {searchResults.music.map((item) => (
                 <MusicItem
