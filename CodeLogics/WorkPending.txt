@@ -1,18 +1,17 @@
 Login Page Wrong Pass Alert  (Done)
 Data Entery
-Djnago Admin Panel UI
+Djnago Admin Panel  (Done)
 Djnago Groups for Theater M etc (extra)
 UI
 Protected Route
 when user order then stock must be reduce 
-F
 
 
 EC: (Done)
     Search (Done)
     Order (Done)
     Cart Fix (Add Size also) (Done)
-    Review Issue
+    Review Issue (Done)
 
 
 

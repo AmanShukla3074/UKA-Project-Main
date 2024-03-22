@@ -112,14 +112,14 @@ function SubNavEC() {
             >
               <Link to="/ecommerce/Sweatshirts">Sweatshirts</Link>
             </li>
-            <li
+            {/* <li
               className={menu === "Tees" ? "active" : ""}
               onClick={() => {
                 setMenu("Tees");
               }}
             >
               <Link to="/ecommerce/Tees">Tees</Link>
-            </li>
+            </li> */}
             <li
               className={menu === "Caps" ? "active" : ""}
               onClick={() => {

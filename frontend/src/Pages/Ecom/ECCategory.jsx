@@ -4,7 +4,7 @@ import { ProductContainer } from '../../Components'
 const ECCategory = ({category}) => {
   return (
     <div>
-      <ProductContainer category={category} header="SHOP HOODIES!"/>  
+      <ProductContainer category={category} />  
     </div>
   )
 }

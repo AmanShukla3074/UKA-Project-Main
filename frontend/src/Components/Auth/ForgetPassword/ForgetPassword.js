@@ -140,7 +140,7 @@ const ForgotPassword = () => {
           <button type="submit">Submit</button>
         </form>
       ) : (
-        <div className="OTPcontainer">
+        <div className="OTPcontainerFP">
           <input
             className="OTPItem"
             type="text"

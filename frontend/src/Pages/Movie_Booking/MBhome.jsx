@@ -5,7 +5,6 @@ import { Movie_Container } from '../../Components';
 const MBhome = () => {
   return (
     <div>
-      {/* <ImgSlider /> */}
       <Movie_Container/>
     </div>
   );

@@ -22,7 +22,7 @@ const ProductContainer = (props) => {
       }
     };
     fetchData();
-  }, []);
+  }, [props.category]);
 
   
   return (

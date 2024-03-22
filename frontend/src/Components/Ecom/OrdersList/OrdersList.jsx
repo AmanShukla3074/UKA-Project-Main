@@ -44,7 +44,7 @@ const OrdersList = () => {
           <p>Order Date: {formatDate(order.OrderDate)}</p> {/* Use the formatDate function here */}
           <p>Status Name: {order.Status_ID.Status_Name}</p>
           <p>Total Amount: ${order.Total}</p>
-          <Link to={`/ecommerce/orderdetails/${order.OrderID}`}>View Details</Link>
+          <Link className="orderLink" to={`/ecommerce/orderdetails/${order.OrderID}` }>View Details</Link>
         </div>
       ))}
     </div>

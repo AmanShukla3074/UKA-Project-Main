@@ -124,12 +124,12 @@ const playNextSong = () => {
               <Route path="Hoodie" element={<ECCategory category="hoodie" />} />
               <Route
                 path="Sweatshirts"
-                element={<ECCategory category="Sweatshirts" />}
+                element={<ECCategory category="sweatshirts" />}
               />
-              <Route path="Tees" element={<ECCategory category="tees" />} />
-              <Route path="Caps" element={<ECCategory category="Caps" />} />
-              <Route path="Jeans" element={<ECCategory category="Jeans" />} />
-              <Route path="Shoes" element={<ECCategory category="Shoes" />} />
+              {/* <Route path="Tees" element={<ECCategory category="tees" />} /> */}
+              <Route path="Caps" element={<ECCategory category="caps" />} />
+              <Route path="Jeans" element={<ECCategory category="jeans" />} />
+              <Route path="Shoes" element={<ECCategory category="shoes" />} />
               <Route path="cart" element={<Cart />} />
               <Route path="orderlist" element={<OrdersList />} />
               <Route path="orderdetails" element={<ECOrderDetail />}>

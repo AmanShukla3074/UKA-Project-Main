@@ -12,6 +12,12 @@
   margin-top: 50px;
  }
  
+.forgetpassdiv{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
  /* Heading styling */
  h2 {
   text-align: center;

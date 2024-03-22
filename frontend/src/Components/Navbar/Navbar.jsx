@@ -57,6 +57,10 @@ const Navbar = () => {
     location.pathname === "/" ||
     location.pathname === "/ecommerce";
 
+  const openAdminPanel = () => {
+    window.open("http://127.0.0.1:8000/admin/", "_blank");
+  };
+
   return (
     <nav
       className={`navbar ${
@@ -84,6 +88,9 @@ const Navbar = () => {
         <li>
           <NavLink to="/contact">Contact US</NavLink>
         </li>
+        {user && user.Role === "Admin" && (
+          <li onClick={openAdminPanel} className="adminPanel">Admin Panel</li>
+        )}
       </ul>
       <div className="user-actions">
         {user ? (

@@ -30,17 +30,16 @@ const ECProductDetail = () => {
     window.scrollTo(0, 0);
   }, []);
 
-
   const handleAddToCart = async (productId) => {
     try {
       const accessToken = localStorage.getItem("authTokens");
       const { access } = JSON.parse(accessToken);
 
-
-      const selectedSizeObj = data.Size.find(size => size.size.Size_Name === selectedSize);
+      const selectedSizeObj = data.Size.find(
+        (size) => size.size.Size_Name === selectedSize
+      );
       const sizeId = selectedSizeObj ? selectedSizeObj.size.Size_ID : null;
 
-       
       await axios.post(
         "http://127.0.0.1:8000/api/EC/cart/",
         {
@@ -79,8 +78,7 @@ const ECProductDetail = () => {
         setShowNotification(false);
       }, 3000); // Hide after 3 seconds
     }
- };
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,26 +109,26 @@ const ECProductDetail = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://127.0.0.1:8000/api/EC/RateReview?p_id=${productId}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${authTokens?.access}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       setProductReview(response.data);
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [productId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/EC/RateReview?p_id=${productId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authTokens?.access}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setProductReview(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [productId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,7 +152,7 @@ const ECProductDetail = () => {
       }
     };
     fetchData();
- }, [productId]);
+  }, [productId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,7 +209,9 @@ const ECProductDetail = () => {
         </div>
         <div className="product-details">
           <div className="pname">{data.P_Name}</div>
-          <div className="price">Price: {"\u20B9"} {data.P_Price}</div>
+          <div className="price">
+            Price: {"\u20B9"} {data.P_Price}
+          </div>
 
           {data.Size && data.Size.length > 0 && (
             <div className="size-dropdown-container">
@@ -236,7 +236,6 @@ const ECProductDetail = () => {
             </button>
           </div>
           <div className="desc">{data.P_Desc}</div>
-          {/* Add more details as needed */}
         </div>
       </div>
 
@@ -248,7 +247,15 @@ const ECProductDetail = () => {
                 <StarRating rating={parseInt(review.Rate, 10)} />
                 <p>
                   <strong>Date:</strong>{" "}
-                  {new Date(review.RateReview_Date).toLocaleDateString()}
+                  {new Date(review.RateReview_Date).toLocaleDateString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }
+                  )}
+                  {/* {new Date(review.RateReview_Date).toLocaleDateString()} */}
                 </p>
               </div>
               <p>

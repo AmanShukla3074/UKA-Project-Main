@@ -1,7 +1,8 @@
+
 import React, { useState } from "react";
 import "./Registration.css";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Make sure to install axios if you haven't already
+import axios from "axios"; 
 import Notification from '../../Notification/Notification'
 const Registration = ({ onNext }) => {
   const navigate = useNavigate();
@@ -33,9 +34,9 @@ const Registration = ({ onNext }) => {
   const [isDobValid, setIsDobValid] = useState(true);
   const [isGenderValid, setIsGenderValid] = useState(true);
 
-  const [otp, setOtp] = useState(["", "", "", ""]); // OTP input state
-  const [showOtpInput, setShowOtpInput] = useState(false); // State to control OTP input visibility
-  const [serverOtp, setServerOtp] = useState(""); // OTP received from the server
+  const [otp, setOtp] = useState(["", "", "", ""]); 
+  const [showOtpInput, setShowOtpInput] = useState(false); 
+  const [serverOtp, setServerOtp] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +57,6 @@ const Registration = ({ onNext }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Construct the request body
     const requestBody = {
       first_name: firstName,
       last_name: lastName,
@@ -73,15 +73,15 @@ const Registration = ({ onNext }) => {
       },
     };
     console.log("Sending OTP request with body:", requestBody);
-    // Send OTP to the user's mobile number
+    
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/Auth/send-otp/",
         { mobile_no: mobileNumber }
       );
       if (response.status === 200) {
-        setServerOtp(response.data.otp.toString()); // Store the received OTP
-        console.log("Received OTP:", response.data.otp); // Log the received OTP
+        setServerOtp(response.data.otp.toString()); 
+        console.log("Received OTP:", response.data.otp);
         setShowOtpInput(true);
       } else {
         alert("An error occurred while sending the OTP.");
@@ -95,7 +95,6 @@ const Registration = ({ onNext }) => {
   const handleOtpSubmit = async () => {
     const otpValue = otp.join("");
     if (otpValue === serverOtp) {
-      // OTP verified, proceed with registration
       await registerUser();
     } else {
       alert("Invalid OTP. Please try again.");
@@ -124,50 +123,30 @@ const Registration = ({ onNext }) => {
         }
       );
       if (response.status === 200) {
-        // Registration successful
         setNotificationMessage("Registration successful!");
         setNotificationColor("green");
         setShowNotification(true);
-        // Optionally, hide the notification after a delay
         setTimeout(() => {
           setShowNotification(false);
-        }, 3000); // Hide after 3 seconds
+        }, 3000); 
+        // navigate("/address")
         navigate("/login")
       } else {
-        // Registration failed
         setNotificationMessage("Registration failed. Please try again.");
         setNotificationColor("red");
         setShowNotification(true);
-        // Optionally, hide the notification after a delay
         setTimeout(() => {
           setShowNotification(false);
         }, 3000);
       }
    } catch (error) {
-      // Handle error
       setNotificationMessage("An error occurred during registration.");
       setNotificationColor("red");
       setShowNotification(true);
-      // Optionally, hide the notification after a delay
       setTimeout(() => {
         setShowNotification(false);
       }, 3000);
     }
-    //   console.log("Registration response:", response); 
-    //   if (response.status === 200) {
-    //     alert("Registration successful!");
-    //     const userId = response.data.user_id; // Retrieve the user ID from the response
-    //     console.log("User ID:", userId);
-    //     // You can now use the user ID to navigate to the next page or perform other actions
-    //     navigate("/address", { state: { userId } }); // Pass the user ID to the next page
-    //   } else {
-    //     console.error("Error registering user:", response.data);
-    //     alert("An error occurred while registering.");
-    //   }
-    // } catch (error) {
-    //   console.error("Error registering user:", error.message);
-    //   // Handle error as before
-    // }
   };
 
   const validateFirstName = () => {
@@ -253,10 +232,8 @@ const Registration = ({ onNext }) => {
         profilePicture,
       });
 
-      // Call the parent component's onNext function to navigate to the next page
-      onNext && onNext();
+       onNext && onNext();
 
-      // Use navigate to go to the "/otp" route
       navigate("/otp");
     } else {
       console.log("Form has errors. Please check your inputs.");
@@ -305,7 +282,6 @@ const Registration = ({ onNext }) => {
               <span className="error">Last name cannot be empty</span>
             )}
           </label>
-          {/* Mobile Number */}
           <label>
             Mobile Number:
             <input
@@ -322,7 +298,6 @@ const Registration = ({ onNext }) => {
               <span className="error">Mobile number cannot be empty</span>
             )}
           </label>
-          {/* Email */}
           <label>
             Email:
             <input
@@ -334,7 +309,6 @@ const Registration = ({ onNext }) => {
             />
             {!isEmailValid && <span className="error">Invalid email</span>}
           </label>
-          {/* Password */}
           <label>
             Password:
             <input
@@ -350,7 +324,6 @@ const Registration = ({ onNext }) => {
               </span>
             )}
           </label>
-          {/* Date of Birth */}
           <label>
             Date of Birth:
             <input
@@ -365,7 +338,6 @@ const Registration = ({ onNext }) => {
               <span className="error">Date of Birth is required</span>
             )}
           </label>
-          {/* Gender */}
           <label>
             Gender:
             <select
